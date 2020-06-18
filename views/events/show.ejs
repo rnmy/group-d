@@ -7,10 +7,11 @@
         <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
           See details
         </a>
-        <a class="btn btn-success ml-1" href="/events/<%= event._id%>/edit" target="_blank">
+        <a class="btn btn-success" href="/events/<%= event._id%>/edit">
           Edit this event
         </a>
       </h1>
+
     </div>
   </div>
 
@@ -26,6 +27,7 @@
         <th scope="col"><%= event.maxGroupSize%></th>
       </tr>
     </table>
+
     <div>
       <a class="btn btn-primary ml-1" href="/events/<%= event._id%>/groups/new" target="_blank">
         Add a group
@@ -34,5 +36,18 @@
     <a class="btn btn-link" href="/events">Go back to events page</a>
   </div>
 
+  <div class="container mt-5">
+    <h2>Current groups:</h2>
+    <% event.groups.forEach((group) => { %>
+      <div class="card mt-3" style="width: 18rem;">
+        <div class="card-body">
+          <h5 class="card-title"><%= group.name%></h5>
+          <p class="card-text">I am a group.</p>
+          <a href="/events/<%= event._id%>/groups/<%= group._id%>" class="btn btn-primary">See group details</a>
+        </div>
+    </div>
+    <% }) %>
+    <a class="btn btn-link mt-3" href="/events">Go back to events page</a>
+  </div>
 
 <%- include("../partials/footer") %>
