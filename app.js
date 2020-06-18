@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+//Commenting to test
 
 const seedDB = require("./seeds");
 seedDB();
@@ -26,7 +27,7 @@ app.get("/events/new", (req, res) => {
 });
 
 app.post("/events/new", (req, res) => {
-    
+
 })
 
 app.get("/events/:id", (req, res) => {
