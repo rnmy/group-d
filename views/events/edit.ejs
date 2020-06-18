@@ -1,1 +1,9 @@
-<h1>edit your event</h1>
+  <h1>Editing <%= event.name%></h1>
+
+  <form action="/events/<%= event._id%>?_method=PUT" method="POST">
+    <input type="text" name="event[name]" value="<%= event.name%>">
+    <input type="text" name="event[url]" value="<%= event.url%>">
+    <input type="text" name="event[minGroupSize]" value="<%= event.minGroupSize%>">
+    <input type="text" name="event[maxGroupSize]" value="<%= event.maxGroupSize%>">
+    <input type="submit">
+  </form>
