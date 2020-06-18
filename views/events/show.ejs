@@ -4,12 +4,14 @@
     <div class="container">
       <h1 class="mb-4 display-3">
         <%= event.name%>
-        <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
-          See details
-        </a>
-        <a class="btn btn-success" href="/events/<%= event._id%>/edit">
-          Edit this event
-        </a>
+        <div>
+          <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
+            See details
+          </a>
+          <a class="btn btn-success" href="/events/<%= event._id%>/edit">
+            Edit this event
+          </a>
+        </div>
       </h1>
 
     </div>
@@ -33,7 +35,6 @@
         Add a group
       </a>
     </div>
-    <a class="btn btn-link" href="/events">Go back to events page</a>
   </div>
 
   <div class="container mt-5">
