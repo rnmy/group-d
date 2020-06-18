@@ -89,25 +89,6 @@ app.put("/events/:id/", (req, res) => {
 //==================================
 //        GROUPS ROUTES
 //==================================
-
-// Show page for group
-app.get("/events/:id/groups/:groupid", (req, res) => {
-    Event.findById(req.params.id, (err, foundEvent) => {
-        if (err) {
-            res.redirect("/events")
-        } else {
-            Group.findById(req.params.groupid).populate("users").exec(
-            (err, foundGroup) => {
-                if (err) {
-                    res.redirect("/events/" + req.params.id)
-                } else {
-                    res.render("./groups/show", {group: foundGroup, event: foundEvent})
-                }
-            })
-        }
-    })
-})
-
 // Show form to add new group
 app.get("/events/:id/groups/new", (req, res) => {
   const eventId = req.params.id;
@@ -149,6 +130,24 @@ app.post("/events/:id/groups", (req, res) => {
     })
 })
 
+// Show page for group
+app.get("/events/:id/groups/:groupid", (req, res) => {
+    Event.findById(req.params.id, (err, foundEvent) => {
+        if (err) {
+            res.redirect("/events")
+        } else {
+            Group.findById(req.params.groupid).populate("users").exec(
+            (err, foundGroup) => {
+                if (err) {
+                    res.redirect("/events/" + req.params.id)
+                } else {
+                    res.render("./groups/show", {group: foundGroup, event: foundEvent})
+                }
+            })
+        }
+    })
+})
+
 // Join a group logic
 app.put("/events/:id/groups/:groupid", (req, res) => {
   console.log(req.body.newUser)
@@ -157,7 +156,6 @@ app.put("/events/:id/groups/:groupid", (req, res) => {
       name: req.body.newUser
     })
     user.save()
-    console.log(user)
   Group.findByIdAndUpdate(req.params.groupid,
     {
       $push: {users: user},
