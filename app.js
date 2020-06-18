@@ -3,7 +3,7 @@ const app = express();
 //Commenting to test
 
 const seedDB = require("./seeds");
-//seedDB();
+seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -92,32 +92,61 @@ app.put("/events/:id/", (req, res) => {
 
 // Show page for group
 app.get("/events/:id/groups/:groupid", (req, res) => {
-// Have a button that lets you join group
-// Find event by req.params.id
-// Find group by req.params.groupid
-  Event.findById(req.params.id, (err, foundEvent) => {
-    if (err) {
-      res.redirect("/events")
-    } else {
-      Group.findById(req.params.groupid).populate("users").exec(
-        (err, foundGroup) => {
-          if (err) {
-            res.redirect("/events/" + req.params.id)
-          } else {
-            res.render("./groups/show", {group: foundGroup, event: foundEvent})
-          }
-        })
-      }
+    Event.findById(req.params.id, (err, foundEvent) => {
+        if (err) {
+            res.redirect("/events")
+        } else {
+            Group.findById(req.params.groupid).populate("users").exec(
+            (err, foundGroup) => {
+                if (err) {
+                    res.redirect("/events/" + req.params.id)
+                } else {
+                    res.render("./groups/show", {group: foundGroup, event: foundEvent})
+                }
+            })
+        }
     })
-  })
-
-// Add group to an event
-app.get("/events/:id/groups/new", (req, res) => {
-  res.render("./groups/new")
 })
 
+// Show form to add new group
+app.get("/events/:id/groups/new", (req, res) => {
+  const eventId = req.params.id;
+    Event.findById(eventId, (err, event) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("./groups/new", {event: event});
+        }
+    })
+})
+
+// Add new group to DB
 app.post("/events/:id/groups", (req, res) => {
-  res.redirect("/events/" + req.params.id)
+  const eventId = req.params.id;
+    Event.findById(eventId, (err, event) => {
+        if(err){
+            console.log(err);
+        } else {
+            User.create({name: req.body.user}, (err, user) => {
+              if(err){
+                console.log(err);
+              } else {
+                Group.create(
+                  {
+                    name: req.body.groupName,
+                    size: 1,
+                    users: [user]
+                  },
+                  (err, group) => {
+                    event.groups.push(group);
+                    event.save();
+                    res.redirect("/events/" + eventId);
+                  }
+                )
+              }
+            })
+        }
+    })
 })
 
 // Join a group logic
