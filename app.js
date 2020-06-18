@@ -3,10 +3,10 @@ const app = express();
 //Commenting to test
 
 const seedDB = require("./seeds");
-seedDB();
+//seedDB();
 
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const Event = require("./models/event");
 
 const bodyParser = require("body-parser");
