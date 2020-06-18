@@ -26,6 +26,11 @@
         <th scope="col"><%= event.maxGroupSize%></th>
       </tr>
     </table>
+    <div>
+      <a class="btn btn-primary ml-1" href="/events/<%= event._id%>/groups/new" target="_blank">
+        Add a group
+      </a>
+    </div>
     <a class="btn btn-link" href="/events">Go back to events page</a>
   </div>
 
