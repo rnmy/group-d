@@ -8,6 +8,8 @@ const seedDB = require("./seeds");
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 const Event = require("./models/event");
+const User = require("./models/user");
+const Group = require("./models/group");
 
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
@@ -16,6 +18,10 @@ const methodOverride = require('method-override');
 app.use(methodOverride("_method"));
 
 app.set("view engine", "ejs");
+
+//==================================
+//        EVENTS ROUTES
+//==================================
 
 app.get("/", (req, res) => {
     res.redirect("/events");
@@ -79,6 +85,34 @@ app.put("/events/:id/", (req, res) => {
     }
   })
 })
+
+//==================================
+//        GROUPS ROUTES
+//==================================
+
+// Show page for group
+app.get("/events/:id/groups/:groupid", (req, res) => {
+// Have a button that lets you join group
+// Find event by req.params.id
+// Find group by req.params.groupid
+  res.render("./groups/show", {group: foundGroup, event: foundEvent})
+})
+
+// Add group to an event
+app.get("/events/:id/groups/new", (req, res) => {
+  res.render("./groups/new")
+})
+
+app.post("/events/:id/groups", (req, res) => {
+  res.redirect("/events/" + req.params.id)
+})
+
+// Join a group
+app.put("/events/:id/groups/:groupid", (req, res) => {
+  res.redirect("/events/:id/groups" + req.params.groupid)
+})
+
+
 
 app.listen(3000, () => {
     console.log("SERVER START");
