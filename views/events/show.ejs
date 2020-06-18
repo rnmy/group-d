@@ -1,8 +1,33 @@
-  <h1>Event: <%= event.name%></h1>
+<%- include("../partials/header") %>
 
-  <h3>Minimum group size: <%= event.minGroupSize%></h3>
-  <h3>Maximum group size: <%= event.maxGroupSize%></h3>
+  <div class="jumbotron">
+    <div class="container">
+      <h1 class="mb-4 display-3">
+        <%= event.name%>
+        <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
+          See details
+        </a>
+        <a class="btn btn-success ml-1" href="/events/<%= event._id%>/edit" target="_blank">
+          Edit this event
+        </a>
+      </h1>
+    </div>
+  </div>
 
-  <a href="<%= event.url%>">See details</a>
+  <div class="container">
+    <h2>General Information:</h2>
+    <table class="table table-bordered col-lg-6">
+      <tr>
+        <th scope="col">Minimum group size</th>
+        <th scope="col"><%= event.minGroupSize%></th>
+      </tr>
+      <tr>
+        <th scope="col">Maximum group size</th>
+        <th scope="col"><%= event.maxGroupSize%></th>
+      </tr>
+    </table>
+    <a class="btn btn-link" href="/events">Go back to events page</a>
+  </div>
 
-  <a href="/events">Go back to events page</a>
+
+<%- include("../partials/footer") %>
