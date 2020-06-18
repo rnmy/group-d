@@ -1,1 +1,23 @@
-<h1>create new event</h1>
+<%- include("../partials/header") %>
+
+<div class="container">
+        <h1 style="text-align:center;">Add a new Event!</h1>
+        
+        <div style="width: 30%; margin: 25px auto;">
+            <form action="/events" method="POST">
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="name" name="event[name]">
+                </div>
+                <div class="form-group">
+                    <input class="form-control" type="text" placeholder="event link" name="event[url]">
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-lg btn-primary btn-block">Submit</button>
+                </div>
+            </form>
+
+            <a href="/events">Go back</a>
+        </div>
+</div>
+
+<%- include("../partials/footer") %>

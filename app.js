@@ -1,5 +1,3 @@
-//hi
-
 const express = require("express");
 const app = express();
 //Commenting to test
@@ -24,15 +22,29 @@ app.get("/", (req, res) => {
 });
 
 app.get("/events", (req, res) => {
-    res.render("./events/index");
+    Event.find({}, (err, allEvents) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.render("./events/index", {events: allEvents});
+        }
+    });
 });
 
 app.get("/events/new", (req, res) => {
     res.render("./events/new");
 });
 
-app.post("/events/new", (req, res) => {
 
+app.post("/events", (req, res) => {
+    const newEvent = req.body.event;
+    Event.create(newEvent, (err, event) => {
+        if(err){
+            console.log(err);
+        } else {
+            res.redirect("/events");
+        }
+    })
 })
 
 //Show route

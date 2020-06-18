@@ -1,1 +1,25 @@
-<h1>events page</h1>
+<%- include("../partials/header") %>
+
+<div class="container">
+    <header class ="jumbotron">
+        <div class="container">
+            <h1>Events</h1>
+            <p>View the latest hackathons, projects and competitions you can join today!</p>
+            <a class="btn btn-primary btn-lg" href="events/new">Add a new event today!</a>
+        </div>
+    </header>
+    
+    <div class="row">
+        <% events.forEach((event) => { %>
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title"><a href="/events/<%= event._id %>"><%= event.name %></a></h4>
+                    </div>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+</div>
+
+<%- include("../partials/footer") %>
