@@ -1,0 +1,32 @@
+<%- include("../partials/header") %>
+  <div class="container">
+    <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
+    <hr>
+    <h3>Current members:</h3>
+    <% group.users.forEach((user) => { %>
+      <div class="row d-inline">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h6 class="card-title"><%= user.name%></h6>
+              <a href="#" class="card-text">Click to view full profile</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% })%>
+    </div>
+    <div class="container mt-5">
+      <% if(!(group.size == event.maxGroupSize)) { %>
+        <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
+          <div class="form-group">
+            <label>Join this group: </label>
+            <input class="form-control" type="text" name="newUser" placeholder="Your name" style="width: 300px;" required>
+          </div>
+          <button class="btn btn-success mb-5">Enter</button>
+        </form>
+      <% } %>
+      <a href="/events/<%= event._id%>">Go back to <%= event.name%></a>
+    </div>
+
+<%- include("../partials/footer") %>

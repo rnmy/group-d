@@ -55,7 +55,7 @@ app.post("/events", (req, res) => {
 
 //Show route
 app.get("/events/:id", (req, res) => {
-  Event.findById(req.params.id, (err, foundEvent) => {
+  Event.findById(req.params.id).populate("groups").exec((err, foundEvent) => {
     if(err) {
       res.redirect("/events")
     } else {
@@ -95,8 +95,21 @@ app.get("/events/:id/groups/:groupid", (req, res) => {
 // Have a button that lets you join group
 // Find event by req.params.id
 // Find group by req.params.groupid
-  res.render("./groups/show", {group: foundGroup, event: foundEvent})
-})
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {
+      res.redirect("/events")
+    } else {
+      Group.findById(req.params.groupid).populate("users").exec(
+        (err, foundGroup) => {
+          if (err) {
+            res.redirect("/events/" + req.params.id)
+          } else {
+            res.render("./groups/show", {group: foundGroup, event: foundEvent})
+          }
+        })
+      }
+    })
+  })
 
 // Add group to an event
 app.get("/events/:id/groups/new", (req, res) => {
@@ -107,11 +120,27 @@ app.post("/events/:id/groups", (req, res) => {
   res.redirect("/events/" + req.params.id)
 })
 
-// Join a group
+// Join a group logic
 app.put("/events/:id/groups/:groupid", (req, res) => {
-  res.redirect("/events/:id/groups" + req.params.groupid)
+  console.log(req.body.newUser)
+  const user = new User(
+    {
+      name: req.body.newUser
+    })
+    user.save()
+    console.log(user)
+  Group.findByIdAndUpdate(req.params.groupid,
+    {
+      $push: {users: user},
+      $inc: {size: 1}
+    }, (err, group) => {
+    if(err) {
+      res.redirect("/events")
+    } else {
+      res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+    }
+  })
 })
-
 
 
 app.listen(3000, () => {
