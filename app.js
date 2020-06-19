@@ -167,17 +167,10 @@ app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
     })
 })
 
-// Join a group logic
 app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
-  console.log(req.body.newUser)
-  const user = new User(
-    {
-      name: req.body.newUser
-    })
-    user.save()
   Group.findByIdAndUpdate(req.params.groupid,
     {
-      $push: {users: user},
+      $push: {users: res.locals.currentUser},
       $inc: {size: 1}
     }, (err, group) => {
     if(err) {
@@ -231,7 +224,7 @@ app.post("/login", passport.authenticate("local",
    }), function(req, res){
 });
 
-// logic route
+// logout
 app.get("/logout", function(req, res){
   req.logout();
   res.redirect("/");
