@@ -3,7 +3,7 @@ const app = express();
 //Commenting to test
 
 const seedDB = require("./seeds");
-// seedDB();
+//seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -133,10 +133,11 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
               {
                 name: req.body.groupName,
                 size: 1,
+                description: req.body.descr,
                 users: [res.locals.currentUser]
               },
               (err, group) => {
-                event.groups.push(group); 
+                event.groups.push(group);
                 event.save();
                 res.redirect("/events/" + eventId);
               }
@@ -156,7 +157,13 @@ app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
                 if (err) {
                     res.redirect("/events/" + req.params.id)
                 } else {
-                    res.render("./groups/show", {group: foundGroup, event: foundEvent})
+                    const userIDs = foundGroup.users.map((user) => user._id)
+                    res.render("./groups/show",
+                    {
+                      group: foundGroup,
+                      event: foundEvent,
+                      users: userIDs
+                    })
                 }
             })
         }
