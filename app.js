@@ -38,14 +38,15 @@ app.use(function(req, res, next){
 
 app.set("view engine", "ejs");
 
+// Landing page
+app.get("/", (req, res) => {
+  res.render("landing");
+});
+
 //==================================
 //        EVENTS ROUTES
 //==================================
-
-app.get("/", (req, res) => {
-    res.render("landing");
-});
-
+// Show events page
 app.get("/events", isLoggedIn, (req, res) => {
     Event.find({}, (err, allEvents) => {
         if(err){
@@ -56,11 +57,12 @@ app.get("/events", isLoggedIn, (req, res) => {
     });
 });
 
+// Show form to add new event
 app.get("/events/new", isLoggedIn, (req, res) => {
     res.render("./events/new");
 });
 
-
+// Add new event to DB
 app.post("/events", isLoggedIn, (req, res) => {
     const newEvent = req.body.event;
     Event.create(newEvent, (err, event) => {
@@ -72,7 +74,7 @@ app.post("/events", isLoggedIn, (req, res) => {
     })
 })
 
-//Show route
+// Show particular event
 app.get("/events/:id", isLoggedIn, (req, res) => {
   Event.findById(req.params.id).populate("groups").exec((err, foundEvent) => {
     if(err) {
@@ -94,7 +96,7 @@ app.get("/events/:id/edit", isLoggedIn, (req, res) => {
   })
 })
 
-// Updating logic
+// Updating event logic
 app.put("/events/:id/", isLoggedIn, (req, res) => {
   Event.findByIdAndUpdate(req.params.id, req.body.event, (err, updatedEvent) => {
     if(err) {
@@ -127,24 +129,18 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
         if(err){
             console.log(err);
         } else {
-            User.create({name: req.body.user}, (err, user) => {
-              if(err){
-                console.log(err);
-              } else {
-                Group.create(
-                  {
-                    name: req.body.groupName,
-                    size: 1,
-                    users: [user]
-                  },
-                  (err, group) => {
-                    event.groups.push(group);
-                    event.save();
-                    res.redirect("/events/" + eventId);
-                  }
-                )
+            Group.create(
+              {
+                name: req.body.groupName,
+                size: 1,
+                users: [res.locals.currentUser]
+              },
+              (err, group) => {
+                event.groups.push(group); 
+                event.save();
+                res.redirect("/events/" + eventId);
               }
-            })
+            )
         }
     })
 })
@@ -167,6 +163,7 @@ app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
     })
 })
 
+// Join group updating logic
 app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
   Group.findByIdAndUpdate(req.params.groupid,
     {
@@ -177,6 +174,42 @@ app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
       res.redirect("/events")
     } else {
       res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+    }
+  })
+})
+
+//==================================
+//          USER ROUTES
+//==================================
+// Show user page
+app.get("/users/:userId", (req, res) => {
+  User.findById(req.params.userId, (err, user) => {
+    if(err){
+      console.log(err);
+    } else {
+      res.render("./users/show", {user: user});
+    }
+  });
+});
+
+// Show form to edit own profile
+app.get("/users/:userId/edit", (req, res) => {
+  User.findById(req.params.userId, (err, user) => {
+    if(err){
+      console.log(err);
+    } else {
+      res.render("./users/edit", {user: user});
+    }
+  });
+});
+
+// Updating own profile logic
+app.put("/users/:userId", (req, res) => {
+  User.findByIdAndUpdate(req.params.userId, req.body.user, (err, updatedUser) => {
+    if(err) {
+      res.redirect("/users/:userId")
+    } else {
+      res.redirect("/users/" + req.params.userId)
     }
   })
 })
@@ -229,7 +262,6 @@ app.get("/logout", function(req, res){
   req.logout();
   res.redirect("/");
 });
-
 
 function isLoggedIn(req, res, next){
   if(req.isAuthenticated()){

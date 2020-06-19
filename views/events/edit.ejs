@@ -1,4 +1,5 @@
 <%- include("../partials/header") %>
+
   <div class="jumbotron pt-2 pb-2">
     <div class="container">
       <h1 class="display-4">You are now editing:</h1>
@@ -17,11 +18,11 @@
       </div>
       <div class="form-group">
         <label class="text-primary" for="min">Minimum group size:</label>
-        <input class="form-control" id="min" type="text" name="event[minGroupSize]" value="<%= event.minGroupSize%>">
+        <input class="form-control" id="min" type="number" min="1" name="event[minGroupSize]" value="<%= event.minGroupSize%>">
       </div>
       <div class="form-group">
         <label class="text-primary" for="max">Maximum group size:</label>
-        <input class="form-control" id="max" type="text" name="event[maxGroupSize]" value="<%= event.maxGroupSize%>">
+        <input class="form-control" id="max" type="number" min="1" name="event[maxGroupSize]" value="<%= event.maxGroupSize%>">
       </div>
       <button class="btn btn-primary" href="/events/<%= event._id%>">Go back</button>
       <input class="btn btn-success" type="submit">
