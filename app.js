@@ -194,29 +194,37 @@ app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
 
 // show register form
 app.get("/register", function(req, res){
-  res.render("./auth/register"); 
+  res.render("./auth/register");
 });
 
 //handle sign up logic
 app.post("/register", function(req, res){
-  //  var newUser = new User({username: req.body.username});
-  //  User.register(newUser, req.body.password, function(err, user){
-  //      if(err){
-  //          console.log(err);
-  //          return res.render("register");
-  //      }
-  //      passport.authenticate("local")(req, res, function(){
-  //         res.redirect("/events"); 
-  //      });
-  //  });
+   const newUser = new User(
+     {
+       name: req.body.name,
+       email:req.body.email,
+       username: req.body.username,
+       organization: req.body.organization,
+       profilePic: req.body.profilePic
+     });
+   User.register(newUser, req.body.password, function(err, user){
+       if(err){
+           console.log(err);
+           return res.render("./auth/register");
+       }
+       passport.authenticate("local")(req, res, function(){
+          res.redirect("/events");
+       });
+   });
 });
 
 // show login form
 app.get("/login", function(req, res){
-  res.render("./auth/login"); 
+  res.render("./auth/login");
 });
+
 // handling login logic
-app.post("/login", passport.authenticate("local", 
+app.post("/login", passport.authenticate("local",
    {
        successRedirect: "/events",
        failureRedirect: "/login"
