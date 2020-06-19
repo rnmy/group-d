@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   username: String,
   password: String,
   organization: String,
-  profilePic: String
+  profilePic: String,
+  bio: String
 })
 
 userSchema.plugin(passportLocalMongoose)
