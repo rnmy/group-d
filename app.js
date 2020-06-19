@@ -3,7 +3,7 @@ const app = express();
 //Commenting to test
 
 const seedDB = require("./seeds");
-seedDB();
+// seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -17,6 +17,25 @@ app.use(bodyParser.urlencoded({extended: true}));
 const methodOverride = require('method-override');
 app.use(methodOverride("_method"));
 
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+// PASSPORT CONFIGURATION
+app.use(require("express-session")({
+  secret: "Once again Rusty wins cutest dog!",
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next){
+ res.locals.currentUser = req.user;
+ next();
+});
+
 app.set("view engine", "ejs");
 
 //==================================
@@ -24,10 +43,10 @@ app.set("view engine", "ejs");
 //==================================
 
 app.get("/", (req, res) => {
-    res.redirect("/events");
+    res.render("landing");
 });
 
-app.get("/events", (req, res) => {
+app.get("/events", isLoggedIn, (req, res) => {
     Event.find({}, (err, allEvents) => {
         if(err){
             console.log(err);
@@ -37,12 +56,12 @@ app.get("/events", (req, res) => {
     });
 });
 
-app.get("/events/new", (req, res) => {
+app.get("/events/new", isLoggedIn, (req, res) => {
     res.render("./events/new");
 });
 
 
-app.post("/events", (req, res) => {
+app.post("/events", isLoggedIn, (req, res) => {
     const newEvent = req.body.event;
     Event.create(newEvent, (err, event) => {
         if(err){
@@ -54,7 +73,7 @@ app.post("/events", (req, res) => {
 })
 
 //Show route
-app.get("/events/:id", (req, res) => {
+app.get("/events/:id", isLoggedIn, (req, res) => {
   Event.findById(req.params.id).populate("groups").exec((err, foundEvent) => {
     if(err) {
       res.redirect("/events")
@@ -65,7 +84,7 @@ app.get("/events/:id", (req, res) => {
 })
 
 // Form for editing event
-app.get("/events/:id/edit", (req, res) => {
+app.get("/events/:id/edit", isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err) {
       res.redirect("/events")
@@ -76,7 +95,7 @@ app.get("/events/:id/edit", (req, res) => {
 })
 
 // Updating logic
-app.put("/events/:id/", (req, res) => {
+app.put("/events/:id/", isLoggedIn, (req, res) => {
   Event.findByIdAndUpdate(req.params.id, req.body.event, (err, updatedEvent) => {
     if(err) {
       res.redirect("/events")
@@ -90,7 +109,7 @@ app.put("/events/:id/", (req, res) => {
 //        GROUPS ROUTES
 //==================================
 // Show form to add new group
-app.get("/events/:id/groups/new", (req, res) => {
+app.get("/events/:id/groups/new", isLoggedIn, (req, res) => {
   const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if(err){
@@ -102,7 +121,7 @@ app.get("/events/:id/groups/new", (req, res) => {
 })
 
 // Add new group to DB
-app.post("/events/:id/groups", (req, res) => {
+app.post("/events/:id/groups", isLoggedIn, (req, res) => {
   const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if(err){
@@ -131,7 +150,7 @@ app.post("/events/:id/groups", (req, res) => {
 })
 
 // Show page for group
-app.get("/events/:id/groups/:groupid", (req, res) => {
+app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
     Event.findById(req.params.id, (err, foundEvent) => {
         if (err) {
             res.redirect("/events")
@@ -149,7 +168,7 @@ app.get("/events/:id/groups/:groupid", (req, res) => {
 })
 
 // Join a group logic
-app.put("/events/:id/groups/:groupid", (req, res) => {
+app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
   console.log(req.body.newUser)
   const user = new User(
     {
@@ -169,6 +188,54 @@ app.put("/events/:id/groups/:groupid", (req, res) => {
   })
 })
 
+//==================================
+//          AUTH ROUTES
+//==================================
+
+// show register form
+app.get("/register", function(req, res){
+  res.render("./auth/register"); 
+});
+
+//handle sign up logic
+app.post("/register", function(req, res){
+  //  var newUser = new User({username: req.body.username});
+  //  User.register(newUser, req.body.password, function(err, user){
+  //      if(err){
+  //          console.log(err);
+  //          return res.render("register");
+  //      }
+  //      passport.authenticate("local")(req, res, function(){
+  //         res.redirect("/events"); 
+  //      });
+  //  });
+});
+
+// show login form
+app.get("/login", function(req, res){
+  res.render("./auth/login"); 
+});
+// handling login logic
+app.post("/login", passport.authenticate("local", 
+   {
+       successRedirect: "/events",
+       failureRedirect: "/login"
+   }), function(req, res){
+});
+
+// logic route
+app.get("/logout", function(req, res){
+  req.logout();
+  res.redirect("/");
+});
+
+
+function isLoggedIn(req, res, next){
+  if(req.isAuthenticated()){
+      return next();
+  }
+  res.redirect("/login");
+}
 
 app.listen(3000, () => {
     console.log("SERVER START");
