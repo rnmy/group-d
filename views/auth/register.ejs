@@ -1,1 +1,33 @@
-<h1>Registration Page</h1>
+<%- include("../partials/header")%>
+  <div class="container">
+    <h1 class="display-4 mb-3">Sign up</h1>
+    <form action="/register" method="post" style="width: 500px;">
+      <div class="form-group">
+        <label>Your full name:</label>
+        <input class="form-control" type="text" name="name" placeholder="Full name" required>
+      </div>
+      <div class="form-group">
+        <label>Your email:</label>
+        <input class="form-control" type="email" name="email" placeholder="Your email" required>
+      </div>
+      <div class="form-group">
+        <label>Pick a username:</label>
+        <input class="form-control" type="text" name="username" placeholder="Your username" required>
+      </div>
+      <div class="form-group">
+        <label>Enter a password:</label>
+        <input class="form-control" type="password" name="password">
+      </div>
+      <div class="form-group">
+        <label>Your organization:</label>
+        <input class="form-control" type="text" name="organization" placeholder="Organization" required>
+      </div>
+      <div class="form-group">
+        <label>Your profile pic (Optional):</label>
+        <input class="form-control" type="text" name="profilePic" placeholder="Profile picture">
+      </div>
+      <button class="btn btn-success mb-5">Register!</button
+    </form>
+  </div>
+
+<%- include("../partials/footer")%>
