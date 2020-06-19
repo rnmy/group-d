@@ -30,52 +30,73 @@ const events = [
     }
 ];
 
-function seedDB(){
-    Event.deleteMany({}, (err) => {
-        if(err){
-            console.log(err);
-        } else {
-            console.log("REMOVED EVENTS")
-            events.forEach((seed) => {
-                Event.create(seed, (err, event) => {
-                    if(err){
-                        console.log(err);
-                    } else {
-                      Group.create(
-                        {
-                          name: "Group 1",
-                          size: 1
-                        }, (err, group) => {
-                          if (err) {
-                            console.log(err)
-                          } else {
-                            User.create(
-                              {
-                                name: "Rachel"
-                              }, (err, user) => {
-                                if(err) {
-                                  console.log(err)
-                                } else {
-                                  group.users.push(user)
-                                  group.save()
-                                  console.log("Created group")
-                                  event.groups.push(group)
-                                  event.save()
-                                  console.log("Created event")
-                                }
-                              }
-                            )
-                          }
-                        }
-                      )
-                    }
-                  }
-                )
-              }
-            )
+function seedDB() {
+  Event.deleteMany({}, (err) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log("REMOVED EVENTS")
+      events.forEach((seed) => {
+        Event.create(seed, (err, event) => {
+          if(err) {
+            console.log(err)
+          } else {
+            console.log("Created event")
           }
-        }
-      )
+        })
+      })
     }
+  })
+}
+
+// function seedDB(){
+//     Event.deleteMany({}, (err) => {
+//         if(err){
+//             console.log(err);
+//         } else {
+//             console.log("REMOVED EVENTS")
+//             events.forEach((seed) => {
+//                 Event.create(seed, (err, event) => {
+//                     if(err){
+//                         console.log(err);
+//                     } else {
+//                       Group.create(
+//                         {
+//                           name: "Group 1",
+//                           size: 1
+//                         }, (err, group) => {
+//                           if (err) {
+//                             console.log(err)
+//                           } else {
+//                             User.create(
+//                               {
+//                                 name: "Jane",
+//                                 email: "jane@brown.edu.sg",
+//                                 username: "plainjane",
+//                               }, (err, user) => {
+//                                 if(err) {
+//                                   console.log(err)
+//                                 } else {
+//                                   group.users.push(user)
+//                                   group.save()
+//                                   console.log("Created group")
+//                                   event.groups.push(group)
+//                                   event.save()
+//                                   console.log("Created event")
+//                                 }
+//                               }
+//                             )
+//                           }
+//                         }
+//                       )
+//                     }
+//                   }
+//                 )
+//               }
+//             )
+//           }
+//         }
+//       )
+//     }
 
 module.exports = seedDB;
