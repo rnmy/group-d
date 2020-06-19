@@ -1,6 +1,7 @@
 <%- include("../partials/header") %>
   <div class="container">
     <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
+    <h6><%=group.description%></h6>
     <hr>
     <h3>Current members:</h3>
     <% group.users.forEach((user) => { %>
@@ -17,12 +18,19 @@
     <% })%>
     </div>
     <div class="container mt-5">
-      <% if(!(group.size == event.maxGroupSize)) { %>
+      <% if(!(group.size == event.maxGroupSize) && !(users.includes(currentUser._id))) { %>
         <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
           <button class="btn btn-success mb-5">Join this group</button>
         </form>
-      <% } %>
-      <a href="/events/<%= event._id%>">Go back to <%= event.name%></a>
+      <% } else { %>
+        <% if (users.includes(currentUser._id)) { %>
+          <div class="container mb-5">
+            <h4 class="text-secondary">You are currently a member of <%= group.name%></h4>
+          </div>
+          <% } %>
+      <% }%>
+      <a class="ml-3" href="/events/<%= event._id%>">Go back to <%= event.name%></a>
     </div>
+
 
 <%- include("../partials/footer") %>
