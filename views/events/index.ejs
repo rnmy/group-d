@@ -1,15 +1,15 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-    <header class ="jumbotron">
+    <header class ="jumbotron mt-3">
         <div class="container">
             <h1>Events</h1>
             <p>View the latest hackathons, projects and competitions you can join today!</p>
             <a class="btn btn-primary btn-lg" href="/events/new">Add a new event today!</a>
         </div>
     </header>
-    
-    <div class="row">
+
+    <div class="row mb-5">
         <% events.forEach((event) => { %>
             <div class="col-sm-12">
                 <div class="card">
