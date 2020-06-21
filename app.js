@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-//Commenting to test
 
 const seedDB = require("./seeds");
 //seedDB();
@@ -19,12 +18,14 @@ app.use(methodOverride("_method"));
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
   secret: "Once again Rusty wins cutest dog!",
   resave: false,
   saveUninitialized: false
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
@@ -80,9 +81,20 @@ app.get("/events/:id", isLoggedIn, (req, res) => {
     if(err) {
       res.redirect("/events")
     } else {
-      res.render("./events/show", {event: foundEvent});
-    }
-  })
+      let groups = foundEvent.populate("groups").groups
+      let allUsers = []
+
+      Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
+        allUsers = allUsers.concat(data.flat())
+      }).then((data) => {
+        allUsers = allUsers.map((userID) => userID.toString())
+        res.render("./events/show",
+        {
+          event: foundEvent,
+          allUsers: allUsers
+        })
+    }).catch((err) => console.log(err))
+  }})
 })
 
 // Form for editing event
@@ -117,7 +129,7 @@ app.get("/events/:id/groups/new", isLoggedIn, (req, res) => {
         if(err){
             console.log(err);
         } else {
-            res.render("./groups/new", {event: event});
+          res.render("./groups/new", {event: event});
         }
     })
 })
@@ -148,27 +160,50 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
 
 // Show page for group
 app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
-    Event.findById(req.params.id, (err, foundEvent) => {
-        if (err) {
-            res.redirect("/events")
-        } else {
-            Group.findById(req.params.groupid).populate("users").exec(
-            (err, foundGroup) => {
-                if (err) {
-                    res.redirect("/events/" + req.params.id)
-                } else {
-                    const userIDs = foundGroup.users.map((user) => user._id)
-                    res.render("./groups/show",
-                    {
-                      group: foundGroup,
-                      event: foundEvent,
-                      users: userIDs
-                    })
-                }
-            })
-        }
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {
+      res.redirect("/events")
+    } else {
+      Group.findById(req.params.groupid).populate("users").exec(
+        (err, foundGroup) => {
+          if (err) {
+            res.redirect("/events/" + req.params.id)
+          } else {
+            const userIDs = foundGroup.users.map((user) => user._id)
+            let groups = foundEvent.populate("groups").groups
+            let allUsers = []
+
+            Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
+              allUsers = allUsers.concat(data.flat())
+            }).then((data) => {
+              allUsers = allUsers.map((userID) => userID.toString())
+              res.render("./groups/show",
+              {
+                group: foundGroup,
+                event: foundEvent,
+                users: userIDs,
+                allUsers: allUsers
+              })
+            }).catch((err) => console.log(err))
+          }
+        })
+      }
     })
-})
+  })
+
+
+function getAllUsers(groupID) {
+  return new Promise((resolve, reject) => {
+    Group.findById(groupID).populate("users").exec((err, group) => {
+      if (err) {
+        return reject(err)
+      } else {
+        resolve(group.users.map((user) => user._id))
+      }
+    })
+  })
+}
+
 
 // Join group updating logic
 app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
