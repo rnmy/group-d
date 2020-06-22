@@ -19,7 +19,7 @@
                     <div class="mt-3">
                         <form action="/events/<%= event._id %>/groups/<%= group._id %>/pending/<%= pending._id %>" method="POST">
                             <input type="submit" name="action" value="Accept" class="btn btn-success">
-                            <input type="submit" name="action" value="Reject" class="btn btn-danger">   
+                            <input type="submit" name="action" value="Reject" class="btn btn-danger">
                         </form>
                     </div>
                 </div>
@@ -27,21 +27,21 @@
             </div>
           </div>
         <% })%>
-        
+
         <div class="mt-5">
           <a class="btn btn-success" href="/events/<%= event._id%>">Go back to <%= event.name%></a>
         </div>
       </div>
-            
+
       <div class="col-md-2 float-right text-center">
         <p class="lead"><strong>Settings</strong></p>
         <div class="list-group">
             <li class="list-group-item">
-                <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-dark">Group Page</a>  
+                <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-dark">Group Page</a>
             </li>
             <li class="list-group-item">Group Chat</li>
             <li class="list-group-item active">
-                <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-light">Pending Requests</a> 
+                <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-light">Pending Requests</a>
             </li>
             <li class="list-group-item text-danger">Delete Group</li>
         </div>
