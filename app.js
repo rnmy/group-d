@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const seedDB = require("./seeds");
-//seedDB();
+// seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -146,9 +146,13 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
                 name: req.body.groupName,
                 size: 1,
                 description: req.body.descr,
+                pending: [],
                 users: [res.locals.currentUser]
               },
               (err, group) => {
+                group.groupLeader.id = req.user._id;
+                group.groupLeader.name = req.user.name;
+                group.save();
                 event.groups.push(group);
                 event.save();
                 res.redirect("/events/" + eventId);
@@ -169,28 +173,38 @@ app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
           if (err) {
             res.redirect("/events/" + req.params.id)
           } else {
-            const userIDs = foundGroup.users.map((user) => user._id)
-            let groups = foundEvent.populate("groups").groups
-            let allUsers = []
+              const userIDs = foundGroup.users.map((user) => user._id)
+              let groups = foundEvent.populate("groups").groups
+              let allUsers = []
+              let allPending = []
 
-            Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
-              allUsers = allUsers.concat(data.flat())
-            }).then((data) => {
-              allUsers = allUsers.map((userID) => userID.toString())
-              res.render("./groups/show",
-              {
-                group: foundGroup,
-                event: foundEvent,
-                users: userIDs,
-                allUsers: allUsers
+              Promise.all(groups.map(group => getAllUsers(group)))
+              .then((data) => {
+                allUsers = allUsers.concat(data.flat())
               })
-            }).catch((err) => console.log(err))
+
+              Promise.all(groups.map(group => getAllPending(group)))
+              .then((data) => {
+                allPending = allPending.concat(data.flat())
+              })
+              .then((data) => {
+                allUsers = allUsers.map((userID) => userID.toString())
+                allPending = allPending.map((userID) => userID.toString())
+
+                res.render("./groups/show",
+                {
+                  group: foundGroup,
+                  event: foundEvent,
+                  users: userIDs,
+                  allUsers: allUsers,
+                  allPending: allPending
+                })
+              }).catch((err) => console.log(err))
           }
         })
       }
     })
   })
-
 
 function getAllUsers(groupID) {
   return new Promise((resolve, reject) => {
@@ -204,18 +218,70 @@ function getAllUsers(groupID) {
   })
 }
 
+function getAllPending(groupID) {
+  return new Promise((resolve, reject) => {
+    Group.findById(groupID).populate("pending").exec((err, group) => {
+      if (err) {
+        return reject(err)
+      } else {
+        resolve(group.pending.map((user) => user._id))
+      }
+    })
+  })
+}
 
 // Join group updating logic
 app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
   Group.findByIdAndUpdate(req.params.groupid,
     {
-      $push: {users: res.locals.currentUser},
-      $inc: {size: 1}
+      $push: {pending: res.locals.currentUser},
     }, (err, group) => {
     if(err) {
       res.redirect("/events")
     } else {
       res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+    }
+  })
+})
+
+// Show pending requests for group
+app.get("/events/:id/groups/:groupid/pending", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if(err){
+      console.log(err);
+    } else {
+      Group.findById(req.params.groupid, (err, foundGroup) => {
+        if(err){
+          console.log(err);
+        } else {
+          res.render("./groups/pending", {group: foundGroup, event: foundEvent});
+        }
+      })
+    } 
+  })  
+})
+
+// Accept/Reject pending request logic
+app.post("/events/:id/groups/:groupid/pending/:pendingid", (req, res) => {
+  Group.findById(req.params.groupid, (err, foundGroup) => {
+    if(err){
+      console.log(err);
+    } else {
+      User.findById(req.params.pendingid, (err, pendingUser) => {
+        if(err){
+          console.log(err);
+        } else {
+          foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser), 1);
+          const action = req.body.action;
+          if(action === "Accept"){
+            foundGroup.users.push(pendingUser);
+          } else if(action === "Reject"){
+            foundGroup.rejected.push(pendingUser);
+          }
+          foundGroup.save();
+          res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
+        }
+      })
     }
   })
 })
