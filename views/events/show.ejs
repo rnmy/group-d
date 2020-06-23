@@ -47,9 +47,9 @@
         <% }) %>
      <% }%>
    <div>
-     <% if (!(allUsers.includes(String(currentUser._id)))) { %>
-       <a class="btn btn-primary mt-3" href="/events/<%= event._id%>/groups/new">Add a group</a>
-       <% } %>
+    <% if (!(allUsers.includes(String(currentUser._id))) && !(allPending.includes(String(currentUser._id)))) { %>
+      <a class="btn btn-primary mt-3" href="/events/<%= event._id%>/groups/new">Add a group</a>
+    <% } %>
    </div>
  </div>
 

@@ -85,15 +85,27 @@ app.get("/events/:id", isLoggedIn, (req, res) => {
     } else {
       let groups = foundEvent.populate("groups").groups
       let allUsers = []
+      let allPending = []
 
-      Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
+      Promise.all(groups.map(group => getAllUsers(group)))
+      .then((data) => {
         allUsers = allUsers.concat(data.flat())
-      }).then((data) => {
+      })
+
+      Promise.all(groups.map(group => getAllPending(group)))
+      .then((data) => {
+        allPending = allPending.concat(data.flat())
+      })
+      .then((data) => {
         allUsers = allUsers.map((userID) => userID.toString())
+        allPending = allPending.map((userID) => userID.toString())
+        console.log(allPending)
+
         res.render("./events/show",
         {
           event: foundEvent,
-          allUsers: allUsers
+          allUsers: allUsers,
+          allPending: allPending
         })
     }).catch((err) => console.log(err))
   }})

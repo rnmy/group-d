@@ -9,25 +9,30 @@
     <div class="row">
       <div class="col-md-9">
         <h3 class="mb-4">Pending Requests:</h3>
-        <% group.pending.forEach((pending) => { %>
-          <div class="row">
-            <div class="col-lg-6">
-              <div class="card">
-                <div class="card-body">
-                    <h6 class="card-title"><%= pending.name%></h6>
-                    <a href="/users/<%= pending._id%>" class="card-text">Click to view full profile</a>
-                    <div class="mt-3">
-                        <form action="/events/<%= event._id %>/groups/<%= group._id %>/pending/<%= pending._id %>" method="POST">
-                            <input type="submit" name="action" value="Accept" class="btn btn-success">
-                            <input type="submit" name="action" value="Reject" class="btn btn-danger">
-                        </form>
-                    </div>
+
+        <% if(group.pending.length == 0) { %>
+          <h4 class="mt-3">There are currently no pending requests.</h4>
+        <% } else { %>
+          <% group.pending.forEach((pending) => { %>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="card">
+                  <div class="card-body">
+                      <h6 class="card-title"><%= pending.name%></h6>
+                      <a href="/users/<%= pending._id%>" class="card-text">Click to view full profile</a>
+                      <div class="mt-3">
+                          <form action="/events/<%= event._id %>/groups/<%= group._id %>/pending/<%= pending._id %>" method="POST">
+                              <input type="submit" name="action" value="Accept" class="btn btn-success">
+                              <input type="submit" name="action" value="Reject" class="btn btn-danger">   
+                          </form>
+                      </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        <% })%>
-
+          <% })%>
+        <% } %>
+        
         <div class="mt-5">
           <a class="btn btn-success" href="/events/<%= event._id%>">Go back to <%= event.name%></a>
         </div>
