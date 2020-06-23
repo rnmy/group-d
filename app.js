@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const seedDB = require("./seeds");
-// seedDB();
+//seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -18,6 +18,8 @@ app.use(methodOverride("_method"));
 
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
+const group = require("./models/group");
+const e = require("express");
 
 // PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -321,6 +323,99 @@ app.put("/users/:userId", (req, res) => {
     }
   })
 })
+
+// View pending requests 
+app.get("/user/:userId/pending", (req, res) => {
+
+  let groupIDs 
+  let eventIDs
+  getGroupIDs(req.params.userId).then((arr) => {
+    console.log("group IDs", arr)
+    groupIDs = arr
+    return getEventIDs(arr)
+  }).then((arr) => {
+    console.log("eventIDs", arr)
+    eventIDs = arr
+  }).then(() => {
+    let data = []
+    for (let i = 0 ; i < groupIDs.length; i++) {
+      let groupEventPair = {}
+      groupEventPair.group = groupIDs[i]
+      groupEventPair.event = eventIDs[i]
+      data.push(groupEventPair)
+    }
+    return data
+  }).then((result) => {
+    const newresult = Promise.all(result.map((res) => getGroupAndEvent(res)))
+  return newresult}).then((result) => {
+  res.render("./users/pending", {data: result})}).catch((err) => console.log(err)) 
+})
+
+
+// Returns array of group IDs that user is part of
+function getGroupIDs(userID) {
+  // Go through all groups' pending 
+  // If userID exists inside, store the group ID 
+  return new Promise((resolve, reject) => {
+    let id = []
+    Group.find({}, {pending: 1, rejected: 1}, (err, result) => {
+      if(err) {
+        reject(err)
+      } else {
+        for (const res of result) { 
+          if(res.pending.includes(userID) || res.rejected.includes(userID)) {
+            id.push(res._id) 
+          }
+        }
+        resolve(id)
+      }
+    })
+})} 
+
+
+function getEventIDs(idArray) {
+  return new Promise((resolve, reject) => {
+    let id = []
+    Event.find({}, {groups: 1}, (err, result) => {
+      if (err) {
+        reject(err)
+      } else {
+        for (const res of result) {
+          for (const groupID of idArray)
+          if(res.groups.includes(groupID)) {
+            id.push(res._id)
+          }
+        }
+        resolve(id)
+      }
+    })
+  })
+}
+
+function getGroupAndEvent(obj) { 
+  return new Promise((resolve, reject) => {
+    Group.findById(obj.group, (err, foundGroup) => {
+      if(err) {
+        reject(err)
+      } else {
+        Event.findById(obj.event, (err, foundEvent) => {
+          if(err) {
+            reject(err)
+          } else {
+            const newObj = changeObject(obj, foundGroup, foundEvent)
+            resolve(newObj)
+          }
+        })
+      }
+    })
+  })
+}
+
+function changeObject(obj, group, event) {
+  obj.group = group 
+  obj.event = event 
+  return obj
+}
 
 //==================================
 //          AUTH ROUTES
