@@ -1,0 +1,16 @@
+<%- include("../partials/header") %>
+<div class="container">
+    <% for(let i = 0 ; i < data.length; i++) { %>
+        <% if(data[i].group.pending.includes(currentUser._id)) { %>
+            <p>You are pending in the group <%= data[i].group.name%> in the event <%= data[i].event.name%></p>
+            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">See group</a>
+        <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>
+            <p>Your request to join the group <%= data[i].group.name%> in the event <%= data[i].event.name%> has been rejected</p>
+            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">See group</a>
+        <% } else if(data[i].group.users.includes(currentUser._id)) { %>
+            <p>You are a member of the group <%= data[i].group.name%> in the event <%= data[i].event.name%></p>
+            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">See group</a>
+        <% } %>
+    <% } %>
+</div>
+<%- include("../partials/footer") %>
