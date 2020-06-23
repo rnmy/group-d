@@ -84,30 +84,27 @@ app.get("/events/:id", isLoggedIn, (req, res) => {
       res.redirect("/events")
     } else {
       let groups = foundEvent.populate("groups").groups
-      let allUsers = []
-      let allPending = []
+      let allUsers 
+      let allPending
 
       Promise.all(groups.map(group => getAllUsers(group)))
       .then((data) => {
-        allUsers = allUsers.concat(data.flat())
-      })
-
-      Promise.all(groups.map(group => getAllPending(group)))
+        allUsers = data.flat()
+      }).then(() => {
+        const data = Promise.all(groups.map(group => getAllPending(group)))
+      return data})
       .then((data) => {
-        allPending = allPending.concat(data.flat())
-      })
-      .then((data) => {
+        allPending = data.flat()}).then(() => {
         allUsers = allUsers.map((userID) => userID.toString())
         allPending = allPending.map((userID) => userID.toString())
-        console.log(allPending)
-
+      }).then(() => {
         res.render("./events/show",
         {
           event: foundEvent,
           allUsers: allUsers,
           allPending: allPending
         })
-    }).catch((err) => console.log(err))
+      }).catch((err) => console.log(err))
   }})
 })
 
@@ -176,49 +173,46 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
     })
 })
 
-// Show page for group
-app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
-  Event.findById(req.params.id, (err, foundEvent) => {
-    if (err) {
-      res.redirect("/events")
-    } else {
-      Group.findById(req.params.groupid).populate("users").exec(
-        (err, foundGroup) => {
-          if (err) {
-            res.redirect("/events/" + req.params.id)
-          } else {
-              const userIDs = foundGroup.users.map((user) => user._id)
-              let groups = foundEvent.populate("groups").groups
-              let allUsers = []
-              let allPending = []
+  app.get("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
+    Event.findById(req.params.id, (err, foundEvent) => {
+      if (err) {
+        res.redirect("/events")
+      } else {
+        Group.findById(req.params.groupid).populate("users").exec(
+          (err, foundGroup) => {
+            if (err) {
+              res.redirect("/events/" + req.params.id)
+            } else {
+                const userIDs = foundGroup.users.map((user) => user._id)
+                let groups = foundEvent.populate("groups").groups
+                let allUsers = []
+                let allPending = []
 
-              Promise.all(groups.map(group => getAllUsers(group)))
-              .then((data) => {
-                allUsers = allUsers.concat(data.flat())
-              })
-
-              Promise.all(groups.map(group => getAllPending(group)))
-              .then((data) => {
-                allPending = allPending.concat(data.flat())
-              })
-              .then((data) => {
-                allUsers = allUsers.map((userID) => userID.toString())
-                allPending = allPending.map((userID) => userID.toString())
-
-                res.render("./groups/show",
-                {
-                  group: foundGroup,
-                  event: foundEvent,
-                  users: userIDs,
-                  allUsers: allUsers,
-                  allPending: allPending
-                })
-              }).catch((err) => console.log(err))
-          }
-        })
-      }
+                Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
+                allUsers = data.flat()
+                }).then(() => {
+                    const data = Promise.all(groups.map(group => getAllPending(group)))
+                    return data})
+                    .then((data) => {
+                    allPending = data.flat()
+                  }).then(() => {
+                    allUsers = allUsers.map((userID) => userID.toString())
+                    allPending = allPending.map((userID) => userID.toString())
+                }).then(() => {
+                  res.render("./groups/show",
+                  {
+                    group: foundGroup,
+                    event: foundEvent,
+                    users: userIDs,
+                    allUsers: allUsers,
+                    allPending: allPending
+                  })
+                }).catch((err) => console.log(err))
+            }
+          })
+        }
+      })
     })
-  })
 
 function getAllUsers(groupID) {
   return new Promise((resolve, reject) => {
@@ -338,31 +332,23 @@ app.put("/users/:userId", (req, res) => {
 
 // View pending requests 
 app.get("/user/:userId/pending", (req, res) => {
-
-  let groupIDs 
-  let eventIDs
   getGroupIDs(req.params.userId).then((arr) => {
-    console.log("group IDs", arr)
-    groupIDs = arr
-    return getEventIDs(arr)
+    const newArr = Promise.all(arr.map((groupID) => getEvent(groupID)))
+    return newArr
   }).then((arr) => {
-    console.log("eventIDs", arr)
-    eventIDs = arr
-  }).then(() => {
     let data = []
-    for (let i = 0 ; i < groupIDs.length; i++) {
+    for (let i = 0 ; i < arr.length; i++) {
       let groupEventPair = {}
-      groupEventPair.group = groupIDs[i]
-      groupEventPair.event = eventIDs[i]
+      groupEventPair.group = arr[i].group
+      groupEventPair.event = arr[i].event
       data.push(groupEventPair)
     }
     return data
   }).then((result) => {
     const newresult = Promise.all(result.map((res) => getGroupAndEvent(res)))
   return newresult}).then((result) => {
-  res.render("./users/pending", {data: result})}).catch((err) => console.log(err)) 
+  res.render("./users/status", {data: result})}).catch((err) => console.log(err)) 
 })
-
 
 // Returns array of group IDs that user is part of
 function getGroupIDs(userID) {
@@ -370,12 +356,14 @@ function getGroupIDs(userID) {
   // If userID exists inside, store the group ID 
   return new Promise((resolve, reject) => {
     let id = []
-    Group.find({}, {pending: 1, rejected: 1}, (err, result) => {
+    Group.find({}, {pending: 1, rejected: 1, users: 1}, (err, result) => {
       if(err) {
         reject(err)
       } else {
         for (const res of result) { 
-          if(res.pending.includes(userID) || res.rejected.includes(userID)) {
+          if(res.pending.includes(userID) 
+          || res.rejected.includes(userID)
+          || res.users.includes(userID)) {
             id.push(res._id) 
           }
         }
@@ -383,7 +371,6 @@ function getGroupIDs(userID) {
       }
     })
 })} 
-
 
 function getEventIDs(idArray) {
   return new Promise((resolve, reject) => {
@@ -402,6 +389,30 @@ function getEventIDs(idArray) {
       }
     })
   })
+}
+function getEvent(groupID) { 
+  return new Promise((resolve, reject) => {
+    Event.find({}, {groups: 1}, (err, result) => {
+      if (err) {
+        reject(err)
+      } else {
+        for (const res of result) {
+          const eventid = res._id
+          if(res.groups.includes(groupID)) {
+            const newObj = createObject(groupID, eventid) 
+            resolve(newObj)
+          }
+        }
+      }
+    })
+  })
+}
+
+function createObject(groupID, eventID) {
+  let obj = {}
+  obj.group = groupID
+  obj.event = eventID 
+  return obj
 }
 
 function getGroupAndEvent(obj) { 
