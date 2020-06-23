@@ -17,7 +17,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-9 col-md-8 col-sm-12 pt-md-1 pt-sm-4">
+        <div class="col-lg-6 col-md-5 col-sm-12 pt-md-1 pt-sm-4">
             <h4>Email: <%= user.email %></h4>
             <h4>Organisation: <%= user.organization %></h4>
             <br>
@@ -25,6 +25,22 @@
                 <a class="btn btn-primary btn-lg" href="/users/<%= user._id %>/edit">Edit Profile</a>
             <% } %>
         </div>
+        <% if(currentUser._id.equals(user._id)) { %> 
+            <div class="col-lg-3 float-right text-center">
+                <p class="lead"><strong>Options</strong></p>
+                <div class="list-group">
+                  <li class="list-group-item">
+                    <a href="/user/<%= user._id%>/pending">View Pending Requests</a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="/user/<%= user._id%>/groups">View Your Groups</a>
+                  </li>
+                  <li class="list-group-item">
+                      <a href="#">Delete account</a>
+                    </li>
+                </div>
+            </div>
+        <% } %>     
     </div> 
 </div>
 
