@@ -262,15 +262,15 @@ app.get("/events/:id/groups/:groupid/pending", (req, res) => {
     if(err){
       console.log(err);
     } else {
-      Group.findById(req.params.groupid, (err, foundGroup) => {
+      Group.findById(req.params.groupid).populate("pending").exec((err, foundGroup) => {
         if(err){
           console.log(err);
         } else {
           res.render("./groups/pending", {group: foundGroup, event: foundEvent});
         }
       })
-    } 
-  })  
+    }
+  })
 })
 
 // Accept/Reject pending request logic
