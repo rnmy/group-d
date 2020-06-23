@@ -22,7 +22,7 @@
           <div class="col-lg-6">
             <div class="card">
               <div class="card-body">
-                <% if(String(user._id) == String(currentUser._id)) { %>
+                <% if(user._id.equals(currentUser._id)) { %>
                   <h6 class="card-title">You</h6>
                 <% } else { %>
                   <h6 class="card-title"><%= user.name%></h6>
@@ -36,11 +36,9 @@
 
       <div class="mt-5">
         <% if(!(group.size == event.maxGroupSize) 
-              && (!(users.includes(currentUser._id))) 
               && (!(allUsers.includes(String(currentUser._id)))) 
-              && (!(group.pending.includes(currentUser._id))) 
               && (!(allPending.includes(String(currentUser._id))))
-              && (!(group.rejected.includes(currentUser._id)))
+              && (!(group.rejected.includes(currentUser._id))) 
         ) { %>
           <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
             <button class="btn btn-success mb-5">Join this group</button>

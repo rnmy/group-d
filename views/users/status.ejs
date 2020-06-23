@@ -1,0 +1,65 @@
+<%- include("../partials/header") %>
+<div class="container">
+    <h3 class="my-5">Your Groups</h3>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Event</th>
+            <th scope="col">Group</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+            <% for(let i = 0 ; i < data.length; i++) { %>
+                <% if(data[i].group.pending.includes(currentUser._id)) { %>
+                    <tr>
+                        <td>
+                            <a href="/events/<%= data[i].event._id%>/">
+                                <%= data[i].event.name%>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                                <%= data[i].group.name%>
+                            </a>
+                        </td>
+                        <td>Pending</td>
+                    </tr>
+                <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>                    <tr>
+                     <tr>
+                    <td>
+                            <a href="/events/<%= data[i].event._id%>/">
+                                <%= data[i].event.name%>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                                <%= data[i].group.name%>
+                            </a>
+                        </td>
+                        <td>Rejected</td>
+                    </tr>
+                <% } else if(data[i].group.users.includes(currentUser._id)) { %> 
+                    <tr>
+                    <td>
+                        <a href="/events/<%= data[i].event._id%>/">
+                            <%= data[i].event.name%>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                            <%= data[i].group.name%>
+                        </a>
+                    </td>
+                    <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
+                        <td>Leader</td>
+                    <% } else { %>
+                        <td>Member</td>
+                    <% } %>
+                    </tr>
+                <% } %>
+            <% } %>
+        </tbody>
+      </table>
+</div>
+<%- include("../partials/footer") %>
