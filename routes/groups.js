@@ -1,12 +1,13 @@
 const express = require('express')
 const router = express.Router()
 const Group = require("../models/group")
+const Event = require("../models/event")
 
-//==================================
-//        GROUPS ROUTES
-//==================================
+const middleware = require('../middleware'),
+      helper = require('../helper')
+
 // Show form to add new group
-app.get("/new", isLoggedIn, (req, res) => {
+app.get("/new", middleware.isLoggedIn, (req, res) => {
     const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if (err) {
@@ -18,7 +19,7 @@ app.get("/new", isLoggedIn, (req, res) => {
 })
 
 // Add new group to DB
-app.post("/", isLoggedIn, (req, res) => {
+app.post("/", middleware.isLoggedIn, (req, res) => {
     const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if (err) {
@@ -60,10 +61,10 @@ app.get("/:groupid", isLoggedIn, (req, res) => {
                         let allUsers = []
                         let allPending = []
 
-                        Promise.all(groups.map(group => getAllUsers(group))).then((data) => {
+                        Promise.all(groups.map(group => helper.getAllUsers(group))).then((data) => {
                             allUsers = data.flat()
                         }).then(() => {
-                            const data = Promise.all(groups.map(group => getAllPending(group)))
+                            const data = Promise.all(groups.map(group => helper.getAllPending(group)))
                             return data
                         })
                             .then((data) => {
@@ -88,7 +89,7 @@ app.get("/:groupid", isLoggedIn, (req, res) => {
 })
 
 // Join group updating logic
-app.put("/:groupid", isLoggedIn, (req, res) => {
+app.put("/:groupid", middleware.isLoggedIn, (req, res) => {
     Group.findByIdAndUpdate(req.params.groupid,
       {
         $push: {pending: res.locals.currentUser},
