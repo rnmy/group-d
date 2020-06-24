@@ -71,6 +71,13 @@ helperObj.getEventIDs = function(idArray) {
     })
 }
 
+helperObj.createObject = function(groupID, eventID) {
+    let obj = {}
+    obj.group = groupID
+    obj.event = eventID 
+    return obj
+}
+
 helperObj.getEvent = function(groupID) { 
     return new Promise((resolve, reject) => {
         Event.find({}, {groups: 1}, (err, result) => {
@@ -80,7 +87,7 @@ helperObj.getEvent = function(groupID) {
                 for (const res of result) {
                     const eventid = res._id
                     if(res.groups.includes(groupID)) {
-                        const newObj = createObject(groupID, eventid) 
+                        const newObj = helperObj.createObject(groupID, eventid) 
                         resolve(newObj)
                     }
                 }
@@ -89,10 +96,10 @@ helperObj.getEvent = function(groupID) {
     })
 }
   
-helperObj.createObject = function(groupID, eventID) {
-    let obj = {}
-    obj.group = groupID
-    obj.event = eventID 
+  
+helperObj.changeObject = function(obj, group, event) {
+    obj.group = group 
+    obj.event = event 
     return obj
 }
   
@@ -106,7 +113,7 @@ helperObj.getGroupAndEvent = function(obj) {
                     if(err) {
                     reject(err)
                     } else {
-                        const newObj = changeObject(obj, foundGroup, foundEvent)
+                        const newObj = helperObj.changeObject(obj, foundGroup, foundEvent)
                         resolve(newObj)
                     }
                 })
@@ -114,11 +121,6 @@ helperObj.getGroupAndEvent = function(obj) {
         })
     })
 }
-  
-helperObj.changeObject = function(obj, group, event) {
-    obj.group = group 
-    obj.event = event 
-    return obj
-}
+
 
 module.exports = helperObj;
