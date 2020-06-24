@@ -9,7 +9,8 @@ const helper = require('../helper')
 router.get("/", (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if(err){
-        console.log(err);
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("back")
       } else {
         res.render("./users/show", {user: user});
       }
@@ -20,7 +21,8 @@ router.get("/", (req, res) => {
   router.get("/edit", (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if(err){
-        console.log(err);
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("back")
       } else {
         res.render("./users/edit", {user: user});
       }
@@ -31,8 +33,10 @@ router.get("/", (req, res) => {
  router.put("/", (req, res) => {
     User.findByIdAndUpdate(req.params.userId, req.body.user, (err, updatedUser) => {
       if(err) {
+        req.flash("error", "Something went wrong...Try again")
         res.redirect("/users/:userId")
       } else {
+        req.flash("success", "Successfully updated profile")
         res.redirect("/users/" + req.params.userId)
       }
     })
