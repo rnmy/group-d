@@ -7,7 +7,7 @@ const middleware = require('../middleware'),
       helper = require('../helper')
 
 // Show form to add new group
-app.get("/new", middleware.isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, (req, res) => {
     const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if (err) {
@@ -19,7 +19,7 @@ app.get("/new", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add new group to DB
-app.post("/", middleware.isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
     const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if (err) {
@@ -46,7 +46,7 @@ app.post("/", middleware.isLoggedIn, (req, res) => {
     })
 })
 
-app.get("/:groupid", isLoggedIn, (req, res) => {
+router.get("/:groupid", middleware.isLoggedIn, (req, res) => {
     Event.findById(req.params.id, (err, foundEvent) => {
         if (err) {
             res.redirect("/events")
@@ -89,7 +89,7 @@ app.get("/:groupid", isLoggedIn, (req, res) => {
 })
 
 // Join group updating logic
-app.put("/:groupid", middleware.isLoggedIn, (req, res) => {
+router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
     Group.findByIdAndUpdate(req.params.groupid,
       {
         $push: {pending: res.locals.currentUser},
@@ -103,7 +103,7 @@ app.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   })
   
   // Show pending requests for group
-  app.get("/:groupid/pending", (req, res) => {
+  router.get("/:groupid/pending", (req, res) => {
     Event.findById(req.params.id, (err, foundEvent) => {
       if(err){
         console.log(err);
@@ -120,7 +120,7 @@ app.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   })
   
   // Accept/Reject pending request logic
-  app.post("/:groupid/pending/:pendingid", (req, res) => {
+  router.post("/:groupid/pending/:pendingid", (req, res) => {
     Group.findById(req.params.groupid, (err, foundGroup) => {
       if(err){
         console.log(err);
