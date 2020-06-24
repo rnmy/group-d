@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 
 const seedDB = require("./seeds");
-//seedDB();
+// seedDB();
 
 const mongoose = require("mongoose");
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -214,30 +214,6 @@ app.post("/events/:id/groups", isLoggedIn, (req, res) => {
       })
     })
 
-function getAllUsers(groupID) {
-  return new Promise((resolve, reject) => {
-    Group.findById(groupID).populate("users").exec((err, group) => {
-      if (err) {
-        return reject(err)
-      } else {
-        resolve(group.users.map((user) => user._id))
-      }
-    })
-  })
-}
-
-function getAllPending(groupID) {
-  return new Promise((resolve, reject) => {
-    Group.findById(groupID).populate("pending").exec((err, group) => {
-      if (err) {
-        return reject(err)
-      } else {
-        resolve(group.pending.map((user) => user._id))
-      }
-    })
-  })
-}
-
 // Join group updating logic
 app.put("/events/:id/groups/:groupid", isLoggedIn, (req, res) => {
   Group.findByIdAndUpdate(req.params.groupid,
@@ -350,96 +326,6 @@ app.get("/user/:userId/pending", (req, res) => {
   res.render("./users/status", {data: result})}).catch((err) => console.log(err)) 
 })
 
-// Returns array of group IDs that user is part of
-function getGroupIDs(userID) {
-  // Go through all groups' pending 
-  // If userID exists inside, store the group ID 
-  return new Promise((resolve, reject) => {
-    let id = []
-    Group.find({}, {pending: 1, rejected: 1, users: 1}, (err, result) => {
-      if(err) {
-        reject(err)
-      } else {
-        for (const res of result) { 
-          if(res.pending.includes(userID) 
-          || res.rejected.includes(userID)
-          || res.users.includes(userID)) {
-            id.push(res._id) 
-          }
-        }
-        resolve(id)
-      }
-    })
-})} 
-
-function getEventIDs(idArray) {
-  return new Promise((resolve, reject) => {
-    let id = []
-    Event.find({}, {groups: 1}, (err, result) => {
-      if (err) {
-        reject(err)
-      } else {
-        for (const res of result) {
-          for (const groupID of idArray)
-          if(res.groups.includes(groupID)) {
-            id.push(res._id)
-          }
-        }
-        resolve(id)
-      }
-    })
-  })
-}
-function getEvent(groupID) { 
-  return new Promise((resolve, reject) => {
-    Event.find({}, {groups: 1}, (err, result) => {
-      if (err) {
-        reject(err)
-      } else {
-        for (const res of result) {
-          const eventid = res._id
-          if(res.groups.includes(groupID)) {
-            const newObj = createObject(groupID, eventid) 
-            resolve(newObj)
-          }
-        }
-      }
-    })
-  })
-}
-
-function createObject(groupID, eventID) {
-  let obj = {}
-  obj.group = groupID
-  obj.event = eventID 
-  return obj
-}
-
-function getGroupAndEvent(obj) { 
-  return new Promise((resolve, reject) => {
-    Group.findById(obj.group, (err, foundGroup) => {
-      if(err) {
-        reject(err)
-      } else {
-        Event.findById(obj.event, (err, foundEvent) => {
-          if(err) {
-            reject(err)
-          } else {
-            const newObj = changeObject(obj, foundGroup, foundEvent)
-            resolve(newObj)
-          }
-        })
-      }
-    })
-  })
-}
-
-function changeObject(obj, group, event) {
-  obj.group = group 
-  obj.event = event 
-  return obj
-}
-
 //==================================
 //          AUTH ROUTES
 //==================================
@@ -488,13 +374,6 @@ app.get("/logout", function(req, res){
   req.logout();
   res.redirect("/");
 });
-
-function isLoggedIn(req, res, next){
-  if(req.isAuthenticated()){
-      return next();
-  }
-  res.redirect("/login");
-}
 
 app.listen(3000, () => {
     console.log("SERVER START");
