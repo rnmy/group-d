@@ -5,7 +5,7 @@ const User = require("../models/user")
 const helper = require('../helper')
 
 // Show user page
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if(err){
         console.log(err);
@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   });
   
   // Show form to edit own profile
-  app.get("/edit", (req, res) => {
+  router.get("/edit", (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if(err){
         console.log(err);
@@ -27,7 +27,7 @@ app.get("/", (req, res) => {
   });
   
   // Updating own profile logic
-  app.put("/", (req, res) => {
+ router.put("/", (req, res) => {
     User.findByIdAndUpdate(req.params.userId, req.body.user, (err, updatedUser) => {
       if(err) {
         res.redirect("/users/:userId")
@@ -38,7 +38,7 @@ app.get("/", (req, res) => {
   })
   
   // View pending requests 
-  app.get("/pending", (req, res) => {
+ router.get("/pending", (req, res) => {
     helper.getGroupIDs(req.params.userId).then((arr) => {
       const newArr = Promise.all(arr.map((groupID) => helper.getEvent(groupID)))
       return newArr

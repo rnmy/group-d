@@ -2,9 +2,10 @@ const express = require('express')
 const router = express.Router()
 const Event = require("../models/event")
 const middleware = require("../middleware")
+const helper = require("../helper")
 
 // Show events page
-router.get("/", isLoggedIn, (req, res) => {
+router.get("/", middleware.isLoggedIn, (req, res) => {
     Event.find({}, (err, allEvents) => {
         if(err){
             console.log(err);
@@ -15,12 +16,12 @@ router.get("/", isLoggedIn, (req, res) => {
 });
 
 // Show form to add new event
-router.get("/new", isLoggedIn, (req, res) => {
+router.get("/new", middleware.isLoggedIn, (req, res) => {
     res.render("./events/new");
 });
 
 // Add new event to DB
-router.post("/events", isLoggedIn, (req, res) => {
+router.post("/events", middleware.isLoggedIn, (req, res) => {
     const newEvent = req.body.event;
     Event.create(newEvent, (err, event) => {
         if(err){
@@ -32,7 +33,7 @@ router.post("/events", isLoggedIn, (req, res) => {
 })
 
 // Show particular event
-router.get("/:id", isLoggedIn, (req, res) => {
+router.get("/:id", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id).populate("groups").exec((err, foundEvent) => {
     if(err) {
       res.redirect("/events")
@@ -41,11 +42,11 @@ router.get("/:id", isLoggedIn, (req, res) => {
       let allUsers 
       let allPending
 
-      Promise.all(groups.map(group => getAllUsers(group)))
+      Promise.all(groups.map(group => helper.getAllUsers(group)))
       .then((data) => {
         allUsers = data.flat()
       }).then(() => {
-        const data = Promise.all(groups.map(group => getAllPending(group)))
+        const data = Promise.all(groups.map(group => helper.getAllPending(group)))
       return data})
       .then((data) => {
         allPending = data.flat()}).then(() => {
@@ -63,7 +64,7 @@ router.get("/:id", isLoggedIn, (req, res) => {
 })
 
 // Form for editing event
-router.get("/:id/edit", isLoggedIn, (req, res) => {
+router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err) {
       res.redirect("/events")
@@ -74,7 +75,7 @@ router.get("/:id/edit", isLoggedIn, (req, res) => {
 })
 
 // Updating event logic
-router.put("/:id/", isLoggedIn, (req, res) => {
+router.put("/:id/", middleware.isLoggedIn, (req, res) => {
   Event.findByIdAndUpdate(req.params.id, req.body.event, (err, updatedEvent) => {
     if(err) {
       res.redirect("/events")
