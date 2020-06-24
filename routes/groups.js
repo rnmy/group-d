@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router({mergeParams: true})
 const Group = require("../models/group")
 const Event = require("../models/event")
+const User = require("../models/user")
 
 const middleware = require('../middleware'),
       helper = require('../helper')
