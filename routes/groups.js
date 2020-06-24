@@ -130,13 +130,14 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
           if(err){
             console.log(err);
           } else {
-            foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser), 1);
+            foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser._id), 1);
             const action = req.body.action;
             if(action === "Accept"){
               foundGroup.users.push(pendingUser);
             } else if(action === "Reject"){
               foundGroup.rejected.push(pendingUser);
             }
+            
             foundGroup.save();
             res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
           }
