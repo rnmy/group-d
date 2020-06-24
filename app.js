@@ -43,7 +43,7 @@ app.use(function(req, res, next){
 
 app.set("view engine", "ejs");
 
-// ROUTES 
+// ROUTES
 app.use("/", indexRoutes)
 app.use("/events", eventRoutes)
 app.use("/events/:id/groups", groupRoutes)
