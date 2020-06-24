@@ -1,10 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const Event = require("../models/event")
+const middleware = require("../middleware")
 
-//==================================
-//        EVENTS ROUTES
-//==================================
 // Show events page
 router.get("/", isLoggedIn, (req, res) => {
     Event.find({}, (err, allEvents) => {
