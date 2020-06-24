@@ -25,9 +25,9 @@
                         </td>
                         <td>Pending</td>
                     </tr>
-                <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>                    <tr>
+                <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>                    
                      <tr>
-                    <td>
+                        <td>
                             <a href="/events/<%= data[i].event._id%>/">
                                 <%= data[i].event.name%>
                             </a>
