@@ -2,9 +2,8 @@ const express = require('express')
 const router = express.Router()
 const User = require("../models/user")
 
-//==================================
-//          USER ROUTES
-//==================================
+const helper = require('../helper')
+
 // Show user page
 app.get("/", (req, res) => {
     User.findById(req.params.userId, (err, user) => {
@@ -40,8 +39,8 @@ app.get("/", (req, res) => {
   
   // View pending requests 
   app.get("/pending", (req, res) => {
-    getGroupIDs(req.params.userId).then((arr) => {
-      const newArr = Promise.all(arr.map((groupID) => getEvent(groupID)))
+    helper.getGroupIDs(req.params.userId).then((arr) => {
+      const newArr = Promise.all(arr.map((groupID) => helper.getEvent(groupID)))
       return newArr
     }).then((arr) => {
       let data = []
@@ -53,7 +52,7 @@ app.get("/", (req, res) => {
       }
       return data
     }).then((result) => {
-      const newresult = Promise.all(result.map((res) => getGroupAndEvent(res)))
+      const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
     return newresult}).then((result) => {
     res.render("./users/status", {data: result})}).catch((err) => console.log(err)) 
   })
