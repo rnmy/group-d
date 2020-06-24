@@ -10,8 +10,8 @@ const express = require("express"),
       User = require("./models/user"),
       Group = require("./models/group")
 
-const seedDB = require("./seeds");
-// seedDB();
+
+//seedDB();
 
 // Requiring routes
 const indexRoutes = require("./routes/index"),
