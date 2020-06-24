@@ -1,5 +1,5 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router({mergeParams: true})
 const Group = require("../models/group")
 const Event = require("../models/event")
 

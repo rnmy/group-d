@@ -1,8 +1,9 @@
 const express = require('express')
-const router = express.Router()
+const router = express.Router({mergeParams: true})
 const User = require("../models/user")
 
 const helper = require('../helper')
+
 
 // Show user page
 router.get("/", (req, res) => {
