@@ -35,7 +35,7 @@
       <% })%>
 
       <div class="mt-5">
-        <% if(!(group.size == event.maxGroupSize) 
+        <% if(!(group.users.length == event.maxGroupSize) 
               && (!(allUsers.includes(String(currentUser._id)))) 
               && (!(allPending.includes(String(currentUser._id))))
               && (!(group.rejected.includes(currentUser._id))) 

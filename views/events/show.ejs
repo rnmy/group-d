@@ -41,6 +41,11 @@
            <div class="card-body">
              <h5 class="card-title"><%= group.name%></h5>
              <p class="card-text"><%= group.description%></p>
+             <% if(group.users.length >= event.maxGroupSize){ %>
+              <p class="card-text text-danger">This group is full</p>
+             <% } else { %>
+              <p class="card-text">Current group size: <%= group.users.length%></p>
+             <% } %>
              <a href="/events/<%= event._id%>/groups/<%= group._id%>">See group details</a>
            </div>
          </div>

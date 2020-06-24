@@ -24,7 +24,8 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     const eventId = req.params.id;
     Event.findById(eventId, (err, event) => {
         if (err) {
-            console.log(err);
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
         } else {
             Group.create(
                 {
@@ -35,12 +36,18 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                     users: [res.locals.currentUser]
                 },
                 (err, group) => {
+                  if(err){
+                    req.flash("error", "Something went wrong...Try again")
+                    res.redirect("back")
+                  } else {
                     group.groupLeader.id = req.user._id;
                     group.groupLeader.name = req.user.name;
                     group.save();
                     event.groups.push(group);
                     event.save();
+                    req.flash("success", 'Successfully created the group "' + group.name + '" for ' + event.name)
                     res.redirect("/events/" + eventId);
+                  }
                 }
             )
         }
@@ -124,11 +131,13 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   router.post("/:groupid/pending/:pendingid", (req, res) => {
     Group.findById(req.params.groupid, (err, foundGroup) => {
       if(err){
-        console.log(err);
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("back")
       } else {
         User.findById(req.params.pendingid, (err, pendingUser) => {
           if(err){
-            console.log(err);
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
           } else {
             foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser._id), 1);
             const action = req.body.action;

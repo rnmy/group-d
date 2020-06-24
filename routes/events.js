@@ -8,7 +8,8 @@ const helper = require("../helper")
 router.get("/", middleware.isLoggedIn, (req, res) => {
     Event.find({}, (err, allEvents) => {
         if(err){
-            console.log(err);
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
         } else {
             res.render("./events/index", {events: allEvents});
         }
@@ -21,12 +22,14 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 });
 
 // Add new event to DB
-router.post("/events", middleware.isLoggedIn, (req, res) => {
+router.post("/", middleware.isLoggedIn, (req, res) => {
     const newEvent = req.body.event;
     Event.create(newEvent, (err, event) => {
         if(err){
-            console.log(err);
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("/events")
         } else {
+            req.flash("success", 'The event "' + newEvent.name + '" has been created successfully')
             res.redirect("/events");
         }
     })
@@ -36,6 +39,7 @@ router.post("/events", middleware.isLoggedIn, (req, res) => {
 router.get("/:id", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id).populate("groups").exec((err, foundEvent) => {
     if(err) {
+      req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
       let groups = foundEvent.populate("groups").groups
@@ -67,6 +71,7 @@ router.get("/:id", middleware.isLoggedIn, (req, res) => {
 router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err) {
+      req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
       res.render("./events/edit", {event: foundEvent});
@@ -78,8 +83,10 @@ router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
 router.put("/:id/", middleware.isLoggedIn, (req, res) => {
   Event.findByIdAndUpdate(req.params.id, req.body.event, (err, updatedEvent) => {
     if(err) {
+      req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
+      req.flash("success", "The event has been updated successfully")
       res.redirect("/events/" + req.params.id)
     }
   })
