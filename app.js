@@ -20,19 +20,7 @@ const indexRoutes = require("./routes/index"),
       groupRoutes = require("./routes/groups"),
       userRoutes = require("./routes/users")
 
-mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", 
-                 {
-                  useNewUrlParser: true, 
-                  useUnifiedTopology: true, 
-                  useFindAndModify: false, 
-                  useCreateIndex: true
-                 })
-                 .then(() => {
-                   console.log("Connected to DB")
-                 })
-                 .catch(err => {
-                   console.log("ERROR:", err.message)
-                 })
+mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));
