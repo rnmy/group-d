@@ -2,10 +2,11 @@ const mongoose = require('mongoose')
 
 const groupSchema = new mongoose.Schema({
   name: String,
+  isClosed: Boolean,
   description: String,
   groupLeader: {
     id: {
-      type: mongoose.Schema.Types.ObjectID, 
+      type: mongoose.Schema.Types.ObjectID,
       ref: "User"
     },
     name: String
