@@ -14,36 +14,7 @@
         </thead>
         <tbody>
             <% for(let i = 0 ; i < data.length; i++) { %>
-                <% if(data[i].group.pending.includes(currentUser._id)) { %>
-                    <tr>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
-                                <%= data[i].group.name%>
-                            </a>
-                        </td>
-                        <td>Pending</td>
-                    </tr>
-                <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>                    
-                     <tr>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
-                                <%= data[i].group.name%>
-                            </a>
-                        </td>
-                        <td>Rejected</td>
-                    </tr>
-                <% } else if(data[i].group.users.includes(currentUser._id)) { %> 
-                    <tr>
+                <tr>
                     <td>
                         <a href="/events/<%= data[i].event._id%>/">
                             <%= data[i].event.name%>
@@ -58,11 +29,24 @@
                         <td>Leader</td>
                     <% } else { %>
                         <td>Member</td>
+                    <% if(data[i].group.removed.includes(currentUser._id)) { %>
+                        <td>Removed</td>
+                    <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
+                        <td>Pending</td>
+                    <% } else if(data[i].group.rejected.includes(currentUser._id)) { %> 
+                        <td>Rejected</td>
+                    <% } else if(data[i].group.users.includes(currentUser._id)) { %>   
+                        <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
+                            <td>Leader</td>
+                        <% } else { %>
+                            <td>Member</td>
+                        <% } %> 
                     <% } %>
                     </tr>
                 <% } %>
-            <% } %>       
+                </tr>
+            <% } %>
         </tbody>
       </table>
-</div>
+     </div>
 <%- include("../partials/footer") %>
