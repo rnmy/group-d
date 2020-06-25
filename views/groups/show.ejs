@@ -2,8 +2,8 @@
 
 <div class="container">
   <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
-  <h6>Created By <%= group.groupLeader.name %></h6>
-  <h6><%=group.description%></h6>
+  <h6>Created By: <%= group.groupLeader.name %></h6>
+  <h6><em><%=group.description%></em></h6>
   <hr>
 
   <div class="row">
@@ -59,11 +59,22 @@
           <li class="list-group-item">Group Chat</li>
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
             <li class="list-group-item text-decoration-none">
-              <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">Pending Requests</a> 
+              <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
+                Pending Requests: <strong><%=group.pending.length%></strong> 
+              </a> 
             </li>
           <% } %>
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
             <li class="list-group-item text-danger">Delete Group</li>
+            <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %> 
+            <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
+              <button class="btn btn-warning mt-3">Close Group</button>
+            </form>
+            <% } else { %>
+              <% if(group.isClosed) { %> 
+              <p class="text-secondary mt-3">You have closed this group!</p>
+              <% } %>
+            <% } %>
           <% } else { %>
             <li class="list-group-item text-danger">Leave Group</li>
           <% } %>
