@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const groupSchema = new mongoose.Schema({
   name: String,
-  size: Number,
+  isClosed: Boolean,
   description: String,
   groupLeader: {
     id: {

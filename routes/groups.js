@@ -30,7 +30,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
             Group.create(
                 {
                     name: req.body.groupName,
-                    size: 1,
+                    isClosed: false,
                     description: req.body.descr,
                     pending: [],
                     users: [res.locals.currentUser]
@@ -103,6 +103,7 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
         $push: {pending: res.locals.currentUser},
       }, (err, group) => {
       if(err) {
+        req.flash("error", "Something went wrong...Try again")
         res.redirect("/events")
       } else {
         res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
@@ -114,6 +115,7 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   router.get("/:groupid/pending", (req, res) => {
     Event.findById(req.params.id, (err, foundEvent) => {
       if(err){
+        req.flash("error", "Something went wrong...Try again")
         console.log(err);
       } else {
         Group.findById(req.params.groupid).populate("pending").exec((err, foundGroup) => {
@@ -151,6 +153,20 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
             res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
           }
         })
+      }
+    })
+  })
+
+  router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
+    Group.findByIdAndUpdate(req.params.groupid,
+      {
+        $set: {isClosed: true},
+      }, (err, group) => {
+      if(err) {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("/events")
+      } else {
+        res.redirect("/events/" + req.params.id)
       }
     })
   })
