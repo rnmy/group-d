@@ -131,7 +131,7 @@ router.get("/:groupid/pending", (req, res) => {
 })
   
 // Accept/Reject pending request logic
-router.post("/:groupid/pending/:pendingid", (req, res) => {
+router.put("/:groupid/pending/:pendingid", (req, res) => {
   Group.findById(req.params.groupid, (err, foundGroup) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -158,23 +158,8 @@ router.post("/:groupid/pending/:pendingid", (req, res) => {
   })
 })
 
-// Close group logic
-router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
-  Group.findByIdAndUpdate(req.params.groupid,
-    {
-      $set: {isClosed: true},
-    }, (err, group) => {
-    if(err) {
-      req.flash("error", "Something went wrong...Try again")
-      res.redirect("/events")
-    } else {
-      res.redirect("/events/" + req.params.id)
-    }
-  })
-})
-
 // Show edit group page
-router.get("/:groupid/remove", middleware.isLoggedIn, (req, res) => {
+router.get("/:groupid/edit", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if (err) {
       req.flash("error", "Something went wrong...Try again")
@@ -201,7 +186,7 @@ router.get("/:groupid/remove", middleware.isLoggedIn, (req, res) => {
                 allUsers = allUsers.map((userID) => userID.toString())
                 allPending = allPending.map((userID) => userID.toString())
             }).then(() => {
-                res.render("./groups/remove",
+                res.render("./groups/edit",
                     {
                         group: foundGroup,
                         event: foundEvent,
@@ -217,8 +202,47 @@ router.get("/:groupid/remove", middleware.isLoggedIn, (req, res) => {
   })
 })
 
+// Show edit group information form
+router.get("/:groupid/edit_info", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("back")
+    } else {
+      Group.findById(req.params.groupid, (err, foundGroup) => {
+        if(err){
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          res.render("./groups/edit_info", {event: foundEvent, group: foundGroup})
+        }
+      })
+    }
+  })
+})
+
+// Edit group information logic
+router.put("/:groupid/edit_info", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("back")
+    } else {
+      Group.findByIdAndUpdate(req.params.groupid, req.body.group, (err, group) => {
+        if(err){
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          req.flash("success", "Successfully updated group info")
+          // res.redirect("/events/" + foundEvent._id + "/groups/" + group._id)
+        }
+      })
+    }
+  })
+})
+
 // Remove group member logic
-router.post("/:groupid/remove/:removeid", (req, res) => {
+router.put("/:groupid/remove/:removeid", (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -237,11 +261,72 @@ router.post("/:groupid/remove/:removeid", (req, res) => {
               foundGroup.users.splice(foundGroup.users.indexOf(removedUser._id), 1)
               foundGroup.removed.push(removedUser)
               foundGroup.save()
-              res.render("./groups/remove", {event: foundEvent, group: foundGroup})
+              res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id + "/edit")
             }
           })
         }
       })
+    }
+  })
+})
+
+// Change group leader logic
+router.put("/:groupid/change_leader/:newleaderid", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("back")
+    } else {
+      Group.findById(req.params.groupid, (err, foundGroup) => {
+        if(err){
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          User.findById(req.params.newleaderid, (err, newLeader) => {
+            if(err){
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+            } else {
+              foundGroup.groupLeader = {
+                id: newLeader._id,
+                name: newLeader.name
+              }
+              foundGroup.save()
+              res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id)
+            }
+          })
+        }
+      })
+    }
+  })
+})
+
+// Leave group logic
+router.put("/:groupid/leave", (req, res) => {
+  Group.findById(req.params.groupid, (err, foundGroup) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("back")
+    } else {
+      foundGroup.users.splice(foundGroup.users.indexOf(res.locals.currentUser._id), 1)
+      foundGroup.left.push(res.locals.currentUser)
+      foundGroup.save()
+      res.redirect("/events/" + req.params.id)
+    } 
+  })
+})
+
+// Close group logic
+router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
+  Group.findByIdAndUpdate(req.params.groupid,
+    {
+      $set: {isClosed: true},
+    }, (err, group) => {
+    if(err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      res.redirect("/events/" + req.params.id)
     }
   })
 })
