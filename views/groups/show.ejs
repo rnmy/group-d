@@ -15,6 +15,8 @@
         <h6 class="text-secondary mt-4 mb-4">Your request to join <%= group.name%> is pending</h6>
       <% } else if (group.rejected.includes(currentUser._id)) { %>
         <h6 class="text-danger mt-4 mb-4">Your request to join <%= group.name%> has been rejected</h6>
+      <% } else if (group.removed.includes(currentUser._id)) { %>
+        <h6 class="text-danger mt-4 mb-4">You have been removed from <%= group.name%></h6>
       <% } %>
 
       <% group.users.forEach((user) => { %>
@@ -35,10 +37,11 @@
       <% })%>
 
       <div class="mt-5">
-        <% if(!(group.users.length == event.maxGroupSize)
-              && (!(allUsers.includes(String(currentUser._id))))
+        <% if(!(group.users.length == event.maxGroupSize) 
+              && (!(allUsers.includes(String(currentUser._id)))) 
               && (!(allPending.includes(String(currentUser._id))))
               && (!(group.rejected.includes(currentUser._id)))
+              && (!(group.removed.includes(currentUser._id))) 
         ) { %>
           <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
             <button class="btn btn-success mb-5">Join this group</button>
@@ -48,7 +51,8 @@
         <a class="btn btn-success" href="/events/<%= event._id%>">Go back to <%= event.name%></a>
       </div>
     </div>
-
+          
+    <!-- Side Bar -->
     <% if(users.includes(currentUser._id)) { %>
       <div class="col-md-2 float-right text-center">
         <p class="lead"><strong>Settings</strong></p>
@@ -60,17 +64,22 @@
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
             <li class="list-group-item text-decoration-none">
               <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
-                Pending Requests: <strong><%=group.pending.length%></strong>
-              </a>
+                Pending Requests: <strong><%=group.pending.length%></strong> 
+              </a> 
             </li>
           <% } %>
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
-            <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %>
+            <li class="list-group-item">
+              <a href="/events/<%= event._id %>/groups/<%= group._id %>/remove" class="text-dark">
+                Remove Members
+              </a> 
+            </li>
+            <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %> 
             <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
-              <button class="btn btn-warning mt-3">Finalise Group</button>
+              <button class="btn btn-danger mt-3">Close Group</button>
             </form>
             <% } else { %>
-              <% if(group.isClosed) { %>
+              <% if(group.isClosed) { %> 
               <p class="text-secondary mt-3">You have closed this group!</p>
               <% } %>
             <% } %>
@@ -80,6 +89,7 @@
         </div>
       </div>
     <% } %>
+    
   </div>
 </div>
 
