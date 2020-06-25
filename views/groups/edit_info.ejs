@@ -1,0 +1,23 @@
+<%- include("../partials/header") %>
+
+  <div class="container text-center">
+    <h1>Editing Group Info:</h1>
+
+    <div style="width: 30%; margin: 25px auto;">
+        <form action="/events/<%= event._id%>/groups/<%= group._id%>/edit_info?_method=PUT" method="POST">
+            <div class="form-group">
+                <input class="form-control" type="text" value="<%= group.name %>" name="group[name]" required>
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="text" value="<%= group.description %>" name="group[description]" required>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-lg btn-primary btn-block">Submit!</button>
+            </div>
+        </form>
+
+        <a href="/events/<%= event._id%>/groups/<%= group._id %>/edit">Go back</a>
+    </div>
+  </div>
+
+<%- include("../partials/footer") %>
