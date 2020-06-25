@@ -2,6 +2,9 @@
 <div class="container">
     <h3 class="my-5">Your Groups</h3>
     <table class="table">
+        <% if(data.length === 0) { %>
+            <caption><em>You currently have not joined any groups.</em></caption>
+        <% } %>
         <thead>
           <tr>
             <th scope="col">Event</th>
@@ -58,7 +61,7 @@
                     <% } %>
                     </tr>
                 <% } %>
-            <% } %>
+            <% } %>       
         </tbody>
       </table>
 </div>
