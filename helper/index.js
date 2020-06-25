@@ -35,14 +35,15 @@ helperObj.getGroupIDs = function(userID) {
     // If userID exists inside, store the group ID 
     return new Promise((resolve, reject) => {
         let id = []
-        Group.find({}, {pending: 1, rejected: 1, users: 1}, (err, result) => {
+        Group.find({}, {pending: 1, rejected: 1, users: 1, removed: 1}, (err, result) => {
             if(err) {
                 reject(err)
             } else {
                 for (const res of result) { 
                     if(res.pending.includes(userID) 
                        || res.rejected.includes(userID)
-                       || res.users.includes(userID)) {
+                       || res.users.includes(userID)
+                       || res.removed.includes(userID)) {
                             id.push(res._id) 
                     }
                 }
