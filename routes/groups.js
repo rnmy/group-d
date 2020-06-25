@@ -168,6 +168,22 @@ router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
+      req.flash("success", "You have closed the group '" + group.name +"'!")
+      res.redirect("/events/" + req.params.id)
+    }
+  })
+})
+
+router.put("/:groupid/reopen", middleware.isLoggedIn, (req, res) => {
+  Group.findByIdAndUpdate(req.params.groupid,
+    {
+      $set: {isClosed: false},
+    }, (err, group) => {
+    if(err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      req.flash("success", "You have reopened the group '" + group.name +"'!")
       res.redirect("/events/" + req.params.id)
     }
   })

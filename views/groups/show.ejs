@@ -74,13 +74,15 @@
                 Remove Members
               </a> 
             </li>
-            <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %> 
+            <% if(!(group.isClosed)) { %> 
             <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
               <button class="btn btn-danger mt-3">Close Group</button>
             </form>
             <% } else { %>
               <% if(group.isClosed) { %> 
-              <p class="text-secondary mt-3">You have closed this group!</p>
+                <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
+                  <button class="btn btn-warning mt-3">Reopen Group</button>
+                </form>
               <% } %>
             <% } %>
           <% } else { %>
