@@ -28,6 +28,12 @@ const groupSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectID,
       ref: "User"
     }
+  ],
+  removed: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "User"
+    }
   ]
 })
 
