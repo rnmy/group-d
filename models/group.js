@@ -6,7 +6,7 @@ const groupSchema = new mongoose.Schema({
   description: String,
   groupLeader: {
     id: {
-      type: mongoose.Schema.Types.ObjectID, 
+      type: mongoose.Schema.Types.ObjectID,
       ref: "User"
     },
     name: String
@@ -24,6 +24,12 @@ const groupSchema = new mongoose.Schema({
     }
   ],
   rejected: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "User"
+    }
+  ],
+  removed: [
     {
       type: mongoose.Schema.Types.ObjectID,
       ref: "User"
