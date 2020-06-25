@@ -24,6 +24,8 @@
                     </td>
                     <% if(data[i].group.removed.includes(currentUser._id)) { %>
                         <td>Removed</td>
+                    <% } else if(data[i].group.left.includes(currentUser._id)) { %>
+                        <td>Left Group</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
                         <td>Pending</td>
                     <% } else if(data[i].group.rejected.includes(currentUser._id)) { %> 
