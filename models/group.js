@@ -34,6 +34,12 @@ const groupSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectID,
       ref: "User"
     }
+  ],
+  left: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "User"
+    }
   ]
 })
 

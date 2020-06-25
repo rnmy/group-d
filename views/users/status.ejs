@@ -25,7 +25,8 @@
                             <%= data[i].group.name%>
                         </a>
                     </td>
-                    <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
+    
+                    <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%>
                         <td class="text-success">Leader</td>
                     <% } else if(data[i].group.users.includes(currentUser._id)) { %>
                         <td class="text-success">Member</td>
@@ -33,11 +34,13 @@
                         <td class="text-secondary">Removed</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
                         <td class="text-warning">Pending</td>
-                    <% } else if(data[i].group.rejected.includes(currentUser._id)) { %> 
+                    <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>
                         <td class="text-danger">Rejected</td>
-                    <% } %> 
-                    </tr>
-                <% } %>
+                    <% } else if(data[i].group.left.includes(currentUser._id)) { %>
+                        <td class="text-danger">Left Group</td>
+                    <% } %>
+                </tr>
+            <% } %>
         </tbody>
       </table>
      </div>
