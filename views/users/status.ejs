@@ -26,26 +26,18 @@
                         </a>
                     </td>
                     <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
-                        <td>Leader</td>
-                    <% } else { %>
-                        <td>Member</td>
-                    <% if(data[i].group.removed.includes(currentUser._id)) { %>
-                        <td>Removed</td>
+                        <td class="text-success">Leader</td>
+                    <% } else if(data[i].group.users.includes(currentUser._id)) { %>
+                        <td class="text-success">Member</td>
+                    <% } else if(data[i].group.removed.includes(currentUser._id)) { %>
+                        <td class="text-secondary">Removed</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
-                        <td>Pending</td>
+                        <td class="text-warning">Pending</td>
                     <% } else if(data[i].group.rejected.includes(currentUser._id)) { %> 
-                        <td>Rejected</td>
-                    <% } else if(data[i].group.users.includes(currentUser._id)) { %>   
-                        <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
-                            <td>Leader</td>
-                        <% } else { %>
-                            <td>Member</td>
-                        <% } %> 
-                    <% } %>
+                        <td class="text-danger">Rejected</td>
+                    <% } %> 
                     </tr>
                 <% } %>
-                </tr>
-            <% } %>
         </tbody>
       </table>
      </div>
