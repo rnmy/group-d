@@ -4,9 +4,9 @@
     <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
     <h6>Created By: <%= group.groupLeader.name %></h6>
     <h6><em><%=group.description%></em></h6>
-    <a href="/events/<%= event._id%>/groups/<%= group._id%>/edit_info" class="btn btn-sm btn-secondary"> Edit Group Information</a>    
+    <a href="/events/<%= event._id%>/groups/<%= group._id%>/edit_info" class="btn btn-sm btn-secondary"> Edit Group Information</a>
     <hr>
-  
+
     <div class="row">
       <div class="col-md-9">
         <h3 class="mb-4">Current Members:</h3>
@@ -17,7 +17,7 @@
         <% } else if (group.rejected.includes(currentUser._id)) { %>
           <h6 class="text-danger mt-4 mb-4">Your request to join <%= group.name%> has been rejected</h6>
         <% } %>
-  
+
         <% group.users.forEach((user) => { %>
           <div class="row">
             <div class="col-lg-6 mt-3">
@@ -32,12 +32,12 @@
                       <div>
                         <div style="width:50%; float:left;">
                           <form action="/events/<%= event._id%>/groups/<%= group._id%>/change_leader/<%= user._id%>?_method=PUT" method="POST" class="form-inline">
-                            <button class="btn btn-sm btn-success mt-2">Make Group Leader</button>  
+                            <button class="btn btn-sm btn-success mt-2">Make Group Leader</button>
                           </form>
                         </div>
                         <div style="width:50%; float:right;">
                           <form action="/events/<%= event._id%>/groups/<%= group._id%>/remove/<%= user._id%>?_method=PUT" method="POST" class="form-inline">
-                            <button class="btn btn-sm btn-warning mt-2">Remove</button>  
+                            <button class="btn btn-sm btn-warning mt-2">Remove</button>
                           </form>
                         </div>
                       </div>
@@ -48,12 +48,12 @@
             </div>
           </div>
         <% })%>
-  
+
         <div class="mt-5">
           <a class="btn btn-success" href="/events/<%= event._id%>">Go back to <%= event.name%></a>
         </div>
       </div>
-            
+
     <!-- Side Bar -->
     <% if(users.includes(currentUser._id)) { %>
         <div class="col-md-2 float-right text-center">
@@ -66,37 +66,39 @@
             <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
               <li class="list-group-item text-decoration-none">
                 <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
-                  Pending Requests: <strong><%=group.pending.length%></strong> 
-                </a> 
+                  Pending Requests: <strong><%=group.pending.length%></strong>
+                </a>
               </li>
             <% } %>
             <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
               <li class="list-group-item active">
                 <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-light">
                   Edit Group
-                </a> 
+                </a>
               </li>
-              <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %> 
+              <% if(!(group.isClosed)) { %>
               <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
                 <button class="btn btn-danger mt-3">Close Group</button>
               </form>
               <% } else { %>
-                <% if(group.isClosed) { %> 
-                <p class="text-secondary mt-3">You have closed this group!</p>
+                <% if(group.isClosed) { %>
+                  <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
+                    <button class="btn btn-warning mt-3">Reopen Group</button>
+                  </form>
                 <% } %>
               <% } %>
             <% } else { %>
               <li class="list-group-item">
                 <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-                  <button class="btn btn-sm text-danger" style="border: none; background: none;">Leave Group</button>  
+                  <button class="btn btn-sm text-danger" style="border: none; background: none;">Leave Group</button>
                 </form>
               </li>
             <% } %>
           </div>
         </div>
       <% } %>
-      
+
     </div>
   </div>
 
-<%- include("../partials/footer") %>
+  <%- include("../partials/footer") %>

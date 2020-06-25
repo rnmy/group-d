@@ -111,7 +111,7 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
     }
   })
 })
-  
+
 // Show pending requests for group
 router.get("/:groupid/pending", (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
@@ -129,7 +129,7 @@ router.get("/:groupid/pending", (req, res) => {
     }
   })
 })
-  
+
 // Accept/Reject pending request logic
 router.put("/:groupid/pending/:pendingid", (req, res) => {
   Group.findById(req.params.groupid, (err, foundGroup) => {
@@ -149,11 +149,42 @@ router.put("/:groupid/pending/:pendingid", (req, res) => {
           } else if(action === "Reject"){
             foundGroup.rejected.push(pendingUser);
           }
-          
+
           foundGroup.save();
           res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
         }
       })
+    }
+  })
+})
+
+// Close group logic
+router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
+  Group.findByIdAndUpdate(req.params.groupid,
+    {
+      $set: {isClosed: true},
+    }, (err, group) => {
+    if(err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      req.flash("success", "You have closed the group '" + group.name +"'!")
+      res.redirect("/events/" + req.params.id)
+    }
+  })
+})
+
+router.put("/:groupid/reopen", middleware.isLoggedIn, (req, res) => {
+  Group.findByIdAndUpdate(req.params.groupid,
+    {
+      $set: {isClosed: false},
+    }, (err, group) => {
+    if(err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      req.flash("success", "You have reopened the group '" + group.name +"'!")
+      res.redirect("/events/" + req.params.id)
     }
   })
 })
@@ -312,7 +343,7 @@ router.put("/:groupid/leave", (req, res) => {
       foundGroup.left.push(res.locals.currentUser)
       foundGroup.save()
       res.redirect("/events/" + req.params.id)
-    } 
+    }
   })
 })
 

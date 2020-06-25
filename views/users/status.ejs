@@ -2,6 +2,9 @@
 <div class="container">
     <h3 class="my-5">Your Groups</h3>
     <table class="table">
+        <% if(data.length === 0) { %>
+            <caption><em>You currently have not joined any groups.</em></caption>
+        <% } %>
         <thead>
           <tr>
             <th scope="col">Event</th>
@@ -22,24 +25,23 @@
                             <%= data[i].group.name%>
                         </a>
                     </td>
-                    <% if(data[i].group.removed.includes(currentUser._id)) { %>
-                        <td>Removed</td>
-                    <% } else if(data[i].group.left.includes(currentUser._id)) { %>
-                        <td>Left Group</td>
+    
+                    <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%>
+                        <td class="text-success">Leader</td>
+                    <% } else if(data[i].group.users.includes(currentUser._id)) { %>
+                        <td class="text-success">Member</td>
+                    <% } else if(data[i].group.removed.includes(currentUser._id)) { %>
+                        <td class="text-secondary">Removed</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
-                        <td>Pending</td>
-                    <% } else if(data[i].group.rejected.includes(currentUser._id)) { %> 
-                        <td>Rejected</td>
-                    <% } else if(data[i].group.users.includes(currentUser._id)) { %>   
-                        <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%> 
-                            <td>Leader</td>
-                        <% } else { %>
-                            <td>Member</td>
-                        <% } %> 
+                        <td class="text-warning">Pending</td>
+                    <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>
+                        <td class="text-danger">Rejected</td>
+                    <% } else if(data[i].group.left.includes(currentUser._id)) { %>
+                        <td class="text-danger">Left Group</td>
                     <% } %>
                 </tr>
             <% } %>
         </tbody>
       </table>
-</div>
+     </div>
 <%- include("../partials/footer") %>
