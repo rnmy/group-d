@@ -31,7 +31,7 @@
                     <% } else if(data[i].group.users.includes(currentUser._id)) { %>
                         <td class="text-success">Member</td>
                     <% } else if(data[i].group.removed.includes(currentUser._id)) { %>
-                        <td class="text-secondary">Removed</td>
+                        <td class="text-danger">Removed</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
                         <td class="text-warning">Pending</td>
                     <% } else if(data[i].group.rejected.includes(currentUser._id)) { %>
