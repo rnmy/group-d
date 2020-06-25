@@ -19,7 +19,7 @@
 
       <% group.users.forEach((user) => { %>
         <div class="row">
-          <div class="col-lg-6">
+          <div class="col-lg-6 mt-3">
             <div class="card">
               <div class="card-body">
                 <% if(user._id.equals(currentUser._id)) { %>
@@ -63,7 +63,8 @@
             </li>
           <% } %>
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
-            <li class="list-group-item text-danger">Delete Group</li>
+            <li class="list-group-item">Edit Group</li>
+            <li class="list-group-item text-danger">Finalise Group</li>
           <% } else { %>
             <li class="list-group-item text-danger">Leave Group</li>
           <% } %>
