@@ -265,7 +265,7 @@ router.put("/:groupid/edit_info", (req, res) => {
           res.redirect("back")
         } else {
           req.flash("success", "Successfully updated group info")
-          // res.redirect("/events/" + foundEvent._id + "/groups/" + group._id)
+          res.redirect("/events/" + foundEvent._id + "/groups/" + group._id)
         }
       })
     }
