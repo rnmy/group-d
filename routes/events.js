@@ -26,7 +26,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
     const newEvent = req.body.event;
     Event.create(newEvent, (err, event) => {
         if(err){
-            req.flash("error", "Something went wrong...Try again")
+            req.flash("error", "This event has already been created")
             res.redirect("/events")
         } else {
             req.flash("success", 'The event "' + newEvent.name + '" has been created successfully')
@@ -81,9 +81,9 @@ router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
 
 // Updating event logic
 router.put("/:id/", middleware.isLoggedIn, (req, res) => {
-  Event.findByIdAndUpdate(req.params.id, req.body.event, (err, updatedEvent) => {
+  Event.findByIdAndUpdate(req.params.id, req.body.event, { runValidators: true, context: 'query' }, (err, updatedEvent) => {
     if(err) {
-      req.flash("error", "Something went wrong...Try again")
+      req.flash("error", "This event has already been created")
       res.redirect("/events")
     } else {
       req.flash("success", "The event has been updated successfully")
