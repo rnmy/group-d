@@ -1,8 +1,9 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require('mongoose-unique-validator');
 
 const eventSchema = new mongoose.Schema({
-    name: String,
-    url: String,
+    name: {type: String, unique: true, uniqueCaseInsensitive: true},
+    url: {type: String, unique: true, uniqueCaseInsensitive: true},
     minGroupSize: Number,
     maxGroupSize: Number,
     groups: [
@@ -12,5 +13,7 @@ const eventSchema = new mongoose.Schema({
       }
     ]
 })
+
+eventSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("Event", eventSchema);
