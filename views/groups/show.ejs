@@ -9,7 +9,10 @@
   <div class="row">
     <div class="col-md-9">
       <h3 class="mb-4">Current Members:</h3>
-      <% if (users.includes(currentUser._id)) { %>
+      <% if (group.groupLeader.id.equals(currentUser._id)) { %>
+        <h6 class="text-secondary mt-4 mb-4">You are currently the leader of <%= group.name%></h6>
+      <% } else if (!(group.groupLeader.id.equals(currentUser._id))
+        && users.includes(currentUser._id)) { %>
         <h6 class="text-secondary mt-4 mb-4">You are currently a member of <%= group.name%></h6>
       <% } else if (group.pending.includes(currentUser._id)) { %>
         <h6 class="text-secondary mt-4 mb-4">Your request to join <%= group.name%> is pending</h6>
@@ -74,7 +77,7 @@
           <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
             <li class="list-group-item">
               <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-dark">
-                Edit Group
+                Group Settings
               </a> 
             </li>
             <% if(!(group.isClosed)) { %> 
