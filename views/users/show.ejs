@@ -16,7 +16,9 @@
                   <p class="card-text"><%= user.bio %></p>
                 </div>
             </div>
+            <% if(!currentUser._id.equals(user.id)) { %>
             <button class="btn btn-link mt-3" onclick="goBack()">Go Back</button>
+            <% } %>
         </div>
         <div class="col-lg-6 col-md-5 col-sm-12 pt-md-1 pt-sm-4">
             <h4>Email: <%= user.email %></h4>
@@ -33,8 +35,8 @@
                   <li class="list-group-item">
                     <a href="/users/<%= user._id%>/pending">View Groups</a>
                   </li>
-                  <li class="list-group-item">
-                      <a href="#">Delete account</a>
+                  <li class="list-group-item disabled">
+                      Delete account
                     </li>
                 </div>
             </div>
