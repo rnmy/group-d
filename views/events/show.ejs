@@ -35,8 +35,8 @@
 <div class="container mt-5 mb-5">
   <h2>Current groups:</h2>
   <% if(event.groups.length == 0
-      || (event.groups.filter((group) => group.isClosed).length === event.groups.length) 
-      || (event.groups.filter((group) => group.isDeleted).length === event.groups.length)) { %>
+      || (event.groups.filter((group) => group.isClosed).length 
+      + event.groups.filter((group) => group.isDeleted).length === event.groups.length)) { %>
     <h4 class="mt-3">There are currently no groups for this event.</h4>
   <% } else { %>
     <% event.groups.forEach((group) => { %>
