@@ -50,7 +50,7 @@
     <div class="col-md-9">
       <h3 class="mb-4">Pending Requests:</h3>
       <% if(group.pending.length == 0) { %>
-        <h4 class="mt-3">There are currently no pending requests.</h4>
+        <h5 class="mt-3 text-secondary"><em>There are currently no pending requests.</em></h5>
       <% } else { %>
         <% group.pending.forEach((pending) => { %>
           <div class="row">
