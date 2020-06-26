@@ -12,7 +12,7 @@ const express = require("express"),
       flash = require("connect-flash")
 
 
-//seedDB();
+// seedDB();
 
 // Requiring routes
 const indexRoutes = require("./routes/index"),
@@ -21,6 +21,7 @@ const indexRoutes = require("./routes/index"),
       userRoutes = require("./routes/users")
 
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(methodOverride("_method"));

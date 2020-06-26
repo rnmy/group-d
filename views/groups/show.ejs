@@ -89,10 +89,10 @@
               <button class="btn btn-danger mt-3">Close Group</button>
             </form>
             <% } else if(group.isClosed) { %> 
-                <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
-                  <button class="btn btn-warning mt-3">Reopen Group</button>
-                </form>
-              <% } %> 
+              <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
+                <button class="btn btn-warning mt-3">Reopen Group</button>
+              </form>
+            <% } %> 
             <% if (group.users.length === 1 && group.pending.length === 0) { %>
               <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
                 <button class="btn btn-link text-danger mt-3">Delete Group</button>
