@@ -45,7 +45,7 @@
             <li class="list-group-item">
               <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-dark">Group Page</a>
             </li>
-            <li class="list-group-item">Group Chat</li>
+            
             <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
               <li class="list-group-item text-decoration-none active">
                 <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-light">
@@ -53,21 +53,27 @@
                 </a> 
               </li>
             <% } %>
-            <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
+            <% if(currentUser._id.equals(group.groupLeader.id)) { %>
               <li class="list-group-item">
                 <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-dark">
-                  Edit Group
+                  Group Settings
                 </a> 
               </li>
-              <% if(!(group.isClosed) && (group.users.length >= event.minGroupSize)) { %> 
+              <% if(!(group.isClosed)) { %> 
               <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
                 <button class="btn btn-danger mt-3">Close Group</button>
               </form>
-              <% } else { %>
-                <% if(group.isClosed) { %> 
-                <p class="text-secondary mt-3">You have closed this group!</p>
+              <% } else if(group.isClosed) { %> 
+                  <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
+                    <button class="btn btn-warning mt-3">Reopen Group</button>
+                  </form>
+                <% } %> 
+              <% if (group.users.length === 1 && group.pending.length === 0) { %>
+                <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                  <button class="btn btn-link text-danger mt-3">Delete Group</button>
+                </form>
                 <% } %>
-              <% } %>
+
             <% } else { %>
               <li class="list-group-item">
                 <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">

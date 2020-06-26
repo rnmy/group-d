@@ -42,13 +42,13 @@ function seedDB() {
             console.log(err)
           } else {
             console.log("Created event")
-            User.deleteMany({}, (err) => {
-              if(err) {
-                console.log(err);
-              } else {
-                console.log("REMOVED USERS")
-              }
-            })
+            // User.deleteMany({}, (err) => {
+            //   if(err) {
+            //     console.log(err);
+            //   } else {
+            //     console.log("REMOVED USERS")
+            //   }
+            // })
           }
         })
       })

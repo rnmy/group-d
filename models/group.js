@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 const groupSchema = new mongoose.Schema({
   name: String,
   isClosed: Boolean,
+  isDeleted: Boolean,
   description: String,
   groupLeader: {
     id: {

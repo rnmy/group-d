@@ -25,8 +25,11 @@
                             <%= data[i].group.name%>
                         </a>
                     </td>
-    
-                    <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%>
+
+                    <% if(data[i].group.isDeleted === true) { %>
+                        <td class="text-secondary"><em>Group Deleted</em></td>
+                    <% } else { %>
+                        <% if(data[i].group.groupLeader.id.equals(currentUser._id)) {%>
                         <td class="text-success">Leader</td>
                     <% } else if(data[i].group.users.includes(currentUser._id)) { %>
                         <td class="text-success">Member</td>
@@ -38,6 +41,7 @@
                         <td class="text-danger">Rejected</td>
                     <% } else if(data[i].group.left.includes(currentUser._id)) { %>
                         <td class="text-danger">Left Group</td>
+                    <% } %>
                     <% } %>
                 </tr>
             <% } %>
