@@ -31,6 +31,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                 {
                     name: req.body.groupName,
                     isClosed: false,
+                    isDeleted: false,
                     description: req.body.descr,
                     pending: [],
                     users: [res.locals.currentUser]
@@ -169,11 +170,12 @@ router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
       res.redirect("/events")
     } else {
       req.flash("success", "You have closed the group '" + group.name +"'!")
-      res.redirect("/events/" + req.params.id)
+      res.redirect("/events/" + req.params.id + "/groups/" + group.id)
     }
   })
 })
 
+// Reopen group logic
 router.put("/:groupid/reopen", middleware.isLoggedIn, (req, res) => {
   Group.findByIdAndUpdate(req.params.groupid,
     {
@@ -184,7 +186,7 @@ router.put("/:groupid/reopen", middleware.isLoggedIn, (req, res) => {
       res.redirect("/events")
     } else {
       req.flash("success", "You have reopened the group '" + group.name +"'!")
-      res.redirect("/events/" + req.params.id)
+      res.redirect("/events/" + req.params.id + "/groups/" + group.id)
     }
   })
 })
@@ -292,6 +294,7 @@ router.put("/:groupid/remove/:removeid", (req, res) => {
               foundGroup.users.splice(foundGroup.users.indexOf(removedUser._id), 1)
               foundGroup.removed.push(removedUser)
               foundGroup.save()
+              req.flash("success", "You have removed " + removedUser.name + " from the group.")
               res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id + "/edit")
             }
           })
@@ -323,6 +326,7 @@ router.put("/:groupid/change_leader/:newleaderid", (req, res) => {
                 name: newLeader.name
               }
               foundGroup.save()
+              req.flash("success", "You have changed the group leader to " + newLeader.name + ".")
               res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id)
             }
           })
@@ -342,21 +346,24 @@ router.put("/:groupid/leave", (req, res) => {
       foundGroup.users.splice(foundGroup.users.indexOf(res.locals.currentUser._id), 1)
       foundGroup.left.push(res.locals.currentUser)
       foundGroup.save()
+      req.flash("success", "You have left the group '" + foundGroup.name + "'.")
       res.redirect("/events/" + req.params.id)
     }
   })
 })
 
-// Close group logic
-router.put("/:groupid/close", middleware.isLoggedIn, (req, res) => {
-  Group.findByIdAndUpdate(req.params.groupid,
-    {
-      $set: {isClosed: true},
-    }, (err, group) => {
+// "Delete" group logic 
+router.put("/:groupid/delete", middleware.isLoggedIn, (req, res) => {
+  Group.findById(req.params.groupid, (err, foundGroup) => {
     if(err) {
       req.flash("error", "Something went wrong...Try again")
-      res.redirect("/events")
+      res.redirect("back")
     } else {
+      foundGroup.isDeleted = true 
+      foundGroup.users.splice(foundGroup.users.indexOf(res.locals.currentUser._id), 1)
+      foundGroup.left.push(res.locals.currentUser) 
+      foundGroup.save()
+      req.flash("success", "You deleted the group '" + foundGroup.name + "'.")
       res.redirect("/events/" + req.params.id)
     }
   })
