@@ -16,6 +16,7 @@
                   <p class="card-text"><%= user.bio %></p>
                 </div>
             </div>
+            <button class="btn btn-link mt-3" onclick="goBack()">Go Back</button>
         </div>
         <div class="col-lg-6 col-md-5 col-sm-12 pt-md-1 pt-sm-4">
             <h4>Email: <%= user.email %></h4>
@@ -40,7 +41,11 @@
         <% } %>     
     </div> 
 </div>
-
+<script>
+    function goBack() {
+        window.history.back();
+    } 
+</script>
 <%- include("../partials/footer") %>
 
 
