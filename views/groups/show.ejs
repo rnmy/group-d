@@ -6,6 +6,44 @@
   <h6><em><%=group.description%></em></h6>
   <hr>
 
+  <!-- Side Bar -->
+  <% if(users.includes(currentUser._id)) { %>
+    <div class="col-md-3 mb-5 float-right text-center">
+      <div class="list-group">
+        <li class="list-group-item active">
+          <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-light">Group Page</a>
+        </li>
+        
+        <% if(currentUser._id.equals(group.groupLeader.id)) { %>
+          <li class="list-group-item text-decoration-none">
+            <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
+              Pending Requests: <strong><%=group.pending.length%></strong> 
+            </a> 
+          </li>
+        
+          <li class="list-group-item">
+            <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-dark">
+              Group Settings
+            </a> 
+          </li>
+          <% if (group.users.length === 1 && group.pending.length === 0) { %>
+            <li class="list-group-item">
+              <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                <button class="btn btn-sm text-danger">Delete Group</button>
+              </form>
+            </li>
+          <% } %>
+        <% } else { %>
+          <li class="list-group-item">
+            <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
+              <button class="btn btn-sm text-danger">Leave Group</button>  
+            </form>
+          </li>
+        <% } %>
+      </div>
+    </div>
+  <% } %>
+
   <% if (group.isDeleted) { %>
     <h3>The group you are viewing has been deleted.</h3>
   <% } else { %>
@@ -30,7 +68,7 @@
 
       <% group.users.forEach((user) => { %>
         <div class="row">
-          <div class="col-lg-6 mt-3">
+          <div class="col-lg-9 mt-3">
             <div class="card">
               <div class="card-body">
                 <% if(user._id.equals(currentUser._id)) { %>
@@ -52,64 +90,14 @@
               && (!(group.rejected.includes(currentUser._id)))
               && (!(group.removed.includes(currentUser._id))
               && (!(group.left.includes(currentUser._id)))) 
-        ) { %>
+           ) { %>
           <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
             <button class="btn btn-success mb-5">Join this group</button>
           </form>
         <% } %>
-
         <a href="/events/<%= event._id%>">Go back to <%= event.name%></a>
       </div>
     </div>
-          
-    <!-- Side Bar -->
-    <% if(users.includes(currentUser._id)) { %>
-      <div class="col-md-2 float-right text-center">
-        <p class="lead"><strong>Settings</strong></p>
-        <div class="list-group">
-          <li class="list-group-item active">
-            <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-light">Group Page</a>
-          </li>
-          
-          <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
-            <li class="list-group-item text-decoration-none">
-              <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
-                Pending Requests: <strong><%=group.pending.length%></strong> 
-              </a> 
-            </li>
-          <% } %>
-          <% if(currentUser._id.equals(group.groupLeader.id)) { %>
-            <li class="list-group-item">
-              <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-dark">
-                Group Settings
-              </a> 
-            </li>
-            <% if(!(group.isClosed)) { %> 
-            <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
-              <button class="btn btn-danger mt-3">Close Group</button>
-            </form>
-            <% } else if(group.isClosed) { %> 
-              <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
-                <button class="btn btn-warning mt-3">Reopen Group</button>
-              </form>
-            <% } %> 
-            <% if (group.users.length === 1 && group.pending.length === 0) { %>
-              <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
-                <button class="btn btn-link text-danger mt-3">Delete Group</button>
-              </form>
-              <% } %>
-            
-          <% } else { %>
-            <li class="list-group-item">
-              <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-                <button class="btn btn-sm text-danger" style="border: none; background: none;">Leave Group</button>  
-              </form>
-            </li>
-          <% } %>
-        </div>
-      </div>
-    <% } %>
-    
   </div>
 </div>
 <% } %>
