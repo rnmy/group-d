@@ -93,7 +93,7 @@
 
         <div class="mt-5">
           <% if (currentUser._id.equals(group.groupLeader.id)) { %>
-            <% if(!(group.isClosed)) { %> 
+            <% if(!(group.isClosed) && group.pending.length === 0) { %> 
               <form action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
                 <button class="btn btn-danger mb-5">Close Group</button>
               </form>
