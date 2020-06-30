@@ -76,24 +76,24 @@ router.get("/:groupid", middleware.isLoggedIn, (req, res) => {
                         }).then(() => {
                             const data = Promise.all(groups.map(group => helper.getAllPending(group)))
                             return data
-                        })
-                            .then((data) => {
-                                allPending = data.flat()
-                            }).then(() => {
-                                allUsers = allUsers.map((userID) => userID.toString())
-                                allPending = allPending.map((userID) => userID.toString())
-                            }).then(() => {
-                                res.render("./groups/show",
-                                    {
-                                        group: foundGroup,
-                                        event: foundEvent,
-                                        users: userIDs,
-                                        allUsers: allUsers,
-                                        allPending: allPending
-                                    })
-                            }).catch((err) => console.log(err))
+                        }).then((data) => {
+                            allPending = data.flat()
+                        }).then(() => {
+                            allUsers = allUsers.map((userID) => userID.toString())
+                            allPending = allPending.map((userID) => userID.toString())
+                        }).then(() => {
+                            res.render("./groups/show",
+                                {
+                                    group: foundGroup,
+                                    event: foundEvent,
+                                    users: userIDs,
+                                    allUsers: allUsers,
+                                    allPending: allPending
+                                })
+                        }).catch((err) => console.log(err))
                     }
-                })
+                }
+            )
         }
     })
 })
@@ -114,7 +114,7 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
 })
 
 // Show pending requests for group
-router.get("/:groupid/pending", (req, res) => {
+router.get("/:groupid/pending", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -132,7 +132,7 @@ router.get("/:groupid/pending", (req, res) => {
 })
 
 // Accept/Reject pending request logic
-router.put("/:groupid/pending/:pendingid", (req, res) => {
+router.put("/:groupid/pending/:pendingid", middleware.isLoggedIn, (req, res) => {
   Group.findById(req.params.groupid, (err, foundGroup) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -236,7 +236,7 @@ router.get("/:groupid/edit", middleware.isLoggedIn, (req, res) => {
 })
 
 // Show edit group information form
-router.get("/:groupid/edit_info", (req, res) => {
+router.get("/:groupid/edit_info", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -255,7 +255,7 @@ router.get("/:groupid/edit_info", (req, res) => {
 })
 
 // Edit group information logic
-router.put("/:groupid/edit_info", (req, res) => {
+router.put("/:groupid/edit_info", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -275,7 +275,7 @@ router.put("/:groupid/edit_info", (req, res) => {
 })
 
 // Remove group member logic
-router.put("/:groupid/remove/:removeid", (req, res) => {
+router.put("/:groupid/remove/:removeid", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -305,7 +305,7 @@ router.put("/:groupid/remove/:removeid", (req, res) => {
 })
 
 // Change group leader logic
-router.put("/:groupid/change_leader/:newleaderid", (req, res) => {
+router.put("/:groupid/change_leader/:newleaderid", middleware.isLoggedIn, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -337,7 +337,7 @@ router.put("/:groupid/change_leader/:newleaderid", (req, res) => {
 })
 
 // Leave group logic
-router.put("/:groupid/leave", (req, res) => {
+router.put("/:groupid/leave", middleware.isLoggedIn, (req, res) => {
   Group.findById(req.params.groupid, (err, foundGroup) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
