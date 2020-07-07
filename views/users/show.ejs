@@ -7,10 +7,10 @@
         <div class="col-lg-3 col-md-4 col-sm-12">
             <div class="card m-0" style="width: 100%">
                 <% if(!user.profilePic){ %>
-                    <img class="card-img-top" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png">
+                    <img class="card-img-top" src="/placeholder/placeholder.png">
                 <% } else { %>
-                    <img class="card-img-top" src="<%= user.profilePic %>">
-                <% } %>            
+                    <img class="card-img-top" src="/uploads/<%= user.profilePic %>">
+                <% } %>           
                 <div class="card-body">
                   <h5 class="card-title">@<%= user.username %></h5>
                   <p class="card-text"><%= user.bio %></p>
