@@ -4,6 +4,27 @@ const User = require("../models/user")
 
 const middleware = require('../middleware')
 const helper = require('../helper')
+const multer = require('multer')
+const path = require('path')
+const user = require('../models/user')
+
+const storage = multer.diskStorage({
+  destination: './public/uploads',
+  filename: function(req, file, cb) {
+      // extname extracts .jpeg, .png etc
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname))
+  }
+})
+
+const upload = multer({
+  storage: storage,
+  limits: {
+      fileSize: 1000000
+  },
+  fileFilter: function(req, file, cb) {
+      helper.checkFileType(file, cb)
+  }
+}).single('file')
 
 
 // Show user page
@@ -25,20 +46,56 @@ router.get("/edit", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("back")
     } else {
-      res.render("./users/edit", {user: user});
+      res.render("./users/edit", {user: user, error: ''});
     }
   });
 });
 
 // Updating own profile logic
 router.put("/", middleware.isLoggedIn, (req, res) => {
-  User.findByIdAndUpdate(req.params.userId, req.body.user, (err, updatedUser) => {
-    if(err) {
-      req.flash("error", "Something went wrong...Try again")
-      res.redirect("/users/:userId")
+  upload(req, res, (err) => {
+    if (err) {
+      const user = User.findById(req.params.userId)
+      user.exec((err, foundUser) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          res.render("./users/edit", 
+          {
+            user: foundUser,
+            error: "Please upload only images for your profile picture (e.g. .jpeg/.png files)"
+          })
+        }
+      })
     } else {
-      req.flash("success", "Successfully updated profile")
-      res.redirect("/users/" + req.params.userId)
+      let updatedUser
+      if (req.file == undefined) { 
+        updatedUser = User.findByIdAndUpdate(req.params.userId, 
+          {
+            bio: req.body.bio,
+            organization: req.body.organization,
+            email: req.body.email
+          })
+      } else {
+        updatedUser = User.findByIdAndUpdate(req.params.userId, 
+          {
+            bio: req.body.bio,
+            organization: req.body.organization,
+            profilePic: req.file.filename,
+            email: req.body.email
+          }
+        )
+      }
+      updatedUser.exec((err, user) => {
+        if(err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("/users/:userId")
+        } else {
+          req.flash("success", "Successfully updated profile")
+          res.redirect("/users/" + req.params.userId)
+        }       
+      })
     }
   })
 })

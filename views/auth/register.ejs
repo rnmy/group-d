@@ -1,33 +1,69 @@
 <%- include("../partials/header")%>
   <div class="container">
     <h1 class="display-4 mb-3">Sign up</h1>
-    <form action="/register" method="post" style="width: 500px;">
+    
+    <form action="/register" method="post" style="width: 500px;" enctype="multipart/form-data">
       <div class="form-group">
         <label>Your full name:</label>
+        <% if (typeof data.name == 'undefined') {%>
         <input class="form-control" type="text" name="name" placeholder="Full name" required>
+        <% } else { %>
+          <input class="form-control" type="text" name="name" value="<%= data.name%>" required>
+        <% } %>
       </div>
       <div class="form-group">
         <label>Your email:</label>
-        <input class="form-control" type="email" name="email" placeholder="Your email" required>
+        <% if (typeof data.email == 'undefined') {%>
+          <input class="form-control" type="email" name="email" placeholder="Your email" required>
+        <% } else { %>
+          <input class="form-control" type="text" name="email" value="<%= data.email%>" required>
+        <% } %>
       </div>
       <div class="form-group">
         <label>Pick a username:</label>
+        <% if (typeof data.username == 'undefined') {%>
         <input class="form-control" type="text" name="username" placeholder="Your username" required>
+        <% } else { %>
+          <input class="form-control" type="text" name="username" value="<%= data.username%>" required>
+        <% } %>
       </div>
       <div class="form-group">
         <label>Enter a password:</label>
-        <input class="form-control" type="password" name="password">
+        <input class="form-control" type="password" id="password" name="password" minlength="8" onkeyup="check()" required>
+      </div>
+      <div class="form-group">
+        <label>Confirm your password:</label>
+        <input class="form-control" type="password" id="passwordConfirmation" onkeyup="check()"" required>
+        <span id='message'></span>
       </div>
       <div class="form-group">
         <label>Your organization:</label>
-        <input class="form-control" type="text" name="organization" placeholder="Organization" required>
+        <% if (typeof data.organization == 'undefined') {%>
+          <input class="form-control" type="text" name="organization" placeholder="Organization" required>
+        <% } else { %>
+          <input class="form-control" type="text" name="organization" value="<%= data.organization%>" required>
+        <% } %>
       </div>
       <div class="form-group">
         <label>Your profile pic (Optional):</label>
-        <input class="form-control" type="text" name="profilePic" placeholder="Profile picture">
+        <input type="file" class="form-control-file" name="file">
       </div>
-      <button class="btn btn-success mb-5">Register!</button
+      <button id="submit" class="btn btn-success mb-5">Register!</button
     </form>
+    <script>
+     function check() {
+      if (document.getElementById('password').value && document.getElementById('password').value ==
+        document.getElementById('passwordConfirmation').value) {
+        document.getElementById('message').style.color = 'green';
+        document.getElementById('message').innerHTML = 'Matching';
+        document.getElementById('submit').disabled = false
+      } else {
+        document.getElementById('message').style.color = 'red';
+        document.getElementById('message').innerHTML = 'Not matching';
+        document.getElementById('submit').disabled = true
+      }
+    }
+    </script>
   </div>
 
 <%- include("../partials/footer")%>
