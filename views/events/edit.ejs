@@ -18,6 +18,22 @@
           <input class="form-control" id="eventurl" type="text" name="event[url]" value="<%= event.url%>" required>
         </div>
         <div class="form-group">
+          <label class="text-primary" for="description">Description:</label>
+          <textarea class="form-control" id="description" type="text" name="event[desc]" value="<%= event.desc%>" required><%= event.desc%></textarea>
+        </div>
+        <div class="form-group">
+          <label class="text-primary" for="requirements">Requirements:</label>
+          <textarea class="form-control" id="requirements" type="text" name="event[requirements]" value="<%= event.requirements%>" required><%= event.requirements%></textarea>
+        </div>
+        <div class="form-group">
+          <label class="text-primary" for="prizes">Prizes:</label>
+          <textarea class="form-control" id="prizes" type="text" name="event[prizes]" value="<%= event.prizes%>" required><%= event.prizes%></textarea>
+        </div>
+        <div class="form-group">
+          <label class="text-primary" for="date">Date:</label>
+          <input class="form-control" id="date" type="date" name="event[date]" value="<%= event.date.getYear() %>-<%= event.date.getMonth() %>-<%= event.date.getDay() %>" required>
+        </div>
+        <div class="form-group">
           <label class="text-primary" for="min">Minimum group size:</label>
           <input class="form-control" id="min" type="number" min="1" name="event[minGroupSize]" value="<%= event.minGroupSize%>" required>
         </div>
