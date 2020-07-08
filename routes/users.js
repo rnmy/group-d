@@ -95,45 +95,42 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
-          fs.unlink(`./public/uploads/${user.profilePic}`, (err, next) => {
-            if (err) {
-              req.flash("error", "Something went wrong...Try again")
-              res.redirect("back")
+            let updatedUser
+            if (req.file == undefined) { 
+              updatedUser = User.findByIdAndUpdate(req.params.userId, 
+                {
+                  bio: req.body.bio,
+                  organization: req.body.organization,
+                  email: req.body.email
+                })
             } else {
-              let updatedUser
-              if (req.file == undefined) { 
-                updatedUser = User.findByIdAndUpdate(req.params.userId, 
-                  {
-                    bio: req.body.bio,
-                    organization: req.body.organization,
-                    email: req.body.email
-                  })
-              } else {
-                updatedUser = User.findByIdAndUpdate(req.params.userId, 
-                  {
-                    bio: req.body.bio,
-                    organization: req.body.organization,
-                    profilePic: req.file.filename,
-                    email: req.body.email
-                  }
-                )
+              if (!(user.profilePic === '')) {
+                fs.unlinkSync(`./public/uploads/${user.profilePic}`)
               }
-              updatedUser.exec((err, user) => {
-                if(err) {
-                  req.flash("error", "Something went wrong...Try again")
-                  res.redirect("/users/:userId")
-                } else {
-                  req.flash("success", "Successfully updated profile")
-                  res.redirect("/users/" + req.params.userId)
-                }       
-              })
+              updatedUser = User.findByIdAndUpdate(req.params.userId, 
+                {
+                  bio: req.body.bio,
+                  organization: req.body.organization,
+                  profilePic: req.file.filename,
+                  email: req.body.email
+                }
+              )
             }
-          })
-        }
-      })
-    }
+            updatedUser.exec((err, user) => {
+              if(err) {
+                console.log(err)
+                req.flash("error", "Something went wrong...Try again")
+                res.redirect("/users/:userId")
+              } else {
+                req.flash("success", "Successfully updated profile")
+                res.redirect("/users/" + req.params.userId)
+              }       
+            })
+          }
+        })
+      }
+    })
   })
-})
 
   
 
