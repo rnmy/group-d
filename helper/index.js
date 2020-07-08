@@ -1,6 +1,7 @@
 let Event = require("../models/event");
 let Group = require("../models/group");
 let User = require("../models/user");
+const path = require('path')
 
 // all the helper functions go here
 let helperObj = {};
@@ -54,24 +55,6 @@ helperObj.getGroupIDs = function(userID) {
     })
 } 
   
-helperObj.getEventIDs = function(idArray) {
-    return new Promise((resolve, reject) => {
-        let id = []
-        Event.find({}, {groups: 1}, (err, result) => {
-            if (err) {
-                reject(err)
-            } else {
-                for (const res of result) {
-                    for (const groupID of idArray)
-                        if(res.groups.includes(groupID)) {
-                        id.push(res._id)
-                        }
-                }
-                resolve(id)
-            }
-        })
-    })
-}
 
 helperObj.createObject = function(groupID, eventID) {
     let obj = {}
@@ -124,5 +107,20 @@ helperObj.getGroupAndEvent = function(obj) {
     })
 }
 
+helperObj.checkFileType = function(file, cb) {
+    // Check extension AND mimetype (because files are easily renameable)
+    // Allowed extensions 
+    const fileTypes = /jpeg|jpg|png|gif/
+    // Check extensions
+    const extname = fileTypes.test(path.extname(file.originalname.toLowerCase()))
+    // Check mimetype
+    const mimetype = fileTypes.test(file.mimetype)
+  
+    if (extname && mimetype) {
+        return cb(null, true)
+    } else {
+        return cb('Error: Images only')
+    }
+  }
 
 module.exports = helperObj;
