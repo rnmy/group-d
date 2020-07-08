@@ -6,7 +6,7 @@ const middleware = require('../middleware')
 const helper = require('../helper')
 const multer = require('multer')
 const path = require('path')
-const user = require('../models/user')
+const fs = require('fs')
 
 const storage = multer.diskStorage({
   destination: './public/uploads',
@@ -69,32 +69,46 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
         }
       })
     } else {
-      let updatedUser
-      if (req.file == undefined) { 
-        updatedUser = User.findByIdAndUpdate(req.params.userId, 
-          {
-            bio: req.body.bio,
-            organization: req.body.organization,
-            email: req.body.email
-          })
-      } else {
-        updatedUser = User.findByIdAndUpdate(req.params.userId, 
-          {
-            bio: req.body.bio,
-            organization: req.body.organization,
-            profilePic: req.file.filename,
-            email: req.body.email
-          }
-        )
-      }
-      updatedUser.exec((err, user) => {
-        if(err) {
+      User.findById(req.params.userId, (err, user) => {
+        if (err) { 
           req.flash("error", "Something went wrong...Try again")
-          res.redirect("/users/:userId")
+          res.redirect("back")
         } else {
-          req.flash("success", "Successfully updated profile")
-          res.redirect("/users/" + req.params.userId)
-        }       
+          fs.unlink(`./public/uploads/${user.profilePic}`, (err, next) => {
+            if (err) {
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+            } else {
+              let updatedUser
+              if (req.file == undefined) { 
+                updatedUser = User.findByIdAndUpdate(req.params.userId, 
+                  {
+                    bio: req.body.bio,
+                    organization: req.body.organization,
+                    email: req.body.email
+                  })
+              } else {
+                updatedUser = User.findByIdAndUpdate(req.params.userId, 
+                  {
+                    bio: req.body.bio,
+                    organization: req.body.organization,
+                    profilePic: req.file.filename,
+                    email: req.body.email
+                  }
+                )
+              }
+              updatedUser.exec((err, user) => {
+                if(err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("/users/:userId")
+                } else {
+                  req.flash("success", "Successfully updated profile")
+                  res.redirect("/users/" + req.params.userId)
+                }       
+              })
+            }
+          })
+        }
       })
     }
   })
