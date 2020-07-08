@@ -4,6 +4,10 @@ const uniqueValidator = require('mongoose-unique-validator');
 const eventSchema = new mongoose.Schema({
     name: {type: String, unique: true, uniqueCaseInsensitive: true},
     url: {type: String, unique: true, uniqueCaseInsensitive: true},
+    desc: String,
+    requirements: String,
+    prizes: String,
+    date: Date,
     minGroupSize: Number,
     maxGroupSize: Number,
     groups: [
