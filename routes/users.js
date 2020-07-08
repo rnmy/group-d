@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router({mergeParams: true})
 const User = require("../models/user")
+const middleware = require('../middleware')
 
 const helper = require('../helper')
 const multer = require('multer')
@@ -56,7 +57,8 @@ router.get("/", (req, res) => {
     }).then((result) => {
       const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
     return newresult}).then((result) => {
-    res.render("./users/status", {data: result})}).catch((err) => console.log(err)) 
+    res.render("./users/status", {data: result})}).catch((err) => console.log(err))
+ }) 
 
 // Show form to edit own profile
 router.get("/edit", middleware.isLoggedIn, (req, res) => {
@@ -131,6 +133,7 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
       })
     }
   })
+})
 
   
 
