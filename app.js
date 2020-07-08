@@ -13,7 +13,7 @@ const Event = require("./models/event"),
       User = require("./models/user"),
       Group = require("./models/group");
 
-// seedDB();
+//seedDB();
 
 // REQUIRING ROUTES
 const indexRoutes = require("./routes/index"),
