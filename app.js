@@ -6,22 +6,23 @@ const express = require("express"),
       LocalStrategy = require("passport-local"),
       methodOverride = require('method-override'),
       seedDB = require("./seeds"),
-      Event = require("./models/event"),
-      User = require("./models/user"),
-      Group = require("./models/group")
       flash = require("connect-flash")
 
+// REQUIRING MODELS
+const Event = require("./models/event"),
+      User = require("./models/user"),
+      Group = require("./models/group");
 
 // seedDB();
 
-// Requiring routes
+// REQUIRING ROUTES
 const indexRoutes = require("./routes/index"),
       eventRoutes = require("./routes/events"),
       groupRoutes = require("./routes/groups"),
       userRoutes = require("./routes/users")
 
 mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
-// for deploying
+// FOR DEPLOYING
 // mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
@@ -60,7 +61,7 @@ app.listen(3000, () => {
   console.log("SERVER START");
 })
 
-// for deploying
+// FOR DEPLOYING
 // app.listen(process.env.PORT, process.env.IP, () => {
 //   console.log("SERVER START");
 // })
