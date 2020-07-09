@@ -114,6 +114,20 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   })
 })
 
+// Join group updating logic
+router.put("/:groupid/cancel", middleware.isLoggedIn, (req, res) => {
+  Group.findById(req.params.groupid, (err, group) => {
+    if(err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      group.pending.splice(group.pending.indexOf(res.locals.currentUser._id), 1)
+      group.save()
+      res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+    }
+  })
+})
+
 // Show pending requests for group
 router.get("/:groupid/pending", middleware.isGroupLeader, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {

@@ -28,7 +28,7 @@ const upload = multer({
 // Landing page
 router.get("/", (req, res) => {
     res.render("landing");
-  });
+});
 
 // show register form
 router.get("/register", function(req, res){
