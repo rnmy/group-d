@@ -6,7 +6,8 @@ const express = require("express"),
       LocalStrategy = require("passport-local"),
       methodOverride = require('method-override'),
       seedDB = require("./seeds"),
-      flash = require("connect-flash")
+      flash = require("connect-flash"),
+      expressSanitizer = require('express-sanitizer')
 
 // REQUIRING MODELS
 const Event = require("./models/event"),
@@ -27,6 +28,7 @@ mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifi
 mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(expressSanitizer())
 app.use(methodOverride("_method"));
 app.use(flash())
 app.use(express.static('./public'))

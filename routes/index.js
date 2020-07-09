@@ -51,19 +51,19 @@ router.post("/register",function(req, res){
         if (req.file == undefined) {
           newUser = new User(
             {
-              name: req.body.name,
-              email:req.body.email,
-              username: req.body.username,
-              organization: req.body.organization,
+              name: req.sanitize(req.body.name),
+              email: req.sanitize(req.body.email),
+              username: req.sanitize(req.body.username),
+              organization: req.sanitize(req.body.organization),
               profilePic: ''
             });
         } else {
           newUser = new User(
             {
-              name: req.body.name,
-              email:req.body.email,
-              username: req.body.username,
-              organization: req.body.organization,
+              name: req.sanitize(req.body.name),
+              email:req.sanitize(req.body.email),
+              username: req.sanitize(req.body.username),
+              organization: req.sanitize(req.body.organization),
               profilePic: req.file.filename
             });
         }
