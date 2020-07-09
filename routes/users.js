@@ -99,9 +99,9 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
             if (req.file == undefined) { 
               updatedUser = User.findByIdAndUpdate(req.params.userId, 
                 {
-                  bio: req.body.bio,
-                  organization: req.body.organization,
-                  email: req.body.email
+                  bio: req.sanitize(req.body.bio),
+                  organization: req.sanitize(req.body.organization),
+                  email: req.sanitize(req.body.email)
                 })
             } else {
               if (!(user.profilePic === '')) {
@@ -109,10 +109,10 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
               }
               updatedUser = User.findByIdAndUpdate(req.params.userId, 
                 {
-                  bio: req.body.bio,
-                  organization: req.body.organization,
+                  bio: req.sanitize(req.body.bio),
+                  organization: req.sanitize(req.body.organization),
                   profilePic: req.file.filename,
-                  email: req.body.email
+                  email: req.sanitize(req.body.email)
                 }
               )
             }
