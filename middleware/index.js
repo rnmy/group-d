@@ -13,4 +13,67 @@ middlewareObj.isLoggedIn = function(req, res, next) {
     res.redirect("/login");
 }
 
+middlewareObj.isEventCreator = function(req, res, next) { 
+    if(req.isAuthenticated()) {
+        Event.findById(req.params.id, (err, foundEvent) => {
+            if (err) {
+                req.flash("error", "Event not found!")
+                res.redirect("/events")
+            } else {
+                if(foundEvent.author.id.equals(req.user._id)) { 
+                    next()
+                } else {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/events/" + req.params.id)
+                }
+            }
+        })
+    } else {
+        req.flash("error", "You need to be logged in to do that")
+        res.redirect("/login");
+    }
+}
+
+middlewareObj.isGroupMember = function(req, res, next) {
+    if(req.isAuthenticated()) {
+        Group.findById(req.params.groupid, (err, foundGroup) => {
+            if (err) {
+                req.flash("error", "Group not found!")
+                res.redirect("/events/" + req.params.id)
+            } else {
+                if (!(foundGroup.users.includes(req.user._id))) {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+                } else {
+                    next()
+                }
+            }
+        })
+    } else {
+        req.flash("error", "You need to be logged in to do that")
+        res.redirect("/login");
+    }
+}
+
+middlewareObj.isGroupLeader = function(req, res, next) {
+    if(req.isAuthenticated()) {
+        Group.findById(req.params.groupid, (err, foundGroup) => {
+            if (err) {
+                req.flash("error", "Group not found!")
+                res.redirect("/events/" + req.params.id)
+            } else {
+                if (!(foundGroup.groupLeader.id.equals(req.user._id))) {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+                } else {
+                    next()
+                }
+            }
+        })
+    } else {
+        req.flash("error", "You need to be logged in to do that")
+        res.redirect("/login");
+    }
+}
+
 module.exports = middlewareObj;
