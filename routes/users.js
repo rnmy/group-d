@@ -116,15 +116,6 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
                 }
               )
             }
-            updatedUser = User.findByIdAndUpdate(req.params.userId,
-              {
-                bio: req.body.bio,
-                organization: req.body.organization,
-                profilePic: req.file.filename,
-                email: req.body.email
-              }
-            )
-          }
           updatedUser.exec((err, user) => {
             if(err) {
               console.log(err)
@@ -140,6 +131,8 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
     }
   })
 })
+        
+
 
 // Show form to change password
 router.get("/change_password", middleware.isLoggedIn, (req, res) => {
@@ -159,7 +152,6 @@ router.put("/change_password", middleware.isLoggedIn, (req, res) => {
       .then(foundUser => {
           foundUser.changePassword(req.body.current, req.body.new)
               .then(() => {
-                console.log('password changed');
                 req.flash("success", "Password was changed successfully")
                 res.redirect("/users/" + req.params.userId)
               })
