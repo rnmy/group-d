@@ -19,15 +19,14 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
 
 // Show form to add new event
 router.get("/new", middleware.isLoggedIn, (req, res) => {
-    res.render("./events/new");
+    res.render("./events/new", {data: {}, error:""});
 });
 
 // Add new event to DB
 router.post("/", middleware.isLoggedIn, (req, res) => {
     const validURL = validator.isURL(req.body.event.url)
       if(!validURL){
-        req.flash("error", "Please input a valid url")
-        res.redirect("/events")
+        res.render("./events/new", {data: req.body.event, error:"Please input a valid url"})
       } else {
         req.body.event.name = req.sanitize(req.body.event.name)
         req.body.event.desc = req.sanitize(req.body.event.desc)
