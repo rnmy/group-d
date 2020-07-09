@@ -15,7 +15,14 @@ const eventSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectID,
         ref: "Group"
       }
-    ]
+    ],
+    author: {
+      id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+      },
+      username: String
+    }
 })
 
 eventSchema.plugin(uniqueValidator);
