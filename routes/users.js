@@ -28,7 +28,7 @@ const upload = multer({
 
 
 // Show user page
-router.get("/", (req, res) => {
+router.get("/", middleware.isLoggedIn, (req, res) => {
     User.findById(req.params.userId, (err, user) => {
       if(err){
         req.flash("error", "Something went wrong...Try again")
@@ -38,10 +38,10 @@ router.get("/", (req, res) => {
       }
     });
   });
-  
 
- // View pending requests 
- router.get("/pending", (req, res) => {
+
+ // View pending requests
+ router.get("/pending", middleware.isLoggedIn, (req, res) => {
     helper.getGroupIDs(req.params.userId).then((arr) => {
       const newArr = Promise.all(arr.map((groupID) => helper.getEvent(groupID)))
       return newArr
@@ -58,7 +58,7 @@ router.get("/", (req, res) => {
       const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
     return newresult}).then((result) => {
     res.render("./users/status", {data: result})}).catch((err) => console.log(err))
- }) 
+ })
 
 // Show form to edit own profile
 router.get("/edit", middleware.isLoggedIn, (req, res) => {
@@ -82,7 +82,7 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
-          res.render("./users/edit", 
+          res.render("./users/edit",
           {
             user: foundUser,
             error: "Please upload only images for your profile picture (e.g. .jpeg/.png files)"
@@ -91,13 +91,13 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
       })
     } else {
       User.findById(req.params.userId, (err, user) => {
-        if (err) { 
+        if (err) {
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
             let updatedUser
-            if (req.file == undefined) { 
-              updatedUser = User.findByIdAndUpdate(req.params.userId, 
+            if (req.file == undefined) {
+              updatedUser = User.findByIdAndUpdate(req.params.userId,
                 {
                   bio: req.sanitize(req.body.bio),
                   organization: req.sanitize(req.body.organization),
@@ -107,7 +107,7 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
               if (!(user.profilePic === '')) {
                 fs.unlinkSync(`./public/uploads/${user.profilePic}`)
               }
-              updatedUser = User.findByIdAndUpdate(req.params.userId, 
+              updatedUser = User.findByIdAndUpdate(req.params.userId,
                 {
                   bio: req.sanitize(req.body.bio),
                   organization: req.sanitize(req.body.organization),
@@ -116,22 +116,62 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
                 }
               )
             }
-            updatedUser.exec((err, user) => {
-              if(err) {
-                console.log(err)
-                req.flash("error", "Something went wrong...Try again")
-                res.redirect("/users/:userId")
-              } else {
-                req.flash("success", "Successfully updated profile")
-                res.redirect("/users/" + req.params.userId)
-              }       
-            })
+            updatedUser = User.findByIdAndUpdate(req.params.userId,
+              {
+                bio: req.body.bio,
+                organization: req.body.organization,
+                profilePic: req.file.filename,
+                email: req.body.email
+              }
+            )
           }
-        })
-      }
-    })
+          updatedUser.exec((err, user) => {
+            if(err) {
+              console.log(err)
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("/users/:userId")
+            } else {
+              req.flash("success", "Successfully updated profile")
+              res.redirect("/users/" + req.params.userId)
+            }
+          })
+        }
+      })
+    }
   })
+})
 
-  
+// Show form to change password
+router.get("/change_password", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/change_password", {user: foundUser})
+    }
+  })
+})
+
+// Change password logic
+router.put("/change_password", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId)
+      .then(foundUser => {
+          foundUser.changePassword(req.body.current, req.body.new)
+              .then(() => {
+                console.log('password changed');
+                req.flash("success", "Password was changed successfully")
+                res.redirect("/users/" + req.params.userId)
+              })
+              .catch((error) => {
+                req.flash("error", "Incorrect current password")
+                res.redirect("/users/" + req.params.userId + "/change_password")
+              })
+      })
+      .catch((error) => {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("/users/" + req.params.userId)
+      });
+})
 
 module.exports = router
