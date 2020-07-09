@@ -5,6 +5,9 @@
             <h6>Group Leader: <%= group.groupLeader.name %></h6>
             <h6><em><%=group.description%></em></h6>
             <hr>
+            <% if (group.messages.length === 0) { %>
+                <h6 class="text-secondary mt-4 mb-4">There are currently no messages.</h6>
+            <% } %>
             <div class="overflow-auto container" style="height:auto; width:100%; max-height:400px" id="messageThread">
             <% group.messages.forEach(message => { %>
                 <div class="row">
@@ -16,6 +19,13 @@
                         <span class="pull-right text-primary">
                             <small><em><%= message.time%></em></small>
                         </span>
+                        <% if (message.author.id.equals(currentUser._id)) {%> 
+                        <span class="pull-right">
+                            <form class="d-inline ml-2" action="/events/<%=event._id%>/groups/<%=group._id%>/forum/<%=message._id%>?_method=DELETE" method="POST">
+                                <button class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </span>
+                        <% } %>
                         <p style="width:90%">
                             <%= message.text %>
                         </p>
@@ -27,8 +37,7 @@
         <form action="/events/<%= event._id %>/groups/<%= group._id%>/forum" method="POST">
             <div class="form-group">
                 <textarea class="form-control" placeholder="Add a new message" name="message[text]" required></textarea>
-            </div>
-            
+            </div>  
             <button class="btn btn-primary">Submit</button>
         </form>
         <div class="mt-5 mb-5">
