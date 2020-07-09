@@ -41,6 +41,12 @@ const groupSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectID,
       ref: "User"
     }
+  ],
+  messages: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "Message"
+    }
   ]
 })
 
