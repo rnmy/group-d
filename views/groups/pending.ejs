@@ -13,12 +13,16 @@
         <li class="list-group-item">
           <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-dark">Group Page</a>
         </li>
+        <li class="list-group-item">
+          <a href="/events/<%= event._id %>/groups/<%= group._id%>/forum" class="text-dark">Group Forum</a>
+        </li>
         
         <% if(String(currentUser._id) == String(group.groupLeader.id)){ %>
-          <li class="list-group-item text-decoration-none active">
+          <li class="list-group-item text-decoration-none active justify-content-between align-items-center">
             <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-light">
-              Pending Requests: <strong><%=group.pending.length%></strong> 
+              Pending Requests
             </a> 
+            <span class="badge badge-warning badge-pill"><%=group.pending.length%></span>
           </li>
         <% } %>
         <% if(currentUser._id.equals(group.groupLeader.id)) { %>
