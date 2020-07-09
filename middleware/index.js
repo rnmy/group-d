@@ -1,6 +1,7 @@
 let Event = require("../models/event");
 let Group = require("../models/group");
 let User = require("../models/user");
+let Message = require("../models/message");
 
 // all the middleware goes here
 let middlewareObj = {};
@@ -75,5 +76,23 @@ middlewareObj.isGroupLeader = function(req, res, next) {
         res.redirect("/login");
     }
 }
+
+ middlewareObj.isMessageCreator = function(req, res, next) {
+     if(req.isAuthenticated()) {
+         Message.findById(req.params.messageid, (err, foundMessage) => {
+             if (err) {
+                req.flash("error", "Message not found!")
+                res.redirect("/events/" + req.params.id + "/groups/")
+             } else {
+                 if (foundMessage.author.id.equals(req.user._id)) {
+                     next()
+                 } else {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "forum/")
+                 }
+             }
+         })
+     }
+ }
 
 module.exports = middlewareObj;
