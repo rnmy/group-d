@@ -24,18 +24,28 @@ router.get("/new", middleware.isLoggedIn, (req, res) => {
 
 // Add new event to DB
 router.post("/", middleware.isLoggedIn, (req, res) => {
-    const newEvent = req.body.event;
-    const validURL = validator.isURL(newEvent.url)
+    const validURL = validator.isURL(req.body.event.url)
       if(!validURL){
         req.flash("error", "Please input a valid url")
         res.redirect("/events")
       } else {
-        Event.create(newEvent, (err, event) => {
+        req.body.event.name = req.sanitize(req.body.event.name)
+        req.body.event.desc = req.sanitize(req.body.event.desc)
+        req.body.event.requirements = req.sanitize(req.body.event.requirements)
+        req.body.event.prizes = req.sanitize(req.body.event.prizes)
+        const author = {
+          id: req.user._id,
+          username: req.user.username
+        }
+        Event.create(req.body.event, (err, event) => {
           if(err){
+              console.log(err)
               req.flash("error", "This event has already been created")
               res.redirect("/events")
           } else {
-              req.flash("success", 'The event "' + newEvent.name + '" has been created successfully')
+              event.author = author
+              event.save()
+              req.flash("success", 'The event "' + req.body.event.name + '" has been created successfully')
               res.redirect("/events");
           }
         })
@@ -68,14 +78,15 @@ router.get("/:id", middleware.isLoggedIn, (req, res) => {
         {
           event: foundEvent,
           allUsers: allUsers,
-          allPending: allPending
+          allPending: allPending,
+          currentUser: req.user
         })
       }).catch((err) => console.log(err))
   }})
 })
 
 // Form for editing event
-router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
+router.get("/:id/edit", middleware.isEventCreator, (req, res) => {
   Event.findById(req.params.id, (err, foundEvent) => {
     if(err) {
       req.flash("error", "Something went wrong...Try again")
@@ -87,10 +98,14 @@ router.get("/:id/edit", middleware.isLoggedIn, (req, res) => {
 })
 
 // Updating event logic
-router.put("/:id/", middleware.isLoggedIn, (req, res) => {
+router.put("/:id/", middleware.isEventCreator, (req, res) => {
+  req.body.event.name = req.sanitize(req.body.event.name)
+  req.body.event.desc = req.sanitize(req.body.event.desc)
+  req.body.event.requirements = req.sanitize(req.body.event.requirements)
+  req.body.event.prizes = req.sanitize(req.body.event.prizes)
   Event.findByIdAndUpdate(req.params.id, req.body.event, { runValidators: true, context: 'query' }, (err, updatedEvent) => {
     if(err) {
-      req.flash("error", "This event has already been created")
+      req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
       req.flash("success", "The event has been updated successfully")

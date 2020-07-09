@@ -1,0 +1,43 @@
+<%- include("../partials/header") %>
+
+    <div class="container">
+            <h1 class="display-4 pt-5"><strong><%= group.name%>'s Forum</strong></h1>
+            <h6>Group Leader: <%= group.groupLeader.name %></h6>
+            <h6><em><%=group.description%></em></h6>
+            <hr>
+            <div class="overflow-auto container" style="height:auto; width:100%; max-height:400px" id="messageThread">
+            <% group.messages.forEach(message => { %>
+                <div class="row">
+                    <div class="col-md-12">
+                        <strong><%= message.author.username%></strong>
+                        <span class="pull-right text-primary">
+                            <small><em><%= message.date%> @ </em></small>
+                        </span>
+                        <span class="pull-right text-primary">
+                            <small><em><%= message.time%></em></small>
+                        </span>
+                        <p style="width:90%">
+                            <%= message.text %>
+                        </p>
+                    </div>
+                </div>
+            <% }) %>
+            <hr>
+        </div> 
+        <form action="/events/<%= event._id %>/groups/<%= group._id%>/forum" method="POST">
+            <div class="form-group">
+                <textarea class="form-control" placeholder="Add a new message" name="message[text]" required></textarea>
+            </div>
+            
+            <button class="btn btn-primary">Submit</button>
+        </form>
+        <div class="mt-5 mb-5">
+            <a href="/events/<%= event._id%>/groups/<%= group._id%>">Go back to <%= group.name%></a>
+        </div>
+    </div>
+    <script>
+        const messageThread = document.querySelector("#messageThread")
+        messageThread.scrollTop = messageThread.scrollHeight
+    </script>
+
+<%- include("../partials/footer") %>

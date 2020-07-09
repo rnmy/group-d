@@ -9,9 +9,13 @@
           <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
             See details
           </a>
-          <a class="btn btn-success" href="/events/<%= event._id%>/edit">
-            Edit this event
-          </a>
+          <% if (currentUser._id.equals(event.author.id)) { %>
+            <a class="btn btn-success" href="/events/<%= event._id%>/edit">
+              Edit this event
+            </a>
+          <% } else if (!(event.author.id == undefined) || (!event.author.username == undefined)) { %>
+            <h6 class="ml-3 mt-2 text-secondary">Submitted by <a href="/users/<%=event.author.id%>"><%=event.author.username%></a></h6>
+          <% } %>
         </div>
       </h1>
     </div>
