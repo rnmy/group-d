@@ -6,28 +6,53 @@
         <div style="width: 30%; margin: 25px auto;">
             <form action="/events" method="POST">
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="name" name="event[name]" required>
+                    <% if (typeof data.name != 'undefined') { %>
+                        <input class="form-control" id="name" type="text" value="<%=data.name%>" name="event[name]" required>
+                    <% } else { %>
+                        <input class="form-control" type="text" placeholder="name" name="event[name]" required>
+                    <% } %>
                 </div>
                 <div class="form-group">
                     <input class="form-control" type="text" placeholder="event link" name="event[url]" required>
                 </div>
+
                 <div class="form-group">
-                    <textarea class="form-control" type="text" placeholder="description" name="event[desc]" required></textarea>
+                    <% if (typeof data.desc != 'undefined') { %> 
+                        <textarea class="form-control" type="text" id="desc" name="event[desc]" required></textarea>
+                    <% } else { %>
+                        <textarea class="form-control" type="text" placeholder="description" name="event[desc]" required></textarea>
+                    <% } %>
+                    </div>
+                <div class="form-group">
+                    <% if (typeof data.requirements != 'undefined') { %> 
+                        <textarea class="form-control" type="text" id="req" name="event[requirements]" required></textarea>
+                    <% } else { %>
+                        <textarea class="form-control" type="text" placeholder="requirements" name="event[requirements]" required></textarea>
+                    <% } %>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" type="text" placeholder="requirements" name="event[requirements]" required></textarea>
-                </div>
-                <div class="form-group">
-                    <textarea class="form-control" type="text" placeholder="prizes" name="event[prizes]" required></textarea>
-                </div>
+                    <% if (typeof data.prizes != 'undefined') { %> 
+                        <textarea class="form-control" type="text" id="prizes" name="event[prizes]" required></textarea>
+                    <% } else { %>
+                        <textarea class="form-control" type="text" placeholder="prizes" name="event[prizes]" required></textarea>
+                    <% } %>
+                    </div>
                 <div class="form-group">
                     <input class="form-control" type="date" placeholder="date" name="event[date]" required>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="number" min="1" placeholder="minimum group size" name="event[minGroupSize]" required>
+                    <% if (typeof data.minGroupSize != 'undefined') { %> 
+                        <input class="form-control" type="number" min="1" value="<%=data.minGroupSize%>"name="event[minGroupSize]" required>
+                    <% } else { %>
+                        <input class="form-control" type="number" min="1" placeholder="minimum group size" name="event[minGroupSize]" required>
+                    <% } %>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="number" min="1" placeholder="maximum group size" name="event[maxGroupSize]" required>
+                    <% if (typeof data.maxGroupSize != 'undefined') { %> 
+                        <input class="form-control" type="number" min="1" value="<%=data.maxGroupSize%>" name="event[maxGroupSize]" required>
+                    <% } else { %>
+                        <input class="form-control" type="number" min="1" placeholder="maximum group size" name="event[maxGroupSize]" required>
+                    <% } %>
                 </div>
                 <div class="form-group">
                     <button class="btn btn-lg btn-primary btn-block">Submit</button>
@@ -35,6 +60,11 @@
             </form>
             <a href="/events">Go back</a>
         </div>
+        <script>
+            document.querySelector("#desc").innerText = `<%= data.desc%>`
+            document.querySelector("#req").innerText = `<%= data.requirements%>`
+            document.querySelector("#prizes").innerText = `<%= data.prizes%>`
+        </script>
 </div>
 
 <%- include("../partials/footer") %>

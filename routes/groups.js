@@ -435,4 +435,17 @@ router.post("/:groupid/forum", middleware.isGroupMember, (req, res) => {
       })
   })
 
+  // Delete your comment 
+  router.delete("/:groupid/forum/:messageid", middleware.isMessageCreator, (req, res) => {
+    Message.findByIdAndRemove(req.params.messageid, (err, foundMessage) => {
+      if(err) {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("back")
+      } else {
+        req.flash("success", "Message deleted")
+        res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/forum")
+      }
+    })
+  })
+
 module.exports = router
