@@ -4,7 +4,7 @@
     <h1>Add New Group to <div><%= event.name %></div></h1>
 
     <div style="width: 30%; margin: 25px auto;">
-        <form action="/events/<%= event._id %>/groups" method="POST">
+        <form id="createGroup" action="/events/<%= event._id %>/groups" method="POST">
             <div class="form-group">
                 <input class="form-control" type="text" placeholder="Group Name" name="groupName" required>
             </div>
@@ -12,12 +12,22 @@
                 <input class="form-control" type="text" placeholder="Short description" name="descr" required>
             </div>
             <div class="form-group">
-                <button class="btn btn-lg btn-primary btn-block">Submit!</button>
+                <button onClick="createGroupAlert()" class="btn btn-lg btn-primary btn-block">Submit!</button>
             </div>
         </form>
 
         <a href="/events/<%= event._id %>/groups">Go back</a>
     </div>
 </div>
+
+<script>
+    function createGroupAlert() {
+        if (confirm("You will become the default group leader and will not be able to create/join other groups under the same event while in this group. Proceed?")) {
+            document.querySelector("#createGroup").submit()
+        } else {
+            event.preventDefault()
+        }
+    }
+</script>
 
 <%- include("../partials/footer") %>
