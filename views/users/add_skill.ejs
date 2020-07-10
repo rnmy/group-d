@@ -42,7 +42,6 @@
             <button class="btn btn-link mt-3" onclick="goBack()">Go Back</button>
             <% } %>
         </div>
-
         <div class="col-lg-9 col-md-8 col-sm-12 pt-md-1 pt-sm-4">
             <div class="card mb-3">
                 <div class="card-body">
@@ -61,14 +60,15 @@
                     </div>
                 </div>
             </div>
-
+            
             <div class="card mb-3">
                 <div class="card-body">
                     <div class="card-title">
                         <div class="row ml-1">
                             <h3><strong>Skills</strong></h3>
                             <a class="btn" href="/users/<%= user._id %>/add_skill" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                            <a class="btn" href="/users/<%= user._id %>/remove_skill" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <a class="btn" href="/users/<%= user._id %>/remove_skill" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
                         </div>
                     </div>
                     <p class="card-text">
@@ -79,6 +79,16 @@
                                 </div>
                             <% })%>
                         </ul>
+                        <form action="/users/<%= user._id%>/add_skill?_method=PUT" method="POST">
+                            <div class="row">
+                                <div class="form-group ml-3 mr-1">
+                                    <input class="form-control" type="text" placeholder="new skill" name="skill" required>
+                                </div>  
+                                <div class="form-group">
+                                    <button class="btn btn-md btn-primary btn-block">Submit</button>
+                                </div>
+                            </div>                       
+                        </form>
                     </p>
                 </div>
             </div>
@@ -89,7 +99,8 @@
                         <div class="row ml-1">
                             <h3><strong>Interests</strong></h3>
                             <a class="btn" href="/users/<%= user._id %>/add_int" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                            <a class="btn" href="/users/<%= user._id %>/remove_int" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <a class="btn" href="/users/<%= user._id %>/remove_int" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
                         </div>
                     </div>
                     <p class="card-text">

@@ -1,14 +1,33 @@
 <%- include("../partials/header") %>
 
-<div class="jumbotron pt-2 pb-2">
-    <div class="container">
-      <h1 class="display-4">Edit your profile</h1>
-    </div>
+<div class="container">
+  <div class="jumbotron">
+    <h1 class="mb-4 display-3"><%= user.name %></h1>
+  </div>
+  <div class="mb-5">
+    <% if(currentUser._id.equals(user._id)) { %> 
+      <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/users/<%= user._id %>">My Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/users/<%= user._id%>/pending">My Groups</a>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
+                <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
+              </div>
+          </li>
+      </ul>
+  <% } %>  
   </div>
   <div class="container">
+    <h3 class="mb-3"><strong>Edit Profile</strong></h3>
     <form action="/users/<%= user._id%>?_method=PUT" method="POST" enctype="multipart/form-data">
       <div class="form-group">
-        <label class="text-primary">Profile Pic (Only images are allowed):</label>
+        <label class="text-primary">New Profile Pic (Only images are allowed):</label>
         <input type="file" class="form-control-file" name="file">
       </div>
       <div class="form-group">
@@ -23,9 +42,9 @@
         <label class="text-primary" for="organization">Organization:</label>
         <input class="form-control" id="organization" type="text" name="organization" value="<%= user.organization %>" required>
       </div>
-      <a class="btn btn-primary" href="/users/<%= user._id%>">Go back</a>
-      <input class="btn btn-success" type="submit">
+      <button class="btn btn-success" type="submit">Edit</button>
     </form>
   </div>
+</div>
 
 <%- include("../partials/footer") %>
