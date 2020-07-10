@@ -41,8 +41,8 @@
 
         <% } else { %>
           <li class="list-group-item">
-            <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-              <button class="btn btn-sm text-danger" style="border: none; background: none;">Leave Group</button>  
+            <form id="leaveGroup" action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
+              <button onClick="leaveGroupAlert()" class="btn btn-sm text-danger">Leave Group</button>  
             </form>
           </li>
         <% } %>
@@ -127,6 +127,16 @@
     }
   }
 
+</script>
+
+<script>
+  function leaveGroupAlert() {
+      if (confirm("You will not be able to join this group again. Proceed?")) {
+          document.querySelector("#leaveGroup").submit()
+      } else {
+          event.preventDefault()
+      }
+  }
 </script>
 
 <%- include("../partials/footer") %>

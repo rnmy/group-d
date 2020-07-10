@@ -39,8 +39,8 @@
           <% } %>
         <% } else { %>
           <li class="list-group-item">
-            <form action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-              <button class="btn btn-sm text-danger">Leave Group</button>  
+            <form id="leaveGroup" action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
+              <button onClick="leaveGroupAlert()" class="btn btn-sm text-danger">Leave Group</button>  
             </form>
           </li>
         <% } %>
@@ -99,8 +99,8 @@
               && (!(group.removed.includes(currentUser._id))
               && (!(group.left.includes(currentUser._id)))) 
            ) { %>
-          <form action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
-            <button class="btn btn-success mb-5">Join this group</button>
+          <form id="joinGroup" action="/events/<%= event._id%>/groups/<%= group._id%>?_method=PUT" method="post">
+            <button onClick="joinGroupAlert()" class="btn btn-success mb-5">Join this group</button>
           </form>
         <% } %>
         <a href="/events/<%= event._id%>">Go back to <%= event.name%></a>
@@ -119,5 +119,23 @@
     }
 </script>
 
+
+<script>
+  function joinGroupAlert() {
+      if (confirm("You will not be able to join/create another group under the same event while your request is pending. Proceed?")) {
+          document.querySelector("#joinGroup").submit()
+      } else {
+          event.preventDefault()
+      }
+  }
+
+  function leaveGroupAlert() {
+      if (confirm("You will not be able to join this group again. Proceed?")) {
+          document.querySelector("#leaveGroup").submit()
+      } else {
+          event.preventDefault()
+      }
+  }
+</script>
 
 <%- include("../partials/footer") %>
