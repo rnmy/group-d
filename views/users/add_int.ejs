@@ -1,0 +1,130 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="mb-4 display-3"><%= user.name %></h1>
+    </div>
+    <div class="mb-5">
+        <% if(currentUser._id.equals(user._id)) { %> 
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                  <a class="nav-link active" href="/users/<%= user._id %>">My Profile</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-dark" href="/users/<%= user._id%>/pending">My Groups</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
+                    <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
+                      <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
+                    </div>
+                </li>
+            </ul>
+        <% } %>  
+    </div>
+    <div class="row">        
+        <div class="col-lg-3 col-md-4 col-sm-12">
+            <div class="card m-0" style="width: 100%">
+                <% if(!user.profilePic){ %>
+                    <img class="card-img-top" src="/placeholder/placeholder.png">
+                <% } else { %>
+                    <img class="card-img-top" src="/uploads/<%= user.profilePic %>">
+                <% } %>           
+                <div class="card-body">
+                  <h5 class="card-title">@<%= user.username %></h5>
+                  <h6 class="card-subtitle mb-2 text-muted"><%= user.organization %></h6>
+                  <p class="card-text"><%= user.bio %></p>
+                  <p class="card-text"><em><%= user.email %></em></p>
+                </div>
+            </div>
+            <% if(!currentUser._id.equals(user.id)) { %>
+            <button class="btn btn-link mt-3" onclick="goBack()">Go Back</button>
+            <% } %>
+        </div>
+        <div class="col-lg-9 col-md-8 col-sm-12 pt-md-1 pt-sm-4">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="card-title">
+                        <div class="row ml-1">
+                            <h3><strong>Experience</strong></h3>
+                            <a class="btn" href="/users/<%= user._id %>/add_exp" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                            <a class="btn" href="/users/<%= user._id %>/remove_exp" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div class="card-text ml-1">
+                        <% user.exp.forEach((exp) => { %>
+                            <h5><%= exp.name %></h5>
+                            <p><%= exp.desc %></p>
+                        <% })%>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="card-title">
+                        <div class="row ml-1">
+                            <h3><strong>Skills</strong></h3>
+                            <a class="btn" href="/users/<%= user._id %>/add_skill" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                            <a class="btn" href="/users/<%= user._id %>/remove_skill" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="card-text">
+                        <ul>
+                            <% user.skills.forEach((skill) => { %>
+                                <div class="row">
+                                    <li><%= skill %></li>
+                                </div>
+                            <% })%>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="card-title">
+                        <div class="row ml-1">
+                            <h3><strong>Interests</strong></h3>
+                            <a class="btn" href="/users/<%= user._id %>/add_int" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                            <a class="btn" href="/users/<%= user._id %>/remove_int" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <p class="card-text">
+                        <ul>
+                            <% user.int.forEach((int) => { %>
+                                <div class="row">
+                                    <li><%= int %></li>
+                                </div>
+                            <% })%>
+                        </ul>
+                        <form action="/users/<%= user._id%>/add_int?_method=PUT" method="POST">
+                            <div class="row">
+                                <div class="form-group ml-3 mr-1">
+                                    <input class="form-control" type="text" placeholder="new interest" name="int" required>
+                                </div>  
+                                <div class="form-group">
+                                    <button class="btn btn-md btn-primary btn-block">Submit</button>
+                                </div>
+                            </div>                       
+                        </form>
+                    </p>
+                </div>
+            </div>
+        </div>  
+    </div> 
+</div>
+
+<script>
+    function goBack() {
+        window.history.back();
+    } 
+</script>
+
+<%- include("../partials/footer") %>
+
+
+
