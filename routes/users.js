@@ -29,35 +29,42 @@ const upload = multer({
 
 // Show user page
 router.get("/", middleware.isLoggedIn, (req, res) => {
-    User.findById(req.params.userId, (err, user) => {
-      if(err){
-        req.flash("error", "Something went wrong...Try again")
-        res.redirect("back")
-      } else {
-        res.render("./users/show", {user: user});
-      }
-    });
+  User.findById(req.params.userId, (err, user) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("back")
+    } else {
+      res.render("./users/show", {user: user});
+    }
   });
+});
 
 
  // View pending requests
  router.get("/pending", middleware.isLoggedIn, (req, res) => {
-    helper.getGroupIDs(req.params.userId).then((arr) => {
-      const newArr = Promise.all(arr.map((groupID) => helper.getEvent(groupID)))
-      return newArr
-    }).then((arr) => {
-      let data = []
-      for (let i = 0 ; i < arr.length; i++) {
-        let groupEventPair = {}
-        groupEventPair.group = arr[i].group
-        groupEventPair.event = arr[i].event
-        data.push(groupEventPair)
+   User.findById(req.params.userId, (err, foundUser) => {
+      if(err) {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("back")
+      } else {
+        helper.getGroupIDs(req.params.userId).then((arr) => {
+          const newArr = Promise.all(arr.map((groupID) => helper.getEvent(groupID)))
+          return newArr
+        }).then((arr) => {
+          let data = []
+          for (let i = 0 ; i < arr.length; i++) {
+            let groupEventPair = {}
+            groupEventPair.group = arr[i].group
+            groupEventPair.event = arr[i].event
+            data.push(groupEventPair)
+          }
+          return data
+        }).then((result) => {
+          const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
+        return newresult}).then((result) => {
+        res.render("./users/status", {user: foundUser, data: result})}).catch((err) => console.log(err))
       }
-      return data
-    }).then((result) => {
-      const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
-    return newresult}).then((result) => {
-    res.render("./users/status", {data: result})}).catch((err) => console.log(err))
+   })
  })
 
 // Show form to edit own profile
@@ -132,8 +139,6 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
   })
 })
         
-
-
 // Show form to change password
 router.get("/change_password", middleware.isLoggedIn, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
@@ -164,6 +169,174 @@ router.put("/change_password", middleware.isLoggedIn, (req, res) => {
         req.flash("error", "Something went wrong...Try again")
         res.redirect("/users/" + req.params.userId)
       });
+})
+
+// Add experience
+router.get("/add_exp", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/add_exp", {user: foundUser})
+    }
+  })
+})
+
+// Add experience logic
+router.put("/add_exp", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      console.log(foundUser.exp.indexOf({name: req.body.exp.name} == -1))
+      if(foundUser.exp.indexOf({name: req.body.exp.name})) {
+        foundUser.exp.push(req.body.exp)
+        foundUser.save()       
+        req.flash("success", "Successfully added experience")
+        res.redirect("/users/" + req.params.userId)
+      } else {              
+        req.flash("error", "This experience already exists")
+        res.redirect("/users/" + req.params.userId + "/add_exp")
+      }
+    }
+  })
+})
+
+// Remove experience
+router.get("/remove_exp", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/remove_exp", {user: foundUser})
+    }
+  })
+})
+
+// Remove experience logic
+router.put("/remove_exp/:expName", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      foundUser.exp.splice(foundUser.exp.indexOf({name: req.params.expName}), 1)
+      foundUser.save()
+      req.flash("success", "Successfully removed experience")
+      res.redirect("/users/" + req.params.userId)
+    }
+  })
+})
+
+// Add skill
+router.get("/add_skill", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/add_skill", {user: foundUser})
+    }
+  })
+})
+
+// Add skill logic
+router.put("/add_skill", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      foundUser.skills.push(req.body.skill)
+      foundUser.save()       
+      req.flash("success", "Successfully added skill")
+      res.redirect("/users/" + req.params.userId)
+    }
+  })
+})
+
+// Remove skill
+router.get("/remove_skill", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/remove_skill", {user: foundUser})
+    }
+  })
+})
+
+// Remove skill logic
+router.put("/remove_skill/:skillName", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      foundUser.skills.splice(foundUser.skills.indexOf(req.params.skillName), 1)
+      foundUser.save()
+      req.flash("success", "Successfully removed experience")
+      res.redirect("/users/" + req.params.userId)
+    }
+  })
+})
+
+// Add interest
+router.get("/add_int", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/add_int", {user: foundUser})
+    }
+  })
+})
+
+// Add interest logic
+router.put("/add_int", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      foundUser.int.push(req.body.int)
+      foundUser.save()       
+      req.flash("success", "Successfully added interest")
+      res.redirect("/users/" + req.params.userId)
+    }
+  })
+})
+
+// Remove interest
+router.get("/remove_int", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      res.render("./users/remove_int", {user: foundUser})
+    }
+  })
+})
+
+// Remove interest logic
+router.put("/remove_int/:intName", middleware.isLoggedIn, (req, res) => {
+  User.findById(req.params.userId, (err, foundUser) => {
+    if(err){
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      foundUser.int.splice(foundUser.int.indexOf(req.params.intName), 1)
+      foundUser.save()
+      req.flash("success", "Successfully removed interest")
+      res.redirect("/users/" + req.params.userId)
+    }
+  })
 })
 
 module.exports = router
