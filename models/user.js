@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
   password: String,
   organization: String,
   profilePic: String,
-  bio: String
+  bio: String,
+  exp: [{name: String, desc: String}],
+  skills: [{type: String, unique: true, uniqueCaseInsensitive: true}],
+  int: [{type: String, unique: true, uniqueCaseInsensitive: true}]
 })
 
 userSchema.plugin(passportLocalMongoose)
