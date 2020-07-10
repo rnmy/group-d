@@ -116,6 +116,8 @@
     function reopen() {
       if(confirm("The event will be accessible under the event page. You will be able to delete the group again. Proceed?")) {
         document.querySelector("#reopen").submit()
+      } else {
+        event.preventDefault()
       }
     }
     function deleteGroup() {
