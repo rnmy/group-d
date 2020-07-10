@@ -32,8 +32,8 @@
           </li>
           <% if (group.users.length === 1 && group.pending.length === 0) { %>
             <li class="list-group-item">
-              <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
-                <button class="btn btn-sm text-danger">Delete Group</button>
+              <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
               </form>
             </li>
           <% } %>
@@ -109,5 +109,15 @@
   </div>
 </div>
 <% } %>
+<script>
+  function deleteGroup() {
+      if(confirm("This action is irreversible. Proceed?")) {
+        document.querySelector("#deleteGroup").submit()
+      } else {
+        event.preventDefault()
+      }
+    }
+</script>
+
 
 <%- include("../partials/footer") %>
