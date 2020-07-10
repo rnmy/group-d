@@ -34,8 +34,8 @@
             </li>
             <% if (group.users.length === 1 && group.pending.length === 0) { %>
               <li class="list-group-item">
-                <form action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
-                  <button class="btn btn-sm text-danger">Delete Group</button>
+                <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                  <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
                 </form>
               </li>
             <% } %>
@@ -102,8 +102,8 @@
                 <button onClick="closeAlert()" class="btn btn-danger mb-5">Close Group</button>
               </form>
             <% } else if(group.isClosed) { %> 
-              <form action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
-                <button class="btn btn-warning mb-5">Reopen Group</button>
+              <form id="reopen" action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
+                <button onclick="reopen()" class="btn btn-warning mb-5">Reopen Group</button>
               </form>
             <% } %> 
           <% } %>
@@ -112,6 +112,22 @@
       </div>
     </div>
   </div>
+  <script>
+    function reopen() {
+      if(confirm("The event will be accessible under the event page. You will be able to delete the group again. Proceed?")) {
+        document.querySelector("#reopen").submit()
+      } else {
+        event.preventDefault()
+      }
+    }
+    function deleteGroup() {
+      if(confirm("This action is irreversible. Proceed?")) {
+        document.querySelector("#deleteGroup").submit()
+      } else {
+        event.preventDefault()
+      }
+    }
+  </script>
 
   <script>
     function leaveGroupAlert() {
