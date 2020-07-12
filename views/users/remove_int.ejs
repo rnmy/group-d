@@ -53,10 +53,14 @@
                         </div>
                     </div>
                     <div class="card-text ml-1">
-                        <% user.exp.forEach((exp) => { %>
-                            <h5><%= exp.name %></h5>
-                            <p><%= exp.desc %></p>
-                        <% })%>
+                        <% if(user.exp.length == 0) { %> 
+                            <h5>The user has not input any experiences</h5>
+                        <% } else { %> 
+                            <% user.exp.forEach((exp) => { %>
+                                <h5><%= exp.name %></h5>
+                                <p><%= exp.desc %></p>
+                            <% })%>
+                        <% } %> 
                     </div>
                 </div>
             </div>
@@ -72,13 +76,17 @@
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.skills.forEach((skill) => { %>
-                                <div class="row">
-                                    <li><%= skill %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.skills.length == 0) { %> 
+                            <h5>The user has not input any skills</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.skills.forEach((skill) => { %>
+                                    <div class="row">
+                                        <li><%= skill %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
@@ -94,18 +102,22 @@
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.int.forEach((int) => { %>
-                                <div class="row">
-                                    <li><%= int %></li>
-                                    <form action="/users/<%= user._id%>/remove_int/<%= int %>?_method=PUT" method="POST">
-                                        <div class="form-group ml-3 mr-1 mb-0">
-                                            <button class="btn p-0" style="color: lightgrey;"><i class="fa fa-minus" aria-hidden="true"></i></button>
-                                        </div>
-                                    </form>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.int.length == 0) { %> 
+                            <h5>The user has not input any interests</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.int.forEach((int) => { %>
+                                    <div class="row">
+                                        <li><%= int %></li>
+                                        <form action="/users/<%= user._id%>/remove_int/<%= int %>?_method=PUT" method="POST">
+                                            <div class="form-group ml-3 mr-1 mb-0">
+                                                <button class="btn p-0" style="color: lightgrey;"><i class="fa fa-minus" aria-hidden="true"></i></button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
