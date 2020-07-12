@@ -89,8 +89,8 @@
 
       <div class="mt-5">
         <% if (group.pending.includes(currentUser._id)) { %>
-          <form action="/events/<%= event._id%>/groups/<%= group._id%>/cancel?_method=PUT" method="post">
-            <button class="btn btn-danger mb-5">Cancel Join Request</button>
+          <form id="cancelJoin" action="/events/<%= event._id%>/groups/<%= group._id%>/cancel?_method=PUT" method="post">
+            <button onClick="cancelJoinAlert()" class="btn btn-danger mb-5">Cancel Join Request</button>
           </form>
         <% } else if (!(group.users.length == event.maxGroupSize) 
               && (!(allUsers.includes(String(currentUser._id)))) 
@@ -124,6 +124,14 @@
   function joinGroupAlert() {
       if (confirm("You will not be able to join/create another group under the same event while your request is pending. Proceed?")) {
           document.querySelector("#joinGroup").submit()
+      } else {
+          event.preventDefault()
+      }
+  }
+
+  function cancelJoinAlert() {
+      if (confirm("Your request to join this group will be cancelled. Proceed?")) {
+          document.querySelector("#cancelJoin").submit()
       } else {
           event.preventDefault()
       }
