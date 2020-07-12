@@ -70,7 +70,7 @@ router.post("/register",function(req, res){
         User.register(newUser, req.body.password, function(err, user){
           if(err){
             req.flash("error", err.message)
-            console.log(err);
+            console.log(err)
             return res.redirect("/register");
           }
           passport.authenticate("local")(req, res, function(){

@@ -11,11 +11,12 @@ const userSchema = new mongoose.Schema({
   profilePic: String,
   bio: String,
   exp: [{name: String, desc: String}],
-  skills: [{type: String, unique: true, uniqueCaseInsensitive: true}],
-  int: [{type: String, unique: true, uniqueCaseInsensitive: true}]
+  skills: [{type: String}],
+  int: [{type: String}]
 })
 
 userSchema.plugin(passportLocalMongoose)
 userSchema.plugin(uniqueValidator, {message: 'This email is already linked to an existing account'});
+
 
 module.exports = mongoose.model("User", userSchema)

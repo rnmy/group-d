@@ -95,4 +95,22 @@ middlewareObj.isGroupLeader = function(req, res, next) {
      }
  }
 
+ middlewareObj.isAuthorisedUser = function(req, res, next) {
+     if (req.isAuthenticated()) {
+         User.findById(req.params.userId, (err, foundUser) => {
+             if (err) {
+                req.flash("error", "User not found!")
+                res.redirect("back")
+             } else {
+                 if (foundUser._id.equals(req.user._id)) {
+                     next()
+                 } else {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/users/" + req.params.userId)
+                 }
+             }
+         })
+     }
+ }
+
 module.exports = middlewareObj;

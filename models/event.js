@@ -18,11 +18,17 @@ const eventSchema = new mongoose.Schema({
     ],
     author: {
       id: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectID,
         ref: "User"
       },
       username: String
-    }
+    },
+    bookmarks: [
+      {
+        type: mongoose.Schema.Types.ObjectID,
+        ref: "User"
+      }
+    ]
 })
 
 eventSchema.plugin(uniqueValidator);
