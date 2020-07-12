@@ -53,10 +53,14 @@
                         </div>
                     </div>
                     <div class="card-text ml-1">
-                        <% user.exp.forEach((exp) => { %>
-                            <h5><%= exp.name %></h5>
-                            <p><%= exp.desc %></p>
-                        <% })%>
+                        <% if(user.exp.length == 0) { %> 
+                            <h5>The user has not input any experiences</h5>
+                        <% } else { %> 
+                            <% user.exp.forEach((exp) => { %>
+                                <h5><%= exp.name %></h5>
+                                <p><%= exp.desc %></p>
+                            <% })%>
+                        <% } %> 
                     </div>
                 </div>
             </div>
@@ -72,13 +76,17 @@
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.skills.forEach((skill) => { %>
-                                <div class="row">
-                                    <li><%= skill %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.skills.length == 0) { %> 
+                            <h5>The user has not input any skills</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.skills.forEach((skill) => { %>
+                                    <div class="row">
+                                        <li><%= skill %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
