@@ -114,7 +114,7 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
   })
 })
 
-// Join group updating logic
+// Cancel join group request logic
 router.put("/:groupid/cancel", middleware.isLoggedIn, (req, res) => {
   Group.findById(req.params.groupid, (err, group) => {
     if(err) {

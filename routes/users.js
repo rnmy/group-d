@@ -279,7 +279,7 @@ router.put("/remove_skill/:skillName", middleware.isLoggedIn, (req, res) => {
     } else {
       foundUser.skills.splice(foundUser.skills.indexOf(req.params.skillName), 1)
       foundUser.save()
-      req.flash("success", "Successfully removed experience")
+      req.flash("success", "Successfully removed skill")
       res.redirect("/users/" + req.params.userId)
     }
   })

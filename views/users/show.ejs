@@ -49,15 +49,21 @@
                     <div class="card-title">
                         <div class="row ml-1">
                             <h3><strong>Experience</strong></h3>
-                            <a class="btn" href="/users/<%= user._id %>/add_exp" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                            <a class="btn" href="/users/<%= user._id %>/remove_exp" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% if(currentUser._id.equals(user._id)) { %> 
+                                <a class="btn" href="/users/<%= user._id %>/add_exp" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                <a class="btn" href="/users/<%= user._id %>/remove_exp" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% } %> 
                         </div>
                     </div>
                     <div class="card-text ml-1">
-                        <% user.exp.forEach((exp) => { %>
-                            <h5><%= exp.name %></h5>
-                            <p><%= exp.desc %></p>
-                        <% })%>
+                        <% if(user.exp.length == 0) { %> 
+                            <h5>The user has not input any experiences</h5>
+                        <% } else { %> 
+                            <% user.exp.forEach((exp) => { %>
+                                <h5><%= exp.name %></h5>
+                                <p><%= exp.desc %></p>
+                            <% })%>
+                        <% } %> 
                     </div>
                 </div>
             </div>
@@ -67,18 +73,24 @@
                     <div class="card-title">
                         <div class="row ml-1">
                             <h3><strong>Skills</strong></h3>
-                            <a class="btn" href="/users/<%= user._id %>/add_skill" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                            <a class="btn" href="/users/<%= user._id %>/remove_skill" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% if(currentUser._id.equals(user._id)) { %> 
+                                <a class="btn" href="/users/<%= user._id %>/add_skill" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                <a class="btn" href="/users/<%= user._id %>/remove_skill" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% } %> 
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.skills.forEach((skill) => { %>
-                                <div class="row">
-                                    <li><%= skill %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.skills.length == 0) { %> 
+                            <h5>The user has not input any skills</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.skills.forEach((skill) => { %>
+                                    <div class="row">
+                                        <li><%= skill %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
@@ -88,18 +100,24 @@
                     <div class="card-title">
                         <div class="row ml-1">
                             <h3><strong>Interests</strong></h3>
-                            <a class="btn" href="/users/<%= user._id %>/add_int" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
-                            <a class="btn" href="/users/<%= user._id %>/remove_int" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% if(currentUser._id.equals(user._id)) { %> 
+                                <a class="btn" href="/users/<%= user._id %>/add_int" style="color: lightgreen;"><i class="fa fa-plus" aria-hidden="true"></i></a>
+                                <a class="btn" href="/users/<%= user._id %>/remove_int" style="color: lightsalmon;"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                            <% } %> 
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.int.forEach((int) => { %>
-                                <div class="row">
-                                    <li><%= int %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.int.length == 0) { %> 
+                            <h5>The user has not input any interests</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.int.forEach((int) => { %>
+                                    <div class="row">
+                                        <li><%= int %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
