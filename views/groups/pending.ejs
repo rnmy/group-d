@@ -102,9 +102,9 @@
         event.preventDefault()
       }
     }
-  const remaining = <%=(event.maxGroupSize - group.users.length)%>
+  const remaining = <%=(event.maxGroupSize - group.users.length - 1)%>
   function accept(){ 
-    if(confirm(`You will only be able to accept ${remaining} more members after this. Proceed?`)) {
+    if(confirm(`You will only be able to accept ${remaining} more member(s) after this. Proceed?`)) {
       return true;
     } else {
       return false;
