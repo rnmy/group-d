@@ -84,13 +84,17 @@
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.skills.forEach((skill) => { %>
-                                <div class="row">
-                                    <li><%= skill %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.skills.length == 0) { %> 
+                            <h5>The user has not input any skills</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.skills.forEach((skill) => { %>
+                                    <div class="row">
+                                        <li><%= skill %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
@@ -105,13 +109,17 @@
                         </div>
                     </div>
                     <p class="card-text">
-                        <ul>
-                            <% user.int.forEach((int) => { %>
-                                <div class="row">
-                                    <li><%= int %></li>
-                                </div>
-                            <% })%>
-                        </ul>
+                        <% if(user.int.length == 0) { %> 
+                            <h5>The user has not input any interests</h5>
+                        <% } else { %> 
+                            <ul>
+                                <% user.int.forEach((int) => { %>
+                                    <div class="row">
+                                        <li><%= int %></li>
+                                    </div>
+                                <% })%>
+                            </ul>
+                        <% } %> 
                     </p>
                 </div>
             </div>
