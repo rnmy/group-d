@@ -191,7 +191,8 @@ router.put("/add_exp", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      if(foundUser.exp.indexOf({name: req.body.exp.name})) {
+      const allExpNames = foundUser.exp.map(experience => experience.name.toLowerCase())
+      if(allExpNames.includes(req.body.exp.name.toLowerCase()) === -1) {
         foundUser.exp.push(req.body.exp)
         foundUser.save()       
         req.flash("success", "Successfully added experience")
@@ -250,10 +251,16 @@ router.put("/add_skill", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      foundUser.skills.push(req.body.skill)
-      foundUser.save()       
-      req.flash("success", "Successfully added skill")
-      res.redirect("/users/" + req.params.userId)
+      const allSkills = foundUser.skills.map(skill => skill.toLowerCase())
+      if (allSkills.includes(req.body.skill.toLowerCase())) {
+        req.flash("error", "You already have that skill!")
+        res.redirect("/users/" + req.params.userId)
+      } else {
+        foundUser.skills.push(req.body.skill)
+        foundUser.save()       
+        req.flash("success", "Successfully added skill")
+        res.redirect("/users/" + req.params.userId)
+      }  
     }
   })
 })
@@ -304,10 +311,16 @@ router.put("/add_int", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      foundUser.int.push(req.body.int)
-      foundUser.save()       
-      req.flash("success", "Successfully added interest")
-      res.redirect("/users/" + req.params.userId)
+      const allInt = foundUser.int.map(int => int.toLowerCase())
+      if (allInt.includes(req.body.int.toLowerCase())) {
+        req.flash("error", "You already have that interest!")
+        res.redirect("/users/" + req.params.userId)
+      } else {
+        foundUser.int.push(req.body.int)
+        foundUser.save()       
+        req.flash("success", "Successfully added interest")
+        res.redirect("/users/" + req.params.userId)
+      }  
     }
   })
 })
@@ -334,13 +347,13 @@ router.put("/remove_int/:intName", middleware.isLoggedIn, (req, res) => {
       foundUser.int.splice(foundUser.int.indexOf(req.params.intName), 1)
       foundUser.save()
       req.flash("success", "Successfully removed interest")
-      res.redirect("/users/" + req.params.userId)
+      res.redirect("/users/" + req.params.userId)         
     }
   })
 })
 
 // Show bookmarked events
-router.get("/bookmarks", (req, res) => {
+router.get("/bookmarks", middleware.isAuthorisedUser, (req, res) => {
   const foundEvents = Event.find({})
   foundEvents.exec((err, events) => {
     if (err) {
