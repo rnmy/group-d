@@ -145,4 +145,36 @@ router.get("/:id/groups", middleware.isLoggedIn, (req, res) => {
   }})
 })
 
+// Save user to bookmarks 
+router.put("/:id/addbookmark", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      foundEvent.bookmarks.push(req.user._id)
+      foundEvent.save()
+      req.flash("success", "Event saved to your bookmarks")
+      res.redirect("/events/" + foundEvent._id)
+    }
+  })
+})
+
+// Remove user from bookmarks
+router.put("/:id/removebookmark", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {   
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      foundEvent.bookmarks.splice(foundEvent.bookmarks.indexOf(req.user._id), 1)
+      foundEvent.save()
+      req.flash("success", "Event removed from your bookmarks")
+      res.redirect("/events/" + foundEvent._id)
+    }
+  })
+})
+
+
+
 module.exports = router
