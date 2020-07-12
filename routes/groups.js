@@ -148,29 +148,42 @@ router.get("/:groupid/pending", middleware.isGroupLeader, (req, res) => {
 
 // Accept/Reject pending request logic
 router.put("/:groupid/pending/:pendingid", middleware.isGroupLeader, (req, res) => {
-  Group.findById(req.params.groupid, (err, foundGroup) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
       res.redirect("back")
     } else {
-      User.findById(req.params.pendingid, (err, pendingUser) => {
+      Group.findById(req.params.groupid, (err, foundGroup) => {
         if(err){
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
-          foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser._id), 1);
-          const action = req.body.action;
-          if(action === "Accept"){
-            foundGroup.users.push(pendingUser);
-          } else if(action === "Reject"){
-            foundGroup.rejected.push(pendingUser);
-          }
-
-          foundGroup.save();
-          res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
+          User.findById(req.params.pendingid, (err, pendingUser) => {
+            if(err){
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+            } else {
+              foundGroup.pending.splice(foundGroup.pending.indexOf(pendingUser._id), 1);
+              const action = req.body.action;
+              if(action === "Accept"){
+                foundGroup.users.push(pendingUser);
+                if(foundGroup.users.length >= foundEvent.maxGroupSize){
+                  foundGroup.pending.forEach((autoReject) => {
+                    foundGroup.rejected.push(autoReject)
+                  })
+                  foundGroup.pending.length = 0
+                }
+              } else if(action === "Reject"){
+                foundGroup.rejected.push(pendingUser);
+              }
+    
+              foundGroup.save();
+              res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
+            }
+          })
         }
       })
-    }
+    } 
   })
 })
 
@@ -386,17 +399,24 @@ router.put("/:groupid/delete", middleware.isGroupLeader, (req, res) => {
 
 // Show group forum
 router.get("/:groupid/forum", middleware.isGroupMember, (req, res) => {
-  Event.findById(req.params.id, (err, foundEvent) => {
-    if (err) {
+  User.findById(req.user._id, (err, foundUser) => {
+    if(err){
       req.flash("error", "Something went wrong...Try again")
       res.redirect("back")
     } else {
-      Group.findById(req.params.groupid).populate("messages").exec((err, foundGroup) => {
+      Event.findById(req.params.id, (err, foundEvent) => {
         if (err) {
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
-          res.render("./groups/forum", {group: foundGroup, event: foundEvent})
+          Group.findById(req.params.groupid).populate("messages").exec((err, foundGroup) => {
+            if (err) {
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+            } else {
+              res.render("./groups/forum", {user: foundUser, group: foundGroup, event: foundEvent})
+            }
+          })
         }
       })
     }
