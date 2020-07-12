@@ -191,7 +191,6 @@ router.put("/add_exp", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      console.log(foundUser.exp.indexOf({name: req.body.exp.name} == -1))
       if(foundUser.exp.indexOf({name: req.body.exp.name})) {
         foundUser.exp.push(req.body.exp)
         foundUser.save()       

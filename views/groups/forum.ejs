@@ -1,10 +1,55 @@
 <%- include("../partials/header") %>
 
-    <div class="container">
-            <h1 class="display-4 pt-5"><strong><%= group.name%>'s Forum</strong></h1>
-            <h6>Group Leader: <%= group.groupLeader.name %></h6>
-            <h6><em><%=group.description%></em></h6>
-            <hr>
+<div class="container">
+        <h1 class="display-4 pt-5"><strong><%= group.name%>'s Forum</strong></h1>
+        <h6>Group Leader: <%= group.groupLeader.name %></h6>
+        <h6><em><%=group.description%></em></h6>
+        <hr>
+
+        <!-- Side Bar -->
+        <% if(group.users.includes(currentUser._id)) { %>
+            <div class="col-md-3 mb-5 float-right text-center">
+            <div class="list-group">
+                <li class="list-group-item">
+                <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-dark">Group Page</a>
+                </li>
+                <li class="list-group-item active">
+                <a href="/events/<%= event._id %>/groups/<%= group._id%>/forum" class="text-light">Group Forum</a>
+                </li>
+                
+                <% if(currentUser._id.equals(group.groupLeader.id)) { %>
+                <li class="list-group-item text-decoration-none justify-content-between align-items-center">
+                    <a href="/events/<%= event._id %>/groups/<%= group._id %>/pending" class="text-dark">
+                    Pending Requests
+                    </a> 
+                    <span class="badge badge-warning badge-pill"><%=group.pending.length%></span>
+                </li>
+                
+                <li class="list-group-item">
+                    <a href="/events/<%= event._id %>/groups/<%= group._id %>/edit" class="text-dark">
+                    Group Settings
+                    </a> 
+                </li>
+                <% if (group.users.length === 1 && group.pending.length === 0) { %>
+                    <li class="list-group-item">
+                    <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                        <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
+                    </form>
+                    </li>
+                <% } %>
+                <% } else { %>
+                <li class="list-group-item">
+                    <form id="leaveGroup" action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
+                    <button onClick="leaveGroupAlert()" class="btn btn-sm text-danger">Leave Group</button>  
+                    </form>
+                </li>
+                <% } %>
+            </div>
+            </div>
+        <% } %>
+
+        <!-- Forum -->
+        <div class="col-md-8">
             <% if (group.messages.length === 0) { %>
                 <h6 class="text-secondary mt-4 mb-4">There are currently no messages.</h6>
             <% } %>
@@ -40,20 +85,20 @@
             </div>  
             <button class="btn btn-primary">Submit</button>
         </form>
-        <div class="mt-5 mb-5">
-            <a href="/events/<%= event._id%>/groups/<%= group._id%>">Go back to <%= group.name%></a>
-        </div>
     </div>
-    <script>
-        const messageThread = document.querySelector("#messageThread")
-        messageThread.scrollTop = messageThread.scrollHeight
-        function proceed() {
-            if (confirm("Are you sure you want to delete this message?")) {
-                document.querySelector("#delete").submit()
-            } else {
-                event.preventDefault()
-            }
+    <div class="mt-5 mb-5">
+        <a href="/events/<%= event._id%>">Go back to <%= event.name%></a>    </div>
+    </div>
+<script>
+    const messageThread = document.querySelector("#messageThread")
+    messageThread.scrollTop = messageThread.scrollHeight
+    function proceed() {
+        if (confirm("Are you sure you want to delete this message?")) {
+            document.querySelector("#delete").submit()
+        } else {
+            event.preventDefault()
         }
-    </script>
+    }
+</script>
 
 <%- include("../partials/footer") %>
