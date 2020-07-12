@@ -1,6 +1,7 @@
 const express = require('express')
 const router = express.Router({mergeParams: true})
 const User = require("../models/user")
+const Event = require("../models/event")
 const middleware = require('../middleware')
 
 const helper = require('../helper')
@@ -335,6 +336,20 @@ router.put("/remove_int/:intName", middleware.isLoggedIn, (req, res) => {
       foundUser.save()
       req.flash("success", "Successfully removed interest")
       res.redirect("/users/" + req.params.userId)
+    }
+  })
+})
+
+// Show bookmarked events
+router.get("/bookmarks", (req, res) => {
+  const foundEvents = Event.find({})
+  foundEvents.exec((err, events) => {
+    if (err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      Promise.all(events.filter(event => helper.checkBookmarks(event, req.user._id))).then(data => 
+        res.render("./users/bookmarks", {bookmarks: data, user: req.user}))
     }
   })
 })
