@@ -123,4 +123,8 @@ helperObj.checkFileType = function(file, cb) {
     }
   }
 
+helperObj.checkBookmarks = function(event, userID) {
+    return event.bookmarks.includes(userID)
+}
+
 module.exports = helperObj;
