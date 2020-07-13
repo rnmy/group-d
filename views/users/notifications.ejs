@@ -1,0 +1,38 @@
+<%- include("../partials/header") %>
+    <h1 class="container jumbotron display-4">Activity Log</h1>
+    <div class="container">
+        <table class="table">
+            <% if(notifs.length === 0) { %>
+                <caption><em>No new activity.</em></caption>
+            <% } else { %>
+                <%notifs.forEach((notif) => { %>
+                    <tr>
+                        <td>
+                            <span class="pull-right text-primary">
+                                <small><em><%= notif.date.toDateString()%> @ </em></small>
+                            </span>
+                            <span class="pull-right text-primary mr-2">
+                                <small><em><%= notif.date.toLocaleTimeString("en-US", 
+                                    {
+                                        hour: "numeric",
+                                        minute: "numeric"
+                                    }
+                                    )%></em></small>
+                            </span>
+                            <%=notif.text%>
+                        </td>
+                        <td class="mb-1">
+                            <a class="btn btn-link text-success px-0 py-0" href="/events/<%=notif.event._id%>/groups/<%=notif.group._id%>">View</a>
+                            <form action="/users/<%=currentUser._id%>/notifications/<%=notif._id%>?_method=DELETE" method="POST" class="d-inline">
+                                <button class="btn btn-link text-danger ml-2 px-0 py-0">Clear</button>
+                            </form>
+                        </td>
+                    </tr>    
+                <% }) %>
+            <% } %>
+        </table>
+            
+    </div>
+    
+
+<%- include("../partials/footer") %>

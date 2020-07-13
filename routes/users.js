@@ -3,11 +3,13 @@ const router = express.Router({mergeParams: true})
 const User = require("../models/user")
 const Event = require("../models/event")
 const middleware = require('../middleware')
+const Notification = require("../models/notification")
 
 const helper = require('../helper')
 const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
+const { getAllUsers } = require('../helper')
 
 const storage = multer.diskStorage({
   destination: './public/uploads',
@@ -42,7 +44,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
 
 
  // View pending requests
- router.get("/pending", middleware.isLoggedIn, (req, res) => {
+ router.get("/pending", middleware.isAuthorisedUser, (req, res) => {
    User.findById(req.params.userId, (err, foundUser) => {
       if(err) {
         req.flash("error", "Something went wrong...Try again")
@@ -69,7 +71,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
  })
 
 // Show form to edit own profile
-router.get("/edit", middleware.isLoggedIn, (req, res) => {
+router.get("/edit", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, user) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -81,7 +83,7 @@ router.get("/edit", middleware.isLoggedIn, (req, res) => {
 });
 
 // Updating own profile logic
-router.put("/", middleware.isLoggedIn, (req, res) => {
+router.put("/", middleware.isAuthorisedUser, (req, res) => {
   upload(req, res, (err) => {
     if (err) {
       const user = User.findById(req.params.userId)
@@ -141,7 +143,7 @@ router.put("/", middleware.isLoggedIn, (req, res) => {
 })
         
 // Show form to change password
-router.get("/change_password", middleware.isLoggedIn, (req, res) => {
+router.get("/change_password", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -153,7 +155,7 @@ router.get("/change_password", middleware.isLoggedIn, (req, res) => {
 })
 
 // Change password logic
-router.put("/change_password", middleware.isLoggedIn, (req, res) => {
+router.put("/change_password", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId)
       .then(foundUser => {
           foundUser.changePassword(req.body.current, req.body.new)
@@ -173,7 +175,7 @@ router.put("/change_password", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add experience
-router.get("/add_exp", middleware.isLoggedIn, (req, res) => {
+router.get("/add_exp", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -185,7 +187,7 @@ router.get("/add_exp", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add experience logic
-router.put("/add_exp", middleware.isLoggedIn, (req, res) => {
+router.put("/add_exp", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -206,7 +208,7 @@ router.put("/add_exp", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove experience
-router.get("/remove_exp", middleware.isLoggedIn, (req, res) => {
+router.get("/remove_exp", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -218,7 +220,7 @@ router.get("/remove_exp", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove experience logic
-router.put("/remove_exp/:expName", middleware.isLoggedIn, (req, res) => {
+router.put("/remove_exp/:expName", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -233,7 +235,7 @@ router.put("/remove_exp/:expName", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add skill
-router.get("/add_skill", middleware.isLoggedIn, (req, res) => {
+router.get("/add_skill", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -245,7 +247,7 @@ router.get("/add_skill", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add skill logic
-router.put("/add_skill", middleware.isLoggedIn, (req, res) => {
+router.put("/add_skill", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -266,7 +268,7 @@ router.put("/add_skill", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove skill
-router.get("/remove_skill", middleware.isLoggedIn, (req, res) => {
+router.get("/remove_skill", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -278,7 +280,7 @@ router.get("/remove_skill", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove skill logic
-router.put("/remove_skill/:skillName", middleware.isLoggedIn, (req, res) => {
+router.put("/remove_skill/:skillName", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -293,7 +295,7 @@ router.put("/remove_skill/:skillName", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add interest
-router.get("/add_int", middleware.isLoggedIn, (req, res) => {
+router.get("/add_int", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -305,7 +307,7 @@ router.get("/add_int", middleware.isLoggedIn, (req, res) => {
 })
 
 // Add interest logic
-router.put("/add_int", middleware.isLoggedIn, (req, res) => {
+router.put("/add_int", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -326,7 +328,7 @@ router.put("/add_int", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove interest
-router.get("/remove_int", middleware.isLoggedIn, (req, res) => {
+router.get("/remove_int", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -338,7 +340,7 @@ router.get("/remove_int", middleware.isLoggedIn, (req, res) => {
 })
 
 // Remove interest logic
-router.put("/remove_int/:intName", middleware.isLoggedIn, (req, res) => {
+router.put("/remove_int/:intName", middleware.isAuthorisedUser, (req, res) => {
   User.findById(req.params.userId, (err, foundUser) => {
     if(err){
       req.flash("error", "Something went wrong...Try again")
@@ -361,9 +363,45 @@ router.get("/bookmarks", middleware.isAuthorisedUser, (req, res) => {
       res.redirect("/users/:userId")
     } else {
       Promise.all(events.filter(event => helper.checkBookmarks(event, req.user._id))).then(data => 
-        res.render("./users/bookmarks", {bookmarks: data, user: req.user}))
+        res.render("./users/bookmarks", {bookmarks: data, user: req.user})).catch(err => console.log(err))
     }
   })
 })
+
+// Show all notifications
+router.get("/notifications", middleware.isAuthorisedUser, (req, res) => {
+  User.findById(req.user._id).populate("notifs").exec((err, user) => {
+    if (err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId")
+    } else {
+      Promise.all(user.notifs.map(notif => helper.getNotif(notif._id))).then(data => data.sort()
+      ).then(data => res.render("./users/notifications", {notifs: data.reverse()})).catch(err => console.log(err))
+    }
+  })
+})
+
+// Clear notification
+router.delete("/notifications/:notifID", (req, res) => {
+  Notification.findByIdAndRemove(req.params.notifID, (err, removedNotif) => {
+    if (err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/users/:userId/notifications")
+    } else {
+      User.findById(req.user._id, (err, user) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          user.notifs.splice(user.notifs.indexOf(removedNotif._id), 1)
+          user.save()
+          req.flash("success", "Notification cleared")
+          res.redirect("/users/" + req.params.userId + "/notifications")
+        }
+      })
+    }
+  })
+})
+
 
 module.exports = router

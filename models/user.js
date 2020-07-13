@@ -12,7 +12,13 @@ const userSchema = new mongoose.Schema({
   bio: String,
   exp: [{name: String, desc: String}],
   skills: [{type: String}],
-  int: [{type: String}]
+  int: [{type: String}],
+  notifs: [
+    {
+      type: mongoose.Schema.Types.ObjectID,
+      ref: "Notification"
+    }
+  ]
 })
 
 userSchema.plugin(passportLocalMongoose)
