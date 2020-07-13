@@ -11,6 +11,7 @@ const events = [
       requirements: "Anybody from Mindanao (residing, birthplace, working) or anyone who has a heart for Mindanao can take part in this virtual event. All you need is a stable internet connection, mobile phone, tablet or laptop where you can access the video conferences, workshop tools and applications, and programs that can help you and your team in ideating and creating your project. Get ready to meet people from within and outside your locality! Connect, ideate and make new friends in the process.",
       prizes: "$3,000 USD, $3,000 USD donation directed to seller of choice, one Google Home device, Social promotion by Square, 60 min. meeting with Square product team (or other to discuss the winning app), Square swag for up to 5 teammates",
       date: "2019-08-15",
+      deadline: "2019-08-01",
       minGroupSize: 1,
       maxGroupSize: 5
     },
@@ -20,7 +21,8 @@ const events = [
       desc: "A Step Towards the Next Normal. This 4-day virtual hackathon will be a meeting of the minds, a platform that enables connections between the thinkers, the doers, the movers and the shakers. This hackathon is the first virtual hackathon in the Philippines, and a pioneering concept in the Mindanao region, where we will explore practical and innovative solutions that respond to a specific problem within a challenge area, through the use of science and technology. This will go down in history as the event that moved the needle, so we can can safely latch on to a new life now and after the crisis.",
       requirements: "Anybody from Mindanao (residing, birthplace, working) or anyone who has a heart for Mindanao can take part in this virtual event. All you need is a stable internet connection, mobile phone, tablet or laptop where you can access the video conferences, workshop tools and applications, and programs that can help you and your team in ideating and creating your project. Get ready to meet people from within and outside your locality! Connect, ideate and make new friends in the process.",
       prizes: "Highlights of viable ideas for implementation for incubation.",
-      date: "2020-06-1",
+      date: "2021-06-1",
+      deadline: "2021-05-01",
       minGroupSize: 2,
       maxGroupSize: 4
     },
@@ -31,6 +33,7 @@ const events = [
       requirements: "What to build: Use Wit.ai to build Natural Language experiences that can help people's lives. As we see natural language extend experiences on connected devices, we encourage you to build solutions that connect people and drive greater productivity. Whether it’s local discovery, small businesses serving their neighborhoods, or learning a new skill with your friend - we believe the true potential of this platform is unlocked when we build new and engaging ways for our users to connect with products they love.",
       prizes: "$7,000 in prizes First Place • $3,000 USD • At least one 30-minute virtual meeting with a Facebook engineer • Oculus Quest 64GB VR headset (ARV: $399 USD; 1 per individual, 4 max per Org or Team) Second Place • $2,500 USD Third Place • $1,500 USD",
       date: "2021-03-1",
+      deadline: "2021-02-01",
       minGroupSize: 1,
       maxGroupSize: 4
     },
@@ -41,6 +44,7 @@ const events = [
       requirements: "Please refer to the Eligibility section of the Official Rules",
       prizes: "Blocks for Business Teams (5 winners) Blocks for Education or Non-Profit (2 winners) Wildcard (2 winners) Each winner receives $10,000. The best overall submission from all categories wins an additional $10,000. Each Custom Block you build can only be submitted to one category. However, you are allowed to submit multiple blocks to the same category and compete in all categories. That being said, we recommend you focus on quality over quantity of submissions.",
       date: "2020-07-15",
+      deadline: "2020-01-01",
       minGroupSize: 1,
       maxGroupSize: 1
     }

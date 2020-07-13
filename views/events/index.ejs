@@ -17,6 +17,7 @@
                         <h4 class="card-title"><a href="/events/<%= event._id %>"><%= event.name %></a></h4>
                         <h6 class="card-subtitle mb-2 text-muted">Happening on <%= event.date.toDateString() %></h6>
                         <p class="card-text"><%= event.desc.substring(0, 135) %>...</p>
+                        <p class="card-text text-danger">Register by <%= event.deadline.toDateString() %></p>
                     </div>
                 </div>
             </div>

@@ -7,14 +7,14 @@ const validator = require('validator')
 
 // Show events page
 router.get("/", middleware.isLoggedIn, (req, res) => {
-    Event.find({}, (err, allEvents) => {
-        if(err){
-            req.flash("error", "Something went wrong...Try again")
-            res.redirect("back")
-        } else {
-            res.render("./events/index", {events: allEvents});
-        }
-    });
+  Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({}, (err, allEvents) => {
+      if(err){
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+      } else {
+          res.render("./events/index", {events: allEvents});
+      }
+  });
 });
 
 // Show form to add new event
