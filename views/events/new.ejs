@@ -9,49 +9,58 @@
                     <% if (typeof data.name != 'undefined') { %>
                         <input class="form-control" id="name" type="text" value="<%=data.name%>" name="event[name]" required>
                     <% } else { %>
-                        <input class="form-control" type="text" placeholder="name" name="event[name]" required>
+                        <input class="form-control" type="text" placeholder="Event Name" name="event[name]" required>
                     <% } %>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="event link" name="event[url]" required>
+                    <input class="form-control" type="text" placeholder="Event Website" name="event[url]" required>
                 </div>
 
                 <div class="form-group">
                     <% if (typeof data.desc != 'undefined') { %> 
                         <textarea class="form-control" type="text" id="desc" name="event[desc]" required></textarea>
                     <% } else { %>
-                        <textarea class="form-control" type="text" placeholder="description" name="event[desc]" required></textarea>
+                        <textarea class="form-control" type="text" placeholder="Description" name="event[desc]" required></textarea>
                     <% } %>
                     </div>
                 <div class="form-group">
                     <% if (typeof data.requirements != 'undefined') { %> 
                         <textarea class="form-control" type="text" id="req" name="event[requirements]" required></textarea>
                     <% } else { %>
-                        <textarea class="form-control" type="text" placeholder="requirements" name="event[requirements]" required></textarea>
+                        <textarea class="form-control" type="text" placeholder="Requirements" name="event[requirements]" required></textarea>
                     <% } %>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.prizes != 'undefined') { %> 
                         <textarea class="form-control" type="text" id="prizes" name="event[prizes]" required></textarea>
                     <% } else { %>
-                        <textarea class="form-control" type="text" placeholder="prizes" name="event[prizes]" required></textarea>
+                        <textarea class="form-control" type="text" placeholder="Prizes" name="event[prizes]" required></textarea>
                     <% } %>
                     </div>
-                <div class="form-group">
-                    <input class="form-control" type="date" placeholder="date" name="event[date]" required>
+                <div class="input-group flex-nowrap mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="addon-wrapping">Event Date</span>
+                    </div>
+                    <input class="form-control" type="date" placeholder="date" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                </div>
+                <div class="input-group flex-nowrap mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="addon-wrapping">Registration Deadline</span>
+                    </div>
+                    <input class="form-control" type="date" placeholder="registration deadline" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.minGroupSize != 'undefined') { %> 
                         <input class="form-control" type="number" min="1" value="<%=data.minGroupSize%>"name="event[minGroupSize]" required>
                     <% } else { %>
-                        <input class="form-control" type="number" min="1" placeholder="minimum group size" name="event[minGroupSize]" required>
+                        <input class="form-control" type="number" min="1" placeholder="Minimum Group Size" name="event[minGroupSize]" required>
                     <% } %>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.maxGroupSize != 'undefined') { %> 
                         <input class="form-control" type="number" min="1" value="<%=data.maxGroupSize%>" name="event[maxGroupSize]" required>
                     <% } else { %>
-                        <input class="form-control" type="number" min="1" placeholder="maximum group size" name="event[maxGroupSize]" required>
+                        <input class="form-control" type="number" min="1" placeholder="Maximum Group Size" name="event[maxGroupSize]" required>
                     <% } %>
                 </div>
                 <div class="form-group">
