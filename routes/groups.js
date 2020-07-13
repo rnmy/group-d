@@ -4,9 +4,11 @@ const Group = require("../models/group")
 const Event = require("../models/event")
 const User = require("../models/user")
 const Message = require("../models/message")
+const Notification = require("../models/notification")
 
 const middleware = require('../middleware'),
       helper = require('../helper')
+const group = require('../models/group')
 
 // Show form to add new group
 router.get("/new", middleware.isLoggedIn, (req, res) => {
@@ -47,8 +49,32 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                     group.save();
                     event.groups.push(group);
                     event.save();
-                    req.flash("success", 'Successfully created the group "' + group.name + '" for ' + event.name)
-                    res.redirect("/events/" + eventId + "/groups/");
+                    Notification.create(
+                      {
+                        text: `You created the group '${group.name}' under the event '${event.name}'.`,
+                        event: event, 
+                        group: group, 
+                        date: new Date(), 
+                      }, (err, notif) => {
+                        if (err) {
+                          req.flash("error", "Something went wrong...Try again")
+                          res.redirect("back")
+                        } else {
+                          User.findById(req.user._id, (err, user) => {
+                            if (err) {
+                              req.flash("error", "Something went wrong...Try again")
+                              res.redirect("back")
+                            } else {
+                              user.notifs.push(notif)
+                              user.save()
+                              console.log("notifs", user.notifs)
+                              req.flash("success", 'Successfully created the group "' + group.name + '" for ' + event.name)
+                              res.redirect("/events/" + eventId + "/groups/");
+                            }
+                          })  
+                        }
+                      }
+                    )
                   }
                 }
             )
@@ -109,7 +135,32 @@ router.put("/:groupid", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
-      res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+      Event.findById(req.params.id, (err, event) => {
+        if(err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("/events" + req.params.id)
+        } else {
+          Notification.create(
+            {
+              text: `You requested to join '${group.name}' under the event '${event.name}'.`,
+              event: event,
+              group: group,
+              date: new Date()
+            }, (err, notif) => {
+              User.findById(req.user._id, (err, user) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("/events" + req.params.id)
+                } else {
+                  user.notifs.push(notif)
+                  user.save()
+                  req.flash("success", "Your join request is pending")
+                  res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+                }
+              })
+            })
+        }
+      })
     }
   })
 })
@@ -123,7 +174,33 @@ router.put("/:groupid/cancel", middleware.isLoggedIn, (req, res) => {
     } else {
       group.pending.splice(group.pending.indexOf(res.locals.currentUser._id), 1)
       group.save()
-      res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+      Event.findById(req.params.id, (err, event) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("/events")
+        } else {
+          Notification.create(
+            {
+              text: `You cancelled your request to join '${group.name}' under the event '${event.name}'`,
+              event: event,
+              group: group,
+              date: new Date()
+            }, (err, notif) => {
+              User.findById(req.user._id, (err, user) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("/events")
+                } else {
+                  user.notifs.push(notif)
+                  user.save()
+                  req.flash("success", "You have cancelled your pending request")
+                  res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid)
+                } 
+              })
+            }
+          )
+        }
+      })
     }
   })
 })
@@ -167,16 +244,63 @@ router.put("/:groupid/pending/:pendingid", middleware.isGroupLeader, (req, res) 
               const action = req.body.action;
               if(action === "Accept"){
                 foundGroup.users.push(pendingUser);
+                Notification.create(
+                  {
+                    text: `Your request to join '${foundGroup.name}' under the event '${foundEvent.name}' has been accepted.`,
+                    event: foundEvent,
+                    group: foundGroup,
+                    date: new Date()
+                  }, (err, notif) => {
+                    if (err) {
+                      req.flash("error", "Something went wrong...Try again")
+                      res.redirect("back")
+                    } else {
+                      pendingUser.notifs.push(notif)
+                      pendingUser.save()
+                    }
+                  }
+                )
                 if(foundGroup.users.length >= foundEvent.maxGroupSize){
                   foundGroup.pending.forEach((autoReject) => {
                     foundGroup.rejected.push(autoReject)
+                    Notification.create(
+                      {
+                        text: `Your request to join '${foundGroup.name}' under the event '${foundEvent.name}' has been rejected.`,
+                        event: foundEvent,
+                        group: foundGroup,
+                        date: new Date()
+                      }, (err, notif) => {
+                        if (err) {
+                          req.flash("error", "Something went wrong...Try again")
+                          res.redirect("back")
+                        } else {
+                          autoReject.notifs.push(notif)
+                          autoReject.save()
+                        }
+                      }
+                    )
                   })
                   foundGroup.pending.length = 0
                 }
               } else if(action === "Reject"){
                 foundGroup.rejected.push(pendingUser);
+                Notification.create(
+                  {
+                    text: `Your request to join '${foundGroup.name}' under the event '${foundEvent.name}' has been rejected.`,
+                    event: foundEvent,
+                    group: foundGroup,
+                    date: new Date()
+                  }, (err, notif) => {
+                    if (err) {
+                      req.flash("error", "Something went wrong...Try again")
+                      res.redirect("back")
+                    } else {
+                      pendingUser.notifs.push(notif)
+                      pendingUser.save()
+                    }
+                  }
+                )
               }
-    
               foundGroup.save();
               res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/pending");
             }
@@ -197,8 +321,33 @@ router.put("/:groupid/close", middleware.isGroupLeader, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
-      req.flash("success", "You have closed the group '" + group.name +"'!")
-      res.redirect("/events/" + req.params.id + "/groups/" + group.id)
+      Event.findById(req.params.id, (err, event) => {
+        if (err) { 
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("/events")
+        } else {
+          Notification.create(
+            {
+              text: `You closed the group '${group.name}' under the event '${event.name}'.`,
+              event: event,
+              group: group,
+              date: new Date()
+            }, (err, notif) => {
+              User.findById(req.user._id, (err, user) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("/events")
+                } else {
+                  user.notifs.push(notif)
+                  user.save()
+                  req.flash("success", "You have closed the group '" + group.name +"'!")
+                  res.redirect("/events/" + req.params.id + "/groups/" + group.id)
+                }
+              })
+            }
+          )
+        }
+      })  
     }
   })
 })
@@ -213,8 +362,33 @@ router.put("/:groupid/reopen", middleware.isGroupLeader, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
-      req.flash("success", "You have reopened the group '" + group.name +"'!")
-      res.redirect("/events/" + req.params.id + "/groups/" + group.id)
+      Event.findById(req.params.id, (err, event) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("/events")
+        } else {
+          Notification.create(
+            {
+              text: `You reopened the group '${group.name}' under the event '${event.name}'.`,
+              event: event,
+              group: group,
+              date: new Date()
+            }, (err, notif) => {
+              User.findById(req.user._id, (err, user) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("/events")
+                } else {
+                  user.notifs.push(notif)
+                  user.save()
+                  req.flash("success", "You have reopened the group '" + group.name +"'!")
+                  res.redirect("/events/" + req.params.id + "/groups/" + group.id)
+                }
+              })
+            }
+          )
+        }
+      }) 
     }
   })
 })
@@ -322,8 +496,23 @@ router.put("/:groupid/remove/:removeid", middleware.isGroupLeader, (req, res) =>
               foundGroup.users.splice(foundGroup.users.indexOf(removedUser._id), 1)
               foundGroup.removed.push(removedUser)
               foundGroup.save()
-              req.flash("success", "You have removed " + removedUser.name + " from the group.")
-              res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id + "/edit")
+              Notification.create(
+                {
+                text: `You were removed from the group '${foundGroup.name}' under the event '${foundEvent.name}'.`,
+                event: foundEvent,
+                group: foundGroup,
+                date: new Date()
+              }, (err, notif) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("back")
+                } else {
+                  removedUser.notifs.push(notif)
+                  removedUser.save()
+                  req.flash("success", "You have removed " + removedUser.name + " from the group.")
+                  res.redirect("/events/" + foundEvent._id + "/groups/" + foundGroup._id + "/edit")
+                } 
+              })
             }
           })
         }
@@ -374,8 +563,37 @@ router.put("/:groupid/leave", middleware.isGroupMember, (req, res) => {
       foundGroup.users.splice(foundGroup.users.indexOf(res.locals.currentUser._id), 1)
       foundGroup.left.push(res.locals.currentUser)
       foundGroup.save()
-      req.flash("success", "You have left the group '" + foundGroup.name + "'.")
-      res.redirect("/events/" + req.params.id)
+      Event.findById(req.params.id, (err, event) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          Notification.create(
+            {
+              text: `You left the group '${foundGroup.name}' under the event '${event.name}'.`,
+              event: event,
+              group: foundGroup, 
+              date: new Date()
+            }, (err, notif) => {
+              if (err) {
+                req.flash("error", "Something went wrong...Try again")
+                res.redirect("back")
+              } else {
+                User.findById(req.user._id, (err, user) => {
+                  if (err) {
+                    req.flash("error", "Something went wrong...Try again")
+                    res.redirect("back")
+                  } else {
+                    user.notifs.push(notif)
+                    user.save()
+                    req.flash("success", "You have left the group '" + foundGroup.name + "'.")
+                    res.redirect("/events/" + req.params.id)
+                  }
+                })
+              }
+            })
+        }
+      })  
     }
   })
 })
@@ -388,11 +606,37 @@ router.put("/:groupid/delete", middleware.isGroupLeader, (req, res) => {
       res.redirect("back")
     } else {
       foundGroup.isDeleted = true 
+      foundGroup.isClosed = false
       foundGroup.users.splice(foundGroup.users.indexOf(res.locals.currentUser._id), 1)
       foundGroup.left.push(res.locals.currentUser) 
       foundGroup.save()
-      req.flash("success", "You deleted the group '" + foundGroup.name + "'.")
-      res.redirect("/events/" + req.params.id)
+      Event.findById(req.params.id, (err, event) => {
+        if (err) {
+          req.flash("error", "Something went wrong...Try again")
+          res.redirect("back")
+        } else {
+          Notification.create(
+            {
+              text: `You deleted the group '${foundGroup.name}' from '${event.name}'.`,
+              event: event,
+              group: foundGroup,
+              date: new Date()
+            }, (err, notif) => {
+              User.findById(req.user._id, (err, user) => {
+                if (err) {
+                  req.flash("error", "Something went wrong...Try again")
+                  res.redirect("back")
+                } else {
+                  user.notifs.push(notif)
+                  user.save()
+                  req.flash("success", "You deleted the group '" + foundGroup.name + "'.")
+                  res.redirect("/events/" + req.params.id)
+                }
+              })
+            }
+          )
+        }
+      }) 
     }
   })
 })
@@ -447,7 +691,6 @@ router.post("/:groupid/forum", middleware.isGroupMember, (req, res) => {
               message.save()
               foundGroup.messages.push(message)
               foundGroup.save()
-              
               res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/forum")
             }
           })
@@ -462,8 +705,17 @@ router.post("/:groupid/forum", middleware.isGroupMember, (req, res) => {
         req.flash("error", "Something went wrong...Try again")
         res.redirect("back")
       } else {
-        req.flash("success", "Message deleted")
-        res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/forum")
+        Group.findById(req.params.groupid, (err, group) => {
+          if (err) {
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
+          } else {
+            group.messages.splice(group.messages.indexOf(foundMessage._id), 1)
+            group.save()
+            req.flash("success", "Message deleted")
+            res.redirect("/events/" + req.params.id + "/groups/" + req.params.groupid + "/forum")
+          }
+        })
       }
     })
   })
