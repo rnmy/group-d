@@ -114,7 +114,7 @@ router.put("/", middleware.isAuthorisedUser, (req, res) => {
                   email: req.sanitize(req.body.email)
                 })
             } else {
-              if (!(user.profilePic === '')) {
+              if ((!(user.profilePic === '')) && fs.existsSync(`./public/uploads/${user.profilePic}`)) {
                 fs.unlinkSync(`./public/uploads/${user.profilePic}`)
               }
               updatedUser = User.findByIdAndUpdate(req.params.userId,
