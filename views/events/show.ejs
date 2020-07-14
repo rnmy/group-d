@@ -4,6 +4,20 @@
   <div class="jumbotron">
     <div class="container">
       <h1 class="display-3"><%= event.name%></h1>
+      <% if (!(event.bookmarks.includes(currentUser._id))) { %>
+        <form action="/events/<%=event._id%>/addbookmark?_method=PUT" method="POST">
+          <button class="btn btn-warning btn-sm ml-3 mb-3">
+            <i class="fa fa-star mr-2" aria-hidden="true"></i>Bookmark this event
+          </button>
+        </form>
+      <% } else { %>
+        <form action="/events/<%=event._id%>/removebookmark?_method=PUT" method="POST">
+          <button class="btn btn-warning btn-sm ml-3 mb-3">
+            <i class="fa fa-star mr-2" aria-hidden="true"></i>Unbookmark this event
+          </button>
+        </form>
+      <% } %>
+      
       <% if (!(event.author.id == undefined) || (!event.author.username == undefined)) { %>
         <h6 class="ml-3 mb-4 text-secondary"><em>Submitted by <a href="/users/<%=event.author.id%>"><%=event.author.username%></em></a></h6>
       <% } %>

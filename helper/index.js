@@ -1,6 +1,8 @@
-let Event = require("../models/event");
-let Group = require("../models/group");
-let User = require("../models/user");
+const Event = require("../models/event"),
+      Group = require("../models/group"),
+      User = require("../models/user"),
+      Notification = require("../models/notification")
+
 const path = require('path')
 
 // all the helper functions go here
@@ -125,6 +127,22 @@ helperObj.checkFileType = function(file, cb) {
 
 helperObj.escapeRegex = function(text) {
     return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
+
+helperObj.checkBookmarks = function(event, userID) {
+    return event.bookmarks.includes(userID)
+}
+
+helperObj.getNotif = function(notifID) {
+    return new Promise((resolve, reject) => {
+        Notification.findById(notifID).populate("event").populate("group").exec((err, notif) => {
+        if (err) {
+          reject(err)
+        } else {      
+          resolve(notif)
+        }
+      })
+    })
 }
 
 module.exports = helperObj;

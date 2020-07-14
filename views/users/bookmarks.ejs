@@ -1,0 +1,27 @@
+<%- include("../partials/header") %>
+
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="mb-4 display-3"><%= user.name %>'s Bookmarks</h1>
+    </div>
+    <div class="container">
+        <div class="row mb-5">
+            <% if (bookmarks.length === 0) { %> 
+                <h6 class="text-secondary"><em>You currently have not bookmarked any events.</em></h6>
+            <% } else { %>
+                <% bookmarks.forEach((bookmark) => { %>
+                    <div class="col-sm-12 mb-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title"><a href="/events/<%= bookmark._id %>"><%= bookmark.name %></a></h4>
+                                <h6 class="card-subtitle mb-2 text-muted">Happening on <%= bookmark.date.toDateString() %></h6>
+                                <p class="card-text"><%= bookmark.desc.substring(0, 135) %>...</p>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } %>
+          </div>
+    </div>
+</div>
+<%- include("../partials/footer") %>
