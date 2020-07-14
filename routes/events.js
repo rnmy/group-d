@@ -29,6 +29,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
         res.render("./events/new", {data: req.body.event, error:"Please input a valid url"})
       } else {
         req.body.event.name = req.sanitize(req.body.event.name)
+        req.body.event.url = req.sanitize(req.body.event.url)
         req.body.event.desc = req.sanitize(req.body.event.desc)
         req.body.event.requirements = req.sanitize(req.body.event.requirements)
         req.body.event.prizes = req.sanitize(req.body.event.prizes)
@@ -99,13 +100,19 @@ router.get("/:id/edit", middleware.isEventCreator, (req, res) => {
 // Updating event logic
 router.put("/:id/", middleware.isEventCreator, (req, res) => {
   req.body.event.name = req.sanitize(req.body.event.name)
+  req.body.event.url = req.sanitize(req.body.event.url)
   req.body.event.desc = req.sanitize(req.body.event.desc)
   req.body.event.requirements = req.sanitize(req.body.event.requirements)
   req.body.event.prizes = req.sanitize(req.body.event.prizes)
   Event.findByIdAndUpdate(req.params.id, req.body.event, { runValidators: true, context: 'query' }, (err, updatedEvent) => {
     if(err) {
-      req.flash("error", "Something went wrong...Try again")
-      res.redirect("/events")
+      if (err.name === 'ValidationError') {
+        req.flash("error", "That event already exists! Update failed.")
+        res.redirect("/events")
+      } else {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("/events")
+      }
     } else {
       req.flash("success", "The event has been updated successfully")
       res.redirect("/events/" + req.params.id)
