@@ -121,6 +121,10 @@ helperObj.checkFileType = function(file, cb) {
     } else {
         return cb('Error: Images only')
     }
-  }
+}
+
+helperObj.escapeRegex = function(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 module.exports = helperObj;
