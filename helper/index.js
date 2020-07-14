@@ -117,7 +117,6 @@ helperObj.checkFileType = function(file, cb) {
     const extname = fileTypes.test(path.extname(file.originalname.toLowerCase()))
     // Check mimetype
     const mimetype = fileTypes.test(file.mimetype)
-  
     if (extname && mimetype) {
         return cb(null, true)
     } else {

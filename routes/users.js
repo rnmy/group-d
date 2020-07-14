@@ -37,7 +37,8 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("back")
     } else {
-      res.render("./users/show", {user: user});
+      const exists = fs.existsSync(`./public/uploads/${user.profilePic}`)
+      res.render("./users/show", {user: user, picExists: exists});
     }
   });
 });
@@ -84,19 +85,27 @@ router.get("/edit", middleware.isAuthorisedUser, (req, res) => {
 
 // Updating own profile logic
 router.put("/", middleware.isAuthorisedUser, (req, res) => {
-  upload(req, res, (err) => {
-    if (err) {
+  upload(req, res, (error) => {
+    if (error) {
       const user = User.findById(req.params.userId)
       user.exec((err, foundUser) => {
         if (err) {
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
         } else {
-          res.render("./users/edit",
-          {
-            user: foundUser,
-            error: "Please upload only images for your profile picture (e.g. .jpeg/.png files)"
-          })
+          if(error.message && error.message === 'File too large') {
+            res.render("./users/edit",
+              {
+                user: foundUser,
+                error: "Your file size exceeds 1.0MB and is too large!"
+              })
+          } else {
+            res.render("./users/edit",
+              {
+                user: foundUser,
+                error: "Please only upload images (.jpg/.jpeg/.png files)!"
+              })
+          }
         }
       })
     } else {
