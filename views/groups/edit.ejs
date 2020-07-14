@@ -38,6 +38,16 @@
                   <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
                 </form>
               </li>
+            <% } else { %>
+              <li class="list-group-item">
+                <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom" title="You must remove all existing members and resolve outstanding pending requests before you can delete this group.">
+                    <button disabled class="btn btn-sm text-danger" style="pointer-events: none;">
+                      Delete Group
+                    </button> 
+                  </span> 
+                </form>
+              </li>
             <% } %>
           <% } else { %>
             <li class="list-group-item">
@@ -99,11 +109,18 @@
           <% if (currentUser._id.equals(group.groupLeader.id)) { %>
             <% if(!(group.isClosed) && group.pending.length === 0) { %> 
               <form id="close" action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
-                <button onClick="closeAlert()" class="btn btn-danger mb-5">Close Group</button>
+                <button data-toggle="tooltip" data-placement="right" 
+                  title="Your group will no longer be displayed on the events page and no new users will be able to join." onClick="closeAlert()" class="btn btn-danger mb-5">
+                  Close Group
+                </button>
               </form>
             <% } else if(group.isClosed) { %> 
               <form id="reopen" action="/events/<%= event._id %>/groups/<%= group._id%>/reopen?_method=PUT" method="POST">
-                <button onclick="reopen()" class="btn btn-warning mb-5">Reopen Group</button>
+                <button data-toggle="tooltip" data-placement="right" 
+                  title="Your group will be redisplayed on the events page and new users will be able to join." onclick="reopen()" 
+                  class="btn btn-warning mb-5">
+                  Reopen Group
+                </button>
               </form>
             <% } %> 
           <% } %>
@@ -127,9 +144,6 @@
         event.preventDefault()
       }
     }
-  </script>
-
-  <script>
     function leaveGroupAlert() {
         if (confirm("You will not be able to join this group again. Proceed?")) {
             document.querySelector("#leaveGroup").submit()

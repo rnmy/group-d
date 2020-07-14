@@ -95,4 +95,37 @@ middlewareObj.isGroupLeader = function(req, res, next) {
      }
  }
 
+ middlewareObj.isAuthorisedUser = function(req, res, next) {
+     if (req.isAuthenticated()) {
+         User.findById(req.params.userId, (err, foundUser) => {
+             if (err) {
+                req.flash("error", "User not found!")
+                res.redirect("back")
+             } else {
+                 if (foundUser._id.equals(req.user._id)) {
+                     next()
+                 } else {
+                    req.flash("error", "You don't have permission to do that!")
+                    res.redirect("/users/" + req.params.userId)
+                 }
+             }
+         })
+     }
+ }
+
+ middlewareObj.isVerified = async function(req, res, next) {
+     try {
+        const user = await User.findOne({username: req.body.username})
+        if (user.isVerified) {
+            return next()
+        }
+        req.flash("error", "Please check your email and verify your account before logging in!")
+        res.redirect("back")
+     } catch (err) {
+         console.log(err)
+         req.flash("error", "Something went wrong...Try again")
+         res.redirect("back")
+     }
+ }
+
 module.exports = middlewareObj;

@@ -4,7 +4,7 @@ const messageSchema = new mongoose.Schema({
     text: String,
     author: {
         id: {
-          type: mongoose.Schema.Types.ObjectId,
+          type: mongoose.Schema.Types.ObjectID,
           ref: "User"
         },
         username: String

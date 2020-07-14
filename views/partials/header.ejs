@@ -20,12 +20,24 @@
                           </li>
                       </ul> -->
                       <ul class="navbar-nav ml-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/users/<%= currentUser._id %>"><i class="fas fa-user mr-2"></i> Signed in as <%= currentUser.username %></a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user mr-1"></i>
+                                Signed in as <%= currentUser.username %>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <a class="dropdown-item" href="/users/<%= currentUser._id %>">My Profile</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/users/<%= currentUser._id %>/pending">My Groups</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/users/<%= currentUser._id %>/bookmarks">Bookmarked Events</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="/users/<%= currentUser._id %>/notifications">My Activity Log</a>
+                            </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
-                        </li>
+                        </li>              
                       </ul>
                     <% } %>
             </div>

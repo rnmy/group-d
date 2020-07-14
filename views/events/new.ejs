@@ -55,13 +55,21 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="addon-wrapping">Event Date</span>
                     </div>
-                    <input class="form-control" type="date" placeholder="date" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% if (typeof data.date != 'undefined') { %>
+                        <input class="form-control" type="date" value="<%=data.date%>" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } else { %>
+                        <input class="form-control" type="date" placeholder="date" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } %>
                 </div>
                 <div class="input-group flex-nowrap mb-3">
                     <div class="input-group-prepend">
                         <span class="input-group-text" id="addon-wrapping">Registration Deadline</span>
                     </div>
-                    <input class="form-control" type="date" placeholder="registration deadline" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% if (typeof data.deadline != 'undefined') { %>
+                        <input class="form-control" type="date" value="<%=data.deadline%>" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } else { %>
+                        <input class="form-control" type="date" placeholder="registration deadline" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } %>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.minGroupSize != 'undefined') { %> 

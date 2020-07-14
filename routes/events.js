@@ -50,6 +50,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
         res.render("./events/new", {data: req.body.event, error:"Please input a valid url"})
       } else {
         req.body.event.name = req.sanitize(req.body.event.name)
+        req.body.event.url = req.sanitize(req.body.event.url)
         req.body.event.desc = req.sanitize(req.body.event.desc)
         req.body.event.cat = req.body.cat
         req.body.event.requirements = req.sanitize(req.body.event.requirements)
@@ -121,14 +122,20 @@ router.get("/:id/edit", middleware.isEventCreator, (req, res) => {
 // Updating event logic
 router.put("/:id/", middleware.isEventCreator, (req, res) => {
   req.body.event.name = req.sanitize(req.body.event.name)
+  req.body.event.url = req.sanitize(req.body.event.url)
   req.body.event.desc = req.sanitize(req.body.event.desc)
   req.body.event.cat = req.body.cat
   req.body.event.requirements = req.sanitize(req.body.event.requirements)
   req.body.event.prizes = req.sanitize(req.body.event.prizes)
   Event.findByIdAndUpdate(req.params.id, req.body.event, { runValidators: true, context: 'query' }, (err, updatedEvent) => {
     if(err) {
-      req.flash("error", "Something went wrong...Try again")
-      res.redirect("/events")
+      if (err.name === 'ValidationError') {
+        req.flash("error", "That event already exists! Update failed.")
+        res.redirect("/events")
+      } else {
+        req.flash("error", "Something went wrong...Try again")
+        res.redirect("/events")
+      }
     } else {
       req.flash("success", "The event has been updated successfully")
       res.redirect("/events/" + req.params.id)
@@ -167,5 +174,37 @@ router.get("/:id/groups", middleware.isLoggedIn, (req, res) => {
       }).catch((err) => console.log(err))
   }})
 })
+
+// Save user to bookmarks 
+router.put("/:id/addbookmark", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      foundEvent.bookmarks.push(req.user._id)
+      foundEvent.save()
+      req.flash("success", "Event saved to your bookmarks")
+      res.redirect("/events/" + foundEvent._id)
+    }
+  })
+})
+
+// Remove user from bookmarks
+router.put("/:id/removebookmark", (req, res) => {
+  Event.findById(req.params.id, (err, foundEvent) => {
+    if (err) {   
+      req.flash("error", "Something went wrong...Try again")
+      res.redirect("/events")
+    } else {
+      foundEvent.bookmarks.splice(foundEvent.bookmarks.indexOf(req.user._id), 1)
+      foundEvent.save()
+      req.flash("success", "Event removed from your bookmarks")
+      res.redirect("/events/" + foundEvent._id)
+    }
+  })
+})
+
+
 
 module.exports = router
