@@ -113,4 +113,19 @@ middlewareObj.isGroupLeader = function(req, res, next) {
      }
  }
 
+ middlewareObj.isVerified = async function(req, res, next) {
+     try {
+        const user = await User.findOne({username: req.body.username})
+        if (user.isVerified) {
+            return next()
+        }
+        req.flash("error", "Please check your email and verify your account before logging in!")
+        res.redirect("back")
+     } catch (err) {
+         console.log(err)
+         req.flash("error", "Something went wrong...Try again")
+         res.redirect("back")
+     }
+ }
+
 module.exports = middlewareObj;
