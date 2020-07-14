@@ -1,4 +1,4 @@
-require('dotenv').config()
+//require('dotenv').config()
 const express = require("express"),
       app = express(),
       mongoose = require("mongoose"),
@@ -15,7 +15,7 @@ const Event = require("./models/event"),
       User = require("./models/user"),
       Group = require("./models/group");
 
-// seedDB();
+//seedDB();
 
 // REQUIRING ROUTES
 const indexRoutes = require("./routes/index"),
