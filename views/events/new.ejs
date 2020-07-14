@@ -15,14 +15,28 @@
                 <div class="form-group">
                     <input class="form-control" type="text" placeholder="Event Website" name="event[url]" required>
                 </div>
-
                 <div class="form-group">
                     <% if (typeof data.desc != 'undefined') { %> 
                         <textarea class="form-control" type="text" id="desc" name="event[desc]" required></textarea>
                     <% } else { %>
                         <textarea class="form-control" type="text" placeholder="Description" name="event[desc]" required></textarea>
                     <% } %>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <label class="input-group-text" for="cat">Catergory (Maximum of 3)</label>
                     </div>
+                    <select name="cat[]" id="cat" class="selectpicker" data-max-options="3" multiple required>
+                        <option value="Arts">Arts</option>
+                        <option value="Business">Business</option>
+                        <option value="Computing">Computing</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Government & Politics">Government & Politics</option>
+                        <option value="Medical">Medical</option>
+                        <option value="Science">Science</option>
+                        <option value="Others">Others</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <% if (typeof data.requirements != 'undefined') { %> 
                         <textarea class="form-control" type="text" id="req" name="event[requirements]" required></textarea>
