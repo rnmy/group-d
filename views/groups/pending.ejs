@@ -37,6 +37,16 @@
                 <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
               </form>
             </li>
+            <% } else { %>
+              <li class="list-group-item">
+                <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
+                  <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom" title="You must remove all existing members and resolve outstanding pending requests before you can delete this group.">
+                    <button disabled class="btn btn-sm text-danger" style="pointer-events: none;">
+                      Delete Group
+                    </button> 
+                  </span> 
+                </form>
+              </li>
           <% } %>
 
         <% } else { %>
