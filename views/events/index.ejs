@@ -56,7 +56,23 @@
                         <p class="card-text text-danger">Register by <%= event.deadline.toDateString() %></p>
                         <p>
                             <% event.cat.forEach((cat) => { %>
-                                <button class="btn btn-primary btn-sm" disabled><%= cat %></button>
+                                <% if(cat == "Computing") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #6EB5FF" disabled><%= cat %></button>
+                                <% } else if(cat == "Business") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #FFABAB" disabled><%= cat %></button>
+                                <% } else if(cat == "Engineering") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #FFF5BA" disabled><%= cat %></button>
+                                <% } else if(cat == "Arts") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #FFB5E8" disabled><%= cat %></button>
+                                <% } else if(cat == "Science") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #AFF8DB" disabled><%= cat %></button>
+                                <% } else if(cat == "Government and Politics") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #AFCBFF" disabled><%= cat %></button>
+                                <% } else if(cat == "Medical") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #B5B9FF" disabled><%= cat %></button>
+                                <% } else if(cat == "Others") { %>
+                                    <button class="tag btn btn-sm" style="background-color: #FBE4FF" disabled><%= cat %></button>
+                                <% } %>
                             <% }) %>
                         </p>
                     </div>
