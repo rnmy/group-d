@@ -7,14 +7,35 @@ const validator = require('validator')
 
 // Show events page
 router.get("/", middleware.isLoggedIn, (req, res) => {
-  Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({}, (err, allEvents) => {
+  if(req.query.search) {
+    const regex = new RegExp(helper.escapeRegex(req.query.search), 'gi')
+    Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({name: regex}, (err, searchEvents) => {
+        if(err){
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
+        } else {
+            res.render("./events/index", {events: searchEvents, search: req.query.search});
+        }
+    });
+  } else if(req.query.filter) {
+    Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({'cat' : {$in : req.query.filter}}, (err, filterEvents) => {
       if(err){
           req.flash("error", "Something went wrong...Try again")
           res.redirect("back")
       } else {
-          res.render("./events/index", {events: allEvents});
+          res.render("./events/index", {events: filterEvents, search: ""});
       }
-  });
+    })
+  } else {
+    Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({}, (err, allEvents) => {
+        if(err){
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
+        } else {
+            res.render("./events/index", {events: allEvents, search: ""});
+        }
+    });
+  }
 });
 
 // Show form to add new event
@@ -31,6 +52,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
         req.body.event.name = req.sanitize(req.body.event.name)
         req.body.event.url = req.sanitize(req.body.event.url)
         req.body.event.desc = req.sanitize(req.body.event.desc)
+        req.body.event.cat = req.body.cat
         req.body.event.requirements = req.sanitize(req.body.event.requirements)
         req.body.event.prizes = req.sanitize(req.body.event.prizes)
         const author = {
@@ -102,6 +124,7 @@ router.put("/:id/", middleware.isEventCreator, (req, res) => {
   req.body.event.name = req.sanitize(req.body.event.name)
   req.body.event.url = req.sanitize(req.body.event.url)
   req.body.event.desc = req.sanitize(req.body.event.desc)
+  req.body.event.cat = req.body.cat
   req.body.event.requirements = req.sanitize(req.body.event.requirements)
   req.body.event.prizes = req.sanitize(req.body.event.prizes)
   Event.findByIdAndUpdate(req.params.id, req.body.event, { runValidators: true, context: 'query' }, (err, updatedEvent) => {

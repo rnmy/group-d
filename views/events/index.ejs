@@ -8,8 +8,44 @@
             <a class="btn btn-primary btn-lg" href="/events/new">Add a new event today!</a>
         </div>
     </header>
+    
+    <div class="form-inline">
+        <div class="input-group mb-4 mr-3">
+            <form action="/events" method="GET" class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" name="search" value="<%= search %>" placeholder="Event Name...">
+                    <div class="input-group-append">
+                        <input type="submit" class="btn btn-outline-secondary" type="button" value="Search">
+                    </div>
+                </div>
+            </form>
+        </div>
+    
+        <div class="input-group mb-4">
+            <form action="/events" method="GET" class="form-inline">
+                <select name="filter[]" id="filter" class="selectpicker" title="Select Categories" multiple required>
+                    <option value="Arts">Arts</option>
+                    <option value="Business">Business</option>
+                    <option value="Computing">Computing</option>
+                    <option value="Engineering">Engineering</option>
+                    <option value="Government & Politics">Government & Politics</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Science">Science</option>
+                    <option value="Others">Others</option>
+                </select>
+                <div class="input-group-append">
+                    <input type="submit" class="btn btn-outline-secondary" type="button" value="Filter">
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="row mb-5">
+        <div class="mt-4 ml-3">
+            <% if(events.length < 1) { %>
+                <h3>No events match that query, please try again.</h3>
+            <% } %>
+        </div>
         <% events.forEach((event) => { %>
             <div class="col-sm-12 mb-2">
                 <div class="card">
@@ -18,6 +54,11 @@
                         <h6 class="card-subtitle mb-2 text-muted">Happening on <%= event.date.toDateString() %></h6>
                         <p class="card-text"><%= event.desc.substring(0, 135) %>...</p>
                         <p class="card-text text-danger">Register by <%= event.deadline.toDateString() %></p>
+                        <p>
+                            <% event.cat.forEach((cat) => { %>
+                                <button class="btn btn-primary btn-sm" disabled><%= cat %></button>
+                            <% }) %>
+                        </p>
                     </div>
                 </div>
             </div>

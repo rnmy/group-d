@@ -123,7 +123,11 @@ helperObj.checkFileType = function(file, cb) {
     } else {
         return cb('Error: Images only')
     }
-  }
+}
+
+helperObj.escapeRegex = function(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+}
 
 helperObj.checkBookmarks = function(event, userID) {
     return event.bookmarks.includes(userID)
