@@ -7,32 +7,56 @@ const validator = require('validator')
 
 // Show events page
 router.get("/", middleware.isLoggedIn, (req, res) => {
+  // console.log(req.query)
   if(req.query.search) {
-    const regex = new RegExp(helper.escapeRegex(req.query.search), 'gi')
-    Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({name: regex}, (err, searchEvents) => {
+    if(req.query.filter.includes('All')) {
+      const regex = new RegExp(helper.escapeRegex(req.query.search), 'gi')
+      Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({name: regex}, (err, searchEvents) => {
+          if(err){
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+          } else {
+              res.render("./events/index", {events: searchEvents, search: req.query.search, filter: req.query.filter});
+          }
+      });
+    } else {
+      const regex = new RegExp(helper.escapeRegex(req.query.search), 'gi')
+      Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({$and : [{'cat' : {$in : req.query.filter}}, {name: regex}]}, (err, filterEvents) => {
         if(err){
             req.flash("error", "Something went wrong...Try again")
             res.redirect("back")
         } else {
-            res.render("./events/index", {events: searchEvents, search: req.query.search});
+            res.render("./events/index", {events: filterEvents, search: req.query.search, filter: req.query.filter});
         }
-    });
-  } else if(req.query.filter) {
-    Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({'cat' : {$in : req.query.filter}}, (err, filterEvents) => {
-      if(err){
-          req.flash("error", "Something went wrong...Try again")
-          res.redirect("back")
-      } else {
-          res.render("./events/index", {events: filterEvents, search: ""});
-      }
-    })
+      })
+    } 
+  } else if (req.query.filter) {
+    if(req.query.filter.includes('All')) {
+      Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({}, (err, allEvents) => {
+          if(err){
+              req.flash("error", "Something went wrong...Try again")
+              res.redirect("back")
+          } else {
+              res.render("./events/index", {events: allEvents, search: "", filter: ['All']});
+          }
+      });
+    } else {
+      Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({'cat' : {$in : req.query.filter}}, (err, filterEvents) => {
+        if(err){
+            req.flash("error", "Something went wrong...Try again")
+            res.redirect("back")
+        } else {
+            res.render("./events/index", {events: filterEvents, search: req.query.search, filter: req.query.filter});
+        }
+      })
+    } 
   } else {
     Event.find({deadline:{$gte:new Date()}}).sort({deadline: 1}).find({}, (err, allEvents) => {
         if(err){
             req.flash("error", "Something went wrong...Try again")
             res.redirect("back")
         } else {
-            res.render("./events/index", {events: allEvents, search: ""});
+            res.render("./events/index", {events: allEvents, search: "", filter: ['All']});
         }
     });
   }
