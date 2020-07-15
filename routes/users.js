@@ -66,6 +66,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
         }).then((result) => {
           const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
         return newresult}).then((result) => {
+          console.log(result)
         res.render("./users/status", {user: foundUser, data: result})}).catch((err) => console.log(err))
       }
    })
