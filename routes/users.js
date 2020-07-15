@@ -204,14 +204,14 @@ router.put("/add_exp", middleware.isAuthorisedUser, (req, res) => {
       res.redirect("/users/:userId")
     } else {
       const allExpNames = foundUser.exp.map(experience => experience.name.toLowerCase())
-      if(allExpNames.includes(req.body.exp.name.toLowerCase()) === -1) {
+      if(allExpNames.includes(req.body.exp.name.toLowerCase())) {
+        req.flash("error", "This experience already exists")
+        res.redirect("/users/" + req.params.userId + "/add_exp")
+      } else {              
         foundUser.exp.push(req.body.exp)
         foundUser.save()       
         req.flash("success", "Successfully added experience")
         res.redirect("/users/" + req.params.userId)
-      } else {              
-        req.flash("error", "This experience already exists")
-        res.redirect("/users/" + req.params.userId + "/add_exp")
       }
     }
   })

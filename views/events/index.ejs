@@ -8,36 +8,29 @@
             <a class="btn btn-primary btn-lg" href="/events/new">Add a new event today!</a>
         </div>
     </header>
-    
-    <div class="form-inline">
-        <div class="input-group mb-4 mr-3">
-            <form action="/events" method="GET" class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" name="search" value="<%= search %>" placeholder="Event Name...">
-                    <div class="input-group-append">
-                        <input type="submit" class="btn btn-outline-secondary" type="button" value="Search">
+
+    <div class="col-sm-12">
+        <form action="/events" method="GET" class="form-inline">
+            <div class="row searchFilter ml-1" style="width:100%">    
+                <div class="input-group" style="width:100%">
+                    <input type="text" class="form-control btn-outline-secondary" name="search" value="<%= search %>" placeholder="Event Name..." >
+                    <div class="input-group-append mr-3">
+                        <select id="filter" val="<%= filter %>" name="filter[]" id="filter" class="selectpicker form-control" title="Select a Category" data-style="btn-outline-secondary" multiple required>
+                            <option value="All">All</option>
+                            <option value="Arts">Arts</option>
+                            <option value="Business">Business</option>
+                            <option value="Computing">Computing</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Government & Politics">Government & Politics</option>
+                            <option value="Medical">Medical</option>
+                            <option value="Science">Science</option>
+                            <option value="Others">Others</option>
+                        </select>
                     </div>
+                    <input type="submit" class="btn btn-secondary btn-search" type="button" value="Search">
                 </div>
-            </form>
-        </div>
-    
-        <div class="input-group mb-4">
-            <form action="/events" method="GET" class="form-inline">
-                <select name="filter[]" id="filter" class="selectpicker" title="Select Categories" multiple required>
-                    <option value="Arts">Arts</option>
-                    <option value="Business">Business</option>
-                    <option value="Computing">Computing</option>
-                    <option value="Engineering">Engineering</option>
-                    <option value="Government & Politics">Government & Politics</option>
-                    <option value="Medical">Medical</option>
-                    <option value="Science">Science</option>
-                    <option value="Others">Others</option>
-                </select>
-                <div class="input-group-append">
-                    <input type="submit" class="btn btn-outline-secondary" type="button" value="Filter">
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 
     <div class="row mb-5">
