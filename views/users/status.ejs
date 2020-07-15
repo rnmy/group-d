@@ -4,13 +4,13 @@
         <h1 class="mb-4 display-3"><%= user.name %>'s Groups</h1>
     </div>
     <table class="table">
-        <% if(data.length === 0) { %>
-            <caption><em>You currently have not joined any groups. Your active groups will be displayed here.</em></caption>
+        <% if(data.length === 0 || data.map(d => d.group).filter(g => !g.isDeleted).length === 0) { %>
+            <caption><em>You currently no active groups.</em></caption>
         <% } %>
         <thead>
           <tr>
-            <th scope="col">Event</th>
             <th scope="col">Group</th>
+            <th scope="col">Event</th>
             <th scope="col">Status</th>
           </tr>
         </thead>
@@ -19,37 +19,38 @@
                 <tr>
                     <% if(data[i].group.groupLeader.id.equals(currentUser._id) && !data[i].group.isDeleted) { %>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
+                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                                <%= data[i].group.name%>
                             </a>
                         </td>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
-                                <%= data[i].group.name%>
+                            <a href="/events/<%= data[i].event._id%>/">
+                                <%= data[i].event.name%>
                             </a>
                         </td>
                         <td class="text-success">Leader</td>
                     <% } else if(data[i].group.users.includes(currentUser._id)) { %>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
-                            </a>
-                        </td>
-                        <td>
                             <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
                                 <%= data[i].group.name%>
                             </a>
                         </td>
+                        <td>
+                            <a href="/events/<%= data[i].event._id%>/">
+                                <%= data[i].event.name%>
+                            </a>
+                        </td>
+                        
                         <td class="text-success">Member</td>
                     <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
+                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                                <%= data[i].group.name%>
                             </a>
                         </td>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
-                                <%= data[i].group.name%>
+                            <a href="/events/<%= data[i].event._id%>/">
+                                <%= data[i].event.name%>
                             </a>
                         </td>
                         <td class="text-warning">Pending</td>

@@ -30,12 +30,14 @@
       </div>
       <div class="form-group">
         <label>Enter a password:</label>
-        <input class="form-control" type="password" id="password" name="password" minlength="8" onkeyup="check()" required>
+        <input class="form-control" type="password" id="password" name="password" minlength="8" required>
+        <meter id="passwordMeter" max="4"></meter>
+        <p id="strengthText"></p>
       </div>
       <div class="form-group">
         <label>Confirm your password:</label>
         <input class="form-control" type="password" id="passwordConfirmation" onkeyup="check()" required>
-        <span id='message'></span>
+        <p id='confirmText'></p>
       </div>
       <div class="form-group">
         <label>Your organization:</label>
@@ -46,25 +48,52 @@
         <% } %>
       </div>
       <div class="form-group">
-        <label>Your profile pic (Optional):</label>
+        <label>Profile pic (Optional):</label>
+        <h6 class="text-primary mb-2" style="font-size: 0.8rem;"><em>Please choose only .jpg, .jpeg and .png image files of size 1.0MB.</em></h6>
         <input type="file" class="form-control-file" name="file">
       </div>
       <button id="submit" class="btn btn-success mb-5">Register!</button
     </form>
     <script>
-     function check() {
-      if (document.getElementById('password').value && document.getElementById('password').value ==
-        document.getElementById('passwordConfirmation').value) {
-        document.getElementById('message').style.color = 'green';
-        document.getElementById('message').innerHTML = 'Matching';
-        document.getElementById('submit').disabled = false
-      } else {
-        document.getElementById('message').style.color = 'red';
-        document.getElementById('message').innerHTML = 'Not matching';
-        document.getElementById('submit').disabled = true
-      }
+      const passwordField = document.getElementById('password')
+      const passwordConfirm = document.getElementById('passwordConfirmation')
+      const confirmText = document.getElementById('confirmText')
+      const register = document.getElementById('submit')
+      function check() {
+        if (passwordField.value && passwordField.value ==
+          passwordConfirm.value) {
+          confirmText.style.color = 'green';
+          confirmText.innerHTML = 'Passwords match!';
+          register.disabled = false
+        } else {
+          confirmText.style.color = 'red';
+          confirmText.innerHTML = 'Password does not match.';
+          register.disabled = true
+        }
     }
+    const meterField = document.getElementById("passwordMeter")
+    const strengthText = document.getElementById("strengthText")
+    let strength = {
+      0: "Very weak",
+      1: "Weak",
+      2: "Medium",
+      3: "Good",
+      4: "Strong"
+    }
+    meterField.style.display = 'none'
+    passwordField.addEventListener('input', () => {
+      let value = passwordField.value
+      let checkResult = zxcvbn(value)
+      meterField.style.display = 'block'
+      meterField.value = checkResult.score
+      if (value !== "") {
+        strengthText.innerHTML = "Password strength: " + strength[checkResult.score]
+      } else {
+        strengthText.innerHTML = ""
+      }
+    }) 
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.2.0/zxcvbn.js"></script>
   </div>
 
 <%- include("../partials/footer")%>
