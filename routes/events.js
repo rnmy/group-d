@@ -16,7 +16,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
               req.flash("error", "Something went wrong...Try again")
               res.redirect("back")
           } else {
-              res.render("./events/index", {events: searchEvents, search: req.query.search, filter: req.query.filter});
+              res.render("./events/index", {events: searchEvents, search: req.query.search, cat: req.query.filter});
           }
       });
     } else {
@@ -26,7 +26,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
             req.flash("error", "Something went wrong...Try again")
             res.redirect("back")
         } else {
-            res.render("./events/index", {events: filterEvents, search: req.query.search, filter: req.query.filter});
+            res.render("./events/index", {events: filterEvents, search: req.query.search, cat: req.query.filter});
         }
       })
     } 
@@ -37,7 +37,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
               req.flash("error", "Something went wrong...Try again")
               res.redirect("back")
           } else {
-              res.render("./events/index", {events: allEvents, search: "", filter: ['All']});
+              res.render("./events/index", {events: allEvents, search: "", cat: req.query.filter});
           }
       });
     } else {
@@ -46,7 +46,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
             req.flash("error", "Something went wrong...Try again")
             res.redirect("back")
         } else {
-            res.render("./events/index", {events: filterEvents, search: req.query.search, filter: req.query.filter});
+            res.render("./events/index", {events: filterEvents, search: req.query.search, cat: req.query.filter});
         }
       })
     } 
@@ -56,7 +56,7 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
             req.flash("error", "Something went wrong...Try again")
             res.redirect("back")
         } else {
-            res.render("./events/index", {events: allEvents, search: "", filter: ['All']});
+            res.render("./events/index", {events: allEvents, search: "", cat: ['All']});
         }
     });
   }
@@ -138,7 +138,7 @@ router.get("/:id/edit", middleware.isEventCreator, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/events")
     } else {
-      res.render("./events/edit", {event: foundEvent});
+      res.render("./events/edit", {event: foundEvent, cat: foundEvent.cat});
     }
   })
 })
