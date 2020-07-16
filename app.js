@@ -23,9 +23,9 @@ const indexRoutes = require("./routes/index"),
       groupRoutes = require("./routes/groups"),
       userRoutes = require("./routes/users")
 
-mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
+// mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
 // FOR DEPLOYING
-// mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.urlencoded({extended: true}));
@@ -61,11 +61,11 @@ app.use("/events", eventRoutes)
 app.use("/events/:id/groups", groupRoutes) 
 app.use("/users/:userId", userRoutes)
 
-app.listen(3000, () => {
-  console.log("SERVER START");
-})
-
-// FOR DEPLOYING
-// app.listen(process.env.PORT, process.env.IP, () => {
+// app.listen(3000, () => {
 //   console.log("SERVER START");
 // })
+
+// FOR DEPLOYING
+app.listen(process.env.PORT, process.env.IP, () => {
+  console.log("SERVER START");
+})
