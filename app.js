@@ -23,10 +23,21 @@ const indexRoutes = require("./routes/index"),
       groupRoutes = require("./routes/groups"),
       userRoutes = require("./routes/users")
 
-//mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
+const env = process.env.NODE_ENV || 'development'
+if (env === 'test') {
+  process.env.MONGODB_URI = "mongodb://localhost/groupd-test"
+} else {
+  process.env.MONGODB_URI = "mongodb://localhost/group-d"
+}
+mongoose.connect(process.env.MONGODB_URI, 
+  { 
+    useNewUrlParser: true, 
+    useUnifiedTopology: true 
+  })
+mongoose.connect(process.env.MONGODB_URI, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
 // FOR DEPLOYING
-mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-mongoose.set('useCreateIndex', true);
+// mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+// mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(expressSanitizer())
@@ -69,3 +80,5 @@ app.use("/users/:userId", userRoutes)
 app.listen(process.env.PORT, process.env.IP, () => {
   console.log("SERVER START");
 })
+
+module.exports = app
