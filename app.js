@@ -1,4 +1,4 @@
-//require('dotenv').config()
+require('dotenv').config()
 const express = require("express"),
       app = express(),
       mongoose = require("mongoose"),
@@ -23,7 +23,7 @@ const indexRoutes = require("./routes/index"),
       groupRoutes = require("./routes/groups"),
       userRoutes = require("./routes/users")
 
-// mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
+//mongoose.connect("mongodb://localhost/group-d", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}); 
 // FOR DEPLOYING
 mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
@@ -65,7 +65,7 @@ app.use("/users/:userId", userRoutes)
 //   console.log("SERVER START");
 // })
 
-// FOR DEPLOYING
+//FOR DEPLOYING
 app.listen(process.env.PORT, process.env.IP, () => {
   console.log("SERVER START");
 })

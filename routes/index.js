@@ -5,10 +5,10 @@ const User = require("../models/user")
 const multer = require('multer')
 const path = require('path')
 const helper = require('../helper')
-//const middleware = require('../middleware')
-//const crypto = require('crypto')
-//const sgMail = require('@sendgrid/mail')
-//sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// const middleware = require('../middleware')
+// const crypto = require('crypto')
+// const sgMail = require('@sendgrid/mail')
+// sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 const storage = multer.diskStorage({
   destination: './public/uploads',
@@ -42,7 +42,7 @@ router.get("/register", function(req, res){
     });
   });
 
-//handle sign up logic without email verification
+// //handle sign up logic without email verification
 router.post("/register",function(req, res){
   upload(req, res, (err) => {
     if (err) {
@@ -121,7 +121,7 @@ router.post("/register",function(req, res){
 //             });
 //         }
 //         User.register(newUser, req.body.password, async function(err, user){
-//           if(err){
+//           if(err) {
 //             req.flash("error", err.message)
 //             console.log(err)
 //             return res.redirect("/register");
@@ -150,7 +150,7 @@ router.post("/register",function(req, res){
 //   )
 // });
 
-// Email verification route 
+// // Email verification route 
 // router.get('/verify-email', async (req, res, next) => {
 //   try {
 //     const user = await User.findOne({emailToken: req.query.token})

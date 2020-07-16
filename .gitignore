@@ -1,3 +1,5 @@
 
 public/uploads/file-1594277663328.jpg
 *.jpg
+
+.env
