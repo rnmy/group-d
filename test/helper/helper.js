@@ -14,8 +14,7 @@ const {
     createObject,
     getEvent,
     changeObject,
-    getGroupAndEvent,
-    checkFileType
+    getGroupAndEvent
 } = require("../../helper")
 const { 
     userAInfo, 
@@ -24,8 +23,7 @@ const {
     testGroupAInfo, 
     testGroupBInfo, 
     testGroupCInfo,
-    testEventAInfo,
-    testEventBInfo
+    testEventAInfo
 } = require("../seeding/seeds")
 
 
