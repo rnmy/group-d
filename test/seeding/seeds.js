@@ -72,18 +72,5 @@ module.exports.testEventAInfo = {
     maxGroupSize: 4
 }
 
-module.exports.testEventBInfo = {
-    _id: new mongoose.Types.ObjectId(),
-    name: "EventB",
-    url: "EventBURL",
-    desc: "Test",
-    cat: ["Test"],
-    requirements: "Test",
-    prizes: "Test",
-    date: new Date(2020, 7, 27),
-    deadline: new Date(2020, 7, 27),
-    minGroupSize: 1,
-    maxGroupSize: 4
-}
 
 
