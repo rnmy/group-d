@@ -34,8 +34,6 @@ helperObj.getAllPending = function(groupID) {
 
 // Returns array of group IDs that user is part of
 helperObj.getGroupIDs = function(userID) {
-    // Go through all groups' pending 
-    // If userID exists inside, store the group ID 
     return new Promise((resolve, reject) => {
         let id = []
         Group.find({}, {pending: 1, rejected: 1, users: 1, removed: 1, left: 1}, (err, result) => {

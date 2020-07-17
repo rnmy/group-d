@@ -142,6 +142,7 @@ router.put("/", middleware.isAuthorisedUser, (req, res) => {
               req.flash("error", "Something went wrong...Try again")
               res.redirect("/users/:userId")
             } else {
+              res.json({body: user})
               req.flash("success", "Successfully updated profile")
               res.redirect("/users/" + req.params.userId)
             }
