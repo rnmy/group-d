@@ -683,11 +683,12 @@ router.post("/:groupid/forum", middleware.isGroupMember, (req, res) => {
             } else {
               message.author.id = req.user._id
               message.author.username = req.user.username
-              const date = new Date()
               const dateOptions = {month : "short", day : "numeric", year : "numeric"};
-              const timeOptions = {hour: "numeric", minute: "numeric"}
-              message.date = date.toLocaleDateString("en-US", dateOptions)
-              message.time = date.toLocaleTimeString("en-US", timeOptions)
+              const timeOptions = {hour: "numeric", minute: "numeric", timeZone: "Asia/Singapore"}
+
+              message.date = new Date().toLocaleDateString("en-US", dateOptions)
+              message.time = new Date().toLocaleTimeString("en-US", timeOptions)
+
               message.save()
               foundGroup.messages.push(message)
               foundGroup.save()
