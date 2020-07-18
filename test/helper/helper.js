@@ -6,15 +6,22 @@ const mongoose = require('mongoose')
 const db = require('../db-handler')
 const fs = require('fs')
 const expect = require('chai').expect 
+const assert = require('chai').assert 
 const Event = require("../../models/event")
 const Group = require("../../models/group")
 const User = require("../../models/user")
+const Notification = require("../../models/notification")
 const {
     getGroupIDs, 
     createObject,
     getEvent,
     changeObject,
-    getGroupAndEvent
+    getGroupAndEvent,
+    escapeRegex,
+    getAllUsers,
+    getAllPending,
+    checkBookmarks,
+    getNotif
 } = require("../../helper")
 const { 
     userAInfo, 
@@ -23,7 +30,10 @@ const {
     testGroupAInfo, 
     testGroupBInfo, 
     testGroupCInfo,
-    testEventAInfo
+    testEventAInfo,
+    testEventBInfo,
+    testNotificationAInfo,
+    testNotificationBInfo
 } = require("../seeding/seeds")
 
 
@@ -41,6 +51,197 @@ after(async () => db.clearDatabase())
 //         })
 //     })
 // })
+
+describe("Testing escapeRegex helper function", () => {
+    it("Converts a string by interpreting metacharacters as character literals", (done) => {
+        const escape1 = escapeRegex("/beep/")
+        const escape2 = escapeRegex("beep")
+        const escape3 = escapeRegex("/[A-Z]*/")
+        const escape4 = escapeRegex("[A-Z]*")
+        const escape5 = escapeRegex("/^boop$/")
+        const escape6 = escapeRegex("^boop$")
+        const escape7 = escapeRegex("/(?:.*)/")
+        const escape8 = escapeRegex("(?:.*)")
+        const escape9 = escapeRegex("/(?:beep|boop)/")
+        const escape10 = escapeRegex("(?:beep|boop)")
+
+        expect(escape1).to.equal("/beep/")
+        expect(escape2).to.equal("beep")
+        expect(escape3).to.equal("/\\[A\\-Z\\]\\*/")
+        expect(escape4).to.equal("\\[A\\-Z\\]\\*")
+        expect(escape5).to.equal("/\\^boop\\$/")
+        expect(escape6).to.equal("\\^boop\\$")
+        expect(escape7).to.equal("/\\(\\?:\\.\\*\\)/")
+        expect(escape8).to.equal("\\(\\?:\\.\\*\\)")
+        expect(escape9).to.equal("/\\(\\?:beep\\|boop\\)/")
+        expect(escape10).to.equal("\\(\\?:beep\\|boop\\)")
+        done()
+    })
+})
+
+describe("Testing getAllUsers helper function", () => {
+    let userA, userB, groupA
+    beforeEach(async () => {
+        userA = await User.create(userAInfo)
+        userB = await User.create(userBInfo)
+        groupA = await Group.create(testGroupAInfo)
+    })
+    afterEach(async () => db.clearDatabase())
+    it("Test 1: No users in group", async () => {
+        const noUsers = [];
+        const groupUsers = await getAllUsers(groupA._id)
+
+        expect(groupUsers).to.eql(noUsers)
+    })
+    it("Test 2: userA in group", async () => {
+        const users = [userA._id]
+        await groupA.users.push(userA)
+        await groupA.save()
+        const groupUsers = await getAllUsers(groupA._id)
+        
+        expect(groupUsers).to.eql(users)
+    })
+    it("Test 3: userA and userB in group", async () => {
+        const users = [userA._id, userB._id]
+        await groupA.users.push(userA)
+        await groupA.users.push(userB)
+        await groupA.save()
+        const groupUsers = await getAllUsers(groupA._id)
+
+        expect(groupUsers).to.eql(users)
+    })
+    it("Test 4: userA and userB in group, then userA left group", async () => {
+        const users = [userB._id]
+        await groupA.users.push(userA)
+        await groupA.users.push(userB)
+        await groupA.users.shift()
+        await groupA.save()
+        const groupUsers = await getAllUsers(groupA._id)
+
+        expect(groupUsers).to.eql(users)
+    })
+})
+
+describe("Testing getAllPending helper function", () => {
+    let userA, userB, groupA
+    beforeEach(async () => {
+        userA = await User.create(userAInfo)
+        userB = await User.create(userBInfo)
+        groupA = await Group.create(testGroupAInfo)
+    })
+    afterEach(async () => db.clearDatabase())
+    it("Test 1: No pending users in group", async () => {
+        const noPending = [];
+        const groupPending = await getAllPending(groupA._id)
+
+        expect(groupPending).to.eql(noPending)
+    })
+    it("Test 2: userA pending to join group", async () => {
+        const pending = [userA._id]
+        await groupA.pending.push(userA)
+        await groupA.save()
+        const groupPending = await getAllPending(groupA._id)
+        
+        expect(groupPending).to.eql(pending)
+    })
+    it("Test 3: userA and userB pending to join group", async () => {
+        const pending = [userA._id, userB._id]
+        await groupA.pending.push(userA)
+        await groupA.pending.push(userB)
+        await groupA.save()
+        const groupPending = await getAllPending(groupA._id)
+
+        expect(groupPending).to.eql(pending)
+    })
+    it("Test 4: userA and userB pending to join group, then userA removed join group request", async () => {
+        const pending = [userB._id]
+        await groupA.pending.push(userA)
+        await groupA.pending.push(userB)
+        await groupA.pending.shift()
+        await groupA.save()
+        const groupPending = await getAllPending(groupA._id)
+
+        expect(groupPending).to.eql(pending)
+    })
+})
+
+describe("Testing checkBookmarks helper function", () => {
+    let user, anotherUser, eventA, eventB 
+    beforeEach(async () => {
+        user = await User.create(userAInfo)
+        anotherUser = await User.create(userBInfo)
+        eventA = await Event.create(testEventAInfo)
+        eventB = await Event.create(testEventBInfo)
+    })
+    afterEach(async () => db.clearDatabase())
+    it("Test 1: User has no bookmarks", (done) => {
+        const A = checkBookmarks(eventA, user._id)
+        const B = checkBookmarks(eventB, user._id)
+
+        expect(A).to.be.false
+        expect(B).to.be.false
+        done()
+    })
+    it("Tets 2: User bookmarks event A but not event B", async () => {
+        await eventA.bookmarks.push(user._id)
+        await eventA.save()
+        const A = checkBookmarks(eventA, user._id)
+        const B = checkBookmarks(eventB, user._id)
+
+        expect(A).to.be.true
+        expect(B).to.be.false
+    })
+    it("Tets 3: User bookmarks both events A and B", async () => {
+        await eventA.bookmarks.push(user._id)
+        await eventB.bookmarks.push(user._id)
+        await eventA.save()
+        await eventB.save()
+        const A = checkBookmarks(eventA, user._id)
+        const B = checkBookmarks(eventB, user._id)
+
+        expect(A).to.be.true
+        expect(B).to.be.true
+    })
+    it("Tets 4: User bookmarks both events A and B, then removes bookmark for event A", async () => {
+        await eventA.bookmarks.push(user._id)
+        await eventB.bookmarks.push(user._id)
+        await eventA.bookmarks.shift(user._id)
+        await eventA.save()
+        await eventB.save()
+        const A = checkBookmarks(eventA, user._id)
+        const B = checkBookmarks(eventB, user._id)
+
+        expect(A).to.be.false
+        expect(B).to.be.true
+    })
+    it("Tets 5: Two users bookmark event A", async () => {
+        await eventA.bookmarks.push(user._id)
+        await eventA.bookmarks.push(anotherUser._id)
+        await eventA.save()
+        const A = checkBookmarks(eventA, user._id)
+        const B = checkBookmarks(eventA, anotherUser._id)
+
+        expect(A).to.be.true
+        expect(B).to.be.true
+    })
+})
+
+describe("Testing getNotif helper function", () => {
+    let notificationA, groupA, eventA
+    before(async () => {
+        notificationA = await Notification.create({text:"NotificationA", event:eventA, group:groupA, date:new Date(2020, 8, 28)})
+        await notificationA.save()
+    })
+    after(async () => db.clearDatabase())
+    it("Get notification based on ID", async () => {
+        const A = await getNotif(notificationA._id)
+
+        expect(A.text).to.eql(notificationA.text)
+        expect(A.event).to.eql(notificationA.event)
+        expect(A.group).to.eql(notificationA.group)
+        expect(A.date).to.eql(notificationA.date)
+    })
+})
 
 describe("Testing getGroupIDs helper function", () => {
     let userA, userB, userC, groupA, groupB, groupC 
@@ -220,3 +421,4 @@ describe("Testing checkFileType helper function", () => {
         })
     })
 })
+
