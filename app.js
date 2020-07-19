@@ -26,21 +26,22 @@ const indexRoutes = require("./routes/index"),
 const env = process.env.NODE_ENV || 'development'
 if (env === 'test') {
   process.env.MONGODB_URI = "mongodb://localhost/groupd-test"
-} else if (env === 'production') {
-  process.env.MONGODB_URI = "mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority"
+// } else if (env === 'production') {
+//   process.env.MONGODB_URI = "mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority"
 } else {
   process.env.MONGODB_URI = "mongodb://localhost/group-d"
 } 
 
-mongoose.connect(process.env.MONGODB_URI, 
-  { 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true ,
-    useFindAndModify: false
-  })
+// mongoose.connect(process.env.MONGODB_URI, 
+//   { 
+//     useNewUrlParser: true, 
+//     useUnifiedTopology: true ,
+//     useFindAndModify: false
+//   }
+// )
 
 // FOR DEPLOYING
-// mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.connect("mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 
 app.use(bodyParser.urlencoded({extended: true}));
