@@ -10,6 +10,10 @@ const Event = require("../../models/event")
 const Group = require("../../models/group")
 const User = require("../../models/user")
 const Notification = require("../../models/notification")
+const { 
+    userAInfo
+} = require("../seeding/seeds")
+const agent = request.agent(app)
 
 before(async () => db.connect())
 
@@ -77,8 +81,8 @@ describe("POST /register", () => {
         .field('passwordConfirm', 'password')
         .field('organization', 'Test')
         .end((err, res) => {
-            expect(res).to.redirect
             expect(res.req.path).to.equal('/register')
+            expect(res.text).to.have.string("A user with the given username is already registered\n")
             done()
         })
     })

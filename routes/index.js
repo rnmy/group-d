@@ -73,13 +73,12 @@ router.post("/register",function(req, res){
         }
         User.register(newUser, req.body.password, function(err, user){
           if(err){
-            req.flash("error", err.message)
-            return res.redirect("/register");
-          } 
+            res.render("./auth/register", {error: err.message, data: ''});
+          } else {
           passport.authenticate("local")(req, res, function(){
             req.flash("success", "Successfully created account")
             res.redirect("/events");
-          });
+          })}
         });
       }
     }
