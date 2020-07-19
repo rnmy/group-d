@@ -27,14 +27,17 @@ const indexRoutes = require("./routes/index"),
 const env = process.env.NODE_ENV || 'development'
 if (env === 'test') {
   process.env.MONGODB_URI = "mongodb://localhost/groupd-test"
+} else if (env === 'production') {
+  process.env.MONGODB_URI = "mongodb+srv://JavaChip:h2Uu4HtFdAEnKFXo@cluster0-6z3um.mongodb.net/<dbname>?retryWrites=true&w=majority"
 } else {
   process.env.MONGODB_URI = "mongodb://localhost/group-d"
-}
+} 
 
 mongoose.connect(process.env.MONGODB_URI, 
   { 
     useNewUrlParser: true, 
-    useUnifiedTopology: true 
+    useUnifiedTopology: true ,
+    useFindAndModify: false
   })
 
 // FOR DEPLOYING
@@ -74,13 +77,15 @@ app.use("/events", eventRoutes)
 app.use("/events/:id/groups", groupRoutes) 
 app.use("/users/:userId", userRoutes)
 
-app.listen(3000, () => {
-  console.log("SERVER START");
-})
-
-//FOR DEPLOYING
-// app.listen(process.env.PORT, process.env.IP, () => {
-//   console.log("SERVER START");
-// })
+if (env === 'development') {
+  app.listen(3000, () => {
+    console.log("SERVER START");
+  })
+} else {
+  //FOR DEPLOYING
+  app.listen(process.env.PORT, process.env.IP, () => {
+    console.log("SERVER START");
+  })
+}
 
 module.exports = app
