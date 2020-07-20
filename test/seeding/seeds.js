@@ -35,6 +35,14 @@ module.exports.userCInfo = {
     profilePic: ""
 }
 
+module.exports.mockUserInfo = {
+        name: "MockUser",
+        email: "mock@mock.com",
+        emailToken: null,
+        isVerified: true, 
+        username: "MockUser",
+        organization: "NUS"
+}
 
 module.exports.testGroupAInfo = {
     _id: new mongoose.Types.ObjectId(),
@@ -69,11 +77,11 @@ module.exports.testEventAInfo = {
     date: new Date(2020, 7, 27),
     deadline: new Date(2020, 7, 27),
     minGroupSize: 1,
-    maxGroupSize: 4,
-    author: {
-        id: this.userAInfo._id,
-        username: this.userAInfo.username
-    }
+    maxGroupSize: 4
+    // author: {
+    //     id: this.userAInfo._id,
+    //     username: this.userAInfo.username
+    // }
 }
 
 module.exports.testEventBInfo = {
@@ -87,9 +95,9 @@ module.exports.testEventBInfo = {
     date: new Date(2020, 8, 27),
     deadline: new Date(2020, 8, 27),
     minGroupSize: 2,
-    maxGroupSize: 5,
-    author: {
-        id: this.userAInfo._id,
-        username: this.userAInfo.username
-    }
+    maxGroupSize: 5
+    // author: {
+    //     id: this.userAInfo._id,
+    //     username: this.userAInfo.username
+    // }
 }
