@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "export NODE_ENV=test && mocha --recursive --exit --timeout 30000",
+    "test": "export NODE_ENV=test && mocha --recursive --exit --timeout 300000",
     "start": "node app.js"
   },
   "author": "JavaChip",
