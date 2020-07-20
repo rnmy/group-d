@@ -15,7 +15,6 @@ const {
     userAInfo
 } = require("../seeding/seeds")
 const puppeteer = require('puppeteer')
-const e = require('express')
 
 before(async () => {
     await db.connect()
