@@ -63,13 +63,17 @@ module.exports.testEventAInfo = {
     name: "EventA",
     url: "EventAURL",
     desc: "Test",
-    cat: ["Test"],
+    cat: ["Business", "Computing"],
     requirements: "Test",
     prizes: "Test",
     date: new Date(2020, 7, 27),
     deadline: new Date(2020, 7, 27),
     minGroupSize: 1,
-    maxGroupSize: 4
+    maxGroupSize: 4,
+    author: {
+        id: this.userAInfo._id,
+        username: this.userAInfo.username
+    }
 }
 
 module.exports.testEventBInfo = {
@@ -77,11 +81,15 @@ module.exports.testEventBInfo = {
     name: "EventB",
     url: "EventBURL",
     desc: "Test",
-    cat: ["Test"],
+    cat: ["Computing"],
     requirements: "Test",
     prizes: "Test",
     date: new Date(2020, 8, 27),
     deadline: new Date(2020, 8, 27),
     minGroupSize: 2,
-    maxGroupSize: 5
+    maxGroupSize: 5,
+    author: {
+        id: this.userAInfo._id,
+        username: this.userAInfo.username
+    }
 }
