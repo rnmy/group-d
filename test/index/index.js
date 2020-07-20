@@ -14,9 +14,16 @@ const Notification = require("../../models/notification")
 const { 
     userAInfo
 } = require("../seeding/seeds")
-const agent = request.agent(app)
+const puppeteer = require('puppeteer')
+const e = require('express')
 
-before(async () => db.connect())
+before(async () => {
+    await db.connect()
+    
+})
+after (async () => {   
+    await db.clearDatabase()
+});
 
 describe("GET /", () => {
     it("Landing page loads", (done) => {
@@ -147,6 +154,73 @@ describe("GET /logout", () => {
             expect(res.text).to.have.string("Welcome to <strong>group'd!</strong>\n")
             expect(res.req.path).to.equal('/')
             done()
+        })
+    })
+})
+
+describe("Testing index routes with puppeteer", () => {
+    let browser, page
+    beforeEach(async () => {
+        browser = await puppeteer.launch(
+        {
+            executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+            headless: false,    
+            slowMo: 100,    
+            timeout: 0
+        })
+        page = await browser.newPage()
+        await page.setViewport({ width: 1382, height: 702 })
+    });
+    afterEach (async () => {  
+        await page.close();  
+    });
+    after(async () => {
+        await browser.close()
+    })
+        
+    it("POST /register", async () => {
+        const navigationPromise = page.waitForNavigation()
+        await page.goto("http://localhost:3000/");
+        await page.click('.row > .col > .form-group > .btn > a')
+        await navigationPromise
+
+        const name = await page.waitForSelector('body > .container > form > .form-group:nth-child(1) > .form-control')
+        await name.type("MockUser")
+        const email = await page.waitForSelector('body > .container > form > .form-group:nth-child(2) > .form-control')
+        await email.type("mock@mock.com")
+        const username = await page.waitForSelector('body > .container > form > .form-group:nth-child(3) > .form-control')
+        await username.type("MockUser")
+        const password = await page.waitForSelector('body #password')
+        await password.type("password")
+        const passwordConfirm = await page.waitForSelector('body #passwordConfirmation')
+        await passwordConfirm.type("password")
+        const organization = await page.waitForSelector('body > .container > form > .form-group:nth-child(6) > .form-control')
+        await organization.type("NUS")
+        
+        await page.click('body #submit')
+        await navigationPromise
+
+        const text = await page.$eval('body > .container > .alert', a => a.innerText)
+        expect(text).to.equal("Successfully created account")
+    })
+
+    describe("Testing login", () => {
+        it("POST /login with newly registered account", async () => {
+            const navigationPromise = page.waitForNavigation()
+            await page.goto("http://localhost:3000/")
+            await page.click('.row > .col > .form-group > a > .btn')
+            await navigationPromise
+
+            const username = await page.waitForSelector('.container > div > form > .form-group:nth-child(1) > .form-control')
+            await username.type("MockUser")
+            const password = await page.waitForSelector('.container > div > form > .form-group:nth-child(2) > .form-control')
+            await password.type("password")
+
+            await page.click('.container > div > form > .form-group > .btn')
+            await navigationPromise
+
+            const text = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+            expect(text).to.equal("Events")
         })
     })
 })

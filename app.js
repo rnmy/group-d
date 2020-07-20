@@ -77,15 +77,15 @@ app.use("/events", eventRoutes)
 app.use("/events/:id/groups", groupRoutes) 
 app.use("/users/:userId", userRoutes)
 
-if (env === 'development') {
-  server = app.listen(3000, () => {
+if (env === 'development' || 'test') {
+  app.listen(3000, () => {
     console.log("SERVER START");
   })
 } else {
   // FOR DEPLOYING & TESTING
-  server = app.listen(process.env.PORT, process.env.IP, () => {
+  app.listen(process.env.PORT, process.env.IP, () => {
     console.log("SERVER START");
   })
 }
 
-module.exports=server
+module.exports = app
