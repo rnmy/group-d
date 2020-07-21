@@ -77,8 +77,12 @@ app.use("/events", eventRoutes)
 app.use("/events/:id/groups", groupRoutes) 
 app.use("/users/:userId", userRoutes)
 
-if (env === 'development' || 'test') {
+if (env === 'development') {
   app.listen(3000, () => {
+    console.log("SERVER START");
+  })
+} else if (env === 'test') {
+  app.listen(8080, () => {
     console.log("SERVER START");
   })
 } else {
