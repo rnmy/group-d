@@ -1,3 +1,9 @@
 
 public/uploads/file-1594277663328.jpg
 .env
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Chromium Framework
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Helpers
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Internet Plug-Ins
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Libraries
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/Resources
+node_modules/puppeteer/.local-chromium/mac-768783/chrome-mac/Chromium.app/Contents/Frameworks/Chromium Framework.framework/XPCServices
