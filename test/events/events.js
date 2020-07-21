@@ -17,7 +17,7 @@ const {
     testEventBInfo
 } = require("../seeding/seeds")
 
-let browser, page
+let browser, page, mockUser, eventA, eventB
 before(async() => {
     await db.connect()
     browser = await puppeteer.launch(
@@ -31,15 +31,15 @@ before(async() => {
         await page.setViewport({ width: 1382, height: 702 })
 })
 beforeEach(async () => {
-    const user = await User.register(mockUserInfo, "password")
+    mockUser = await User.register(mockUserInfo, "password")
     const authorCreds = {
-        id: user._id,
+        id: mockUser._id,
         username: "MockUser"
     }
-    const eventA = await Event.create(testEventAInfo)
+    eventA = await Event.create(testEventAInfo)
     eventA.author = authorCreds
     await eventA.save()
-    const eventB = await Event.create(testEventBInfo)
+    eventB = await Event.create(testEventBInfo)
     eventB.author = authorCreds 
     await eventB.save()
 
@@ -142,7 +142,82 @@ describe("Editing an event", () => {
 
         const alertMessage = await page.$eval('body > .container > .alert', a => a.innerText)
         expect(alertMessage).to.equal("The event has been updated successfully")
-  
+        await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(2) > .nav-link')
+        await navigationPromise
     })
 })
+
+describe("Adding events to bookmakrs", () => {
+    it("Adding Events A and B to bookmarks", async () => {
+        const navigationPromise = page.waitForNavigation()
+        await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        await page.click('.container > .jumbotron > .container > form > .btn')
+        await navigationPromise
+        const alert1 = await page.$eval('body > .container > .alert', a => a.innerText)
+        expect(alert1).to.equal("Event saved to your bookmarks")
+
+        await page.click('body > .navbar > .navbar-brand')
+        await navigationPromise
+        await page.click('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        await page.click('.container > .jumbotron > .container > form > .btn')
+        await navigationPromise
+        const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
+        expect(alert2).to.equal("Event saved to your bookmarks")
+
+        await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+        await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+        await navigationPromise
+        await page.click('.col-sm-12:nth-child(1) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        const firstBookmark = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
+        expect(firstBookmark).to.equal("EventA")
+        await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+        await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+        await navigationPromise
+        await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        const secondBookmark = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
+        expect(secondBookmark).to.equal("EventB")
+        await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(2) > .nav-link')
+        await navigationPromise
+    })
+})
+
+describe("Removing events from bookmarks", () => {
+    beforeEach(async () => {
+        eventA.bookmarks.push(mockUser)
+        await eventA.save()
+        eventB.bookmarks.push(mockUser)
+        await eventB.save()
+    })
+    it("Removing Events A and B from bookmarks", async () => {
+        const navigationPromise = page.waitForNavigation()
+        await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        await page.click('.container > .jumbotron > .container > form > .btn')
+        await navigationPromise
+        const alert1 = await page.$eval('body > .container > .alert', a => a.innerText)
+        expect(alert1).to.equal("Event removed from your bookmarks")
+
+        await page.click('body > .navbar > .navbar-brand')
+        await navigationPromise
+        await page.click('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a')
+        await navigationPromise
+        await page.click('.container > .jumbotron > .container > form > .btn')
+        await navigationPromise
+        const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
+        expect(alert2).to.equal("Event removed from your bookmarks")
+
+        await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+        await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+        await navigationPromise
+        const text = await page.$eval('.container > .container > .row > .text-secondary > em', a => a.innerText)
+        expect(text).to.equal("You currently have not bookmarked any events.")
+    })
+})
+
+
+
 
