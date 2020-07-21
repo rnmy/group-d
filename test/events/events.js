@@ -18,29 +18,29 @@ const {
 } = require("../seeding/seeds")
 
 describe("Testing event routes with puppeteer", () => {
-    let browser, page
+    let browser, page, eventA, eventB, user
     before(async() => {
         await db.connect()
         browser = await puppeteer.launch(
             {
                 executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
                 headless: false,    
-                slowMo: 100,    
+                slowMo: 40,    
                 timeout: 0
             })
             page = await browser.newPage()
             await page.setViewport({ width: 1382, height: 702 })
     })
     beforeEach(async () => {
-        const user = await User.register(mockUserInfo, "password")
+        user = await User.register(mockUserInfo, "password")
         const authorCreds = {
             id: user._id,
             username: "MockUser"
         }
-        const eventA = await Event.create(testEventAInfo)
+        eventA = await Event.create(testEventAInfo)
         eventA.author = authorCreds
         await eventA.save()
-        const eventB = await Event.create(testEventBInfo)
+        eventB = await Event.create(testEventBInfo)
         eventB.author = authorCreds 
         await eventB.save()
 
@@ -77,6 +77,256 @@ describe("Testing event routes with puppeteer", () => {
             expect(eventA).to.equal('EventA')
             const eventB = await page.$eval('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a', a => a.innerText)
             expect(eventB).to.equal('EventB')
+        })
+        
+        describe('Testing the search-filter bar', () => {
+            it('Search: Event, Category: All', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("Event")
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventA = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventA).to.equal('EventA')
+                const eventB = await page.$eval('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: B, Category: All', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("B")
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventB = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: DOESNOTEXIST, Category: All', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("DOESNOTEXIST")
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const noResults = await page.$eval('body > .container > .row > .mt-4 > h3', a => a.innerText)
+                expect(noResults).to.equal('No events match that query, please try again.')
+            })
+
+            it('Search: , Category: Computing', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', '')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-3')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-3')
+                
+                await page.select('.row #filter', 'Computing')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventA = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventA).to.equal('EventA')
+                const eventB = await page.$eval('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+            
+            it('Search: , Category: Business', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Business')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventB = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: , Category: Arts', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Arts')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const noResults = await page.$eval('body > .container > .row > .mt-4 > h3', a => a.innerText)
+                expect(noResults).to.equal('No events match that query, please try again.')
+            })
+
+            it('Search: Event, Category: Computing', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("Event")
+
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Computing')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventA = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventA).to.equal('EventA')
+                const eventB = await page.$eval('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: Event, Category: Business', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("Event")
+
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Business')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventB = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: B, Category: Computing', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("B")
+
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Computing')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const eventB = await page.$eval('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a', a => a.innerText)
+                expect(eventB).to.equal('EventB')
+            })
+
+            it('Search: A, Category: Business', async() => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("A")
+
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Business')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+            
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const noResults = await page.$eval('body > .container > .row > .mt-4 > h3', a => a.innerText)
+                expect(noResults).to.equal('No events match that query, please try again.')
+            })
         })
     })
 
@@ -125,6 +375,45 @@ describe("Testing event routes with puppeteer", () => {
         })
     })
 
+
+    describe("Adding events to bookmakrs", () => {
+        it("Adding Events A and B to bookmarks", async () => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            await page.click('.container > .jumbotron > .container > form > .btn')
+            await navigationPromise
+            const alert1 = await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert1).to.equal("Event saved to your bookmarks")
+
+            await page.click('body > .navbar > .navbar-brand')
+            await navigationPromise
+            await page.click('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            await page.click('.container > .jumbotron > .container > form > .btn')
+            await navigationPromise
+            const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert2).to.equal("Event saved to your bookmarks")
+
+            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await navigationPromise
+            await page.click('.col-sm-12:nth-child(1) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            const firstBookmark = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
+            expect(firstBookmark).to.equal("EventA")
+            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await navigationPromise
+            await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            const secondBookmark = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
+            expect(secondBookmark).to.equal("EventB")
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(2) > .nav-link')
+            await navigationPromise
+        })
+    })
+
     describe("Editing an event", () => {
         it("GET and POST /events/:id/edit", async () => {
             const navigationPromise = page.waitForNavigation()
@@ -159,7 +448,43 @@ describe("Testing event routes with puppeteer", () => {
 
             const alertMessage = await page.$eval('body > .container > .alert', a => a.innerText)
             expect(alertMessage).to.equal("The event has been updated successfully")
+       
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(2) > .nav-link')
+            await navigationPromise
     
+        })
+    })
+
+    describe("Removing events from bookmarks", () => {
+        beforeEach(async () => {
+            eventA.bookmarks.push(user)
+            await eventA.save()
+            eventB.bookmarks.push(user)
+            await eventB.save()
+        })
+        it("Removing Events A and B from bookmarks", async () => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            await page.click('.container > .jumbotron > .container > form > .btn')
+            await navigationPromise
+            const alert1 = await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert1).to.equal("Event removed from your bookmarks")
+
+            await page.click('body > .navbar > .navbar-brand')
+            await navigationPromise
+            await page.click('.col-sm-12:nth-child(3) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            await page.click('.container > .jumbotron > .container > form > .btn')
+            await navigationPromise
+            const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert2).to.equal("Event removed from your bookmarks")
+
+            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
+            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await navigationPromise
+            const text = await page.$eval('.container > .container > .row > .text-secondary > em', a => a.innerText)
+            expect(text).to.equal("You currently have not bookmarked any events.")
         })
     })
 })
