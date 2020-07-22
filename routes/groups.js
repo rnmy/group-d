@@ -67,7 +67,6 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
                             } else {
                               user.notifs.push(notif)
                               user.save()
-                              console.log("notifs", user.notifs)
                               req.flash("success", 'Successfully created the group "' + group.name + '" for ' + event.name)
                               res.redirect("/events/" + eventId + "/groups/");
                             }

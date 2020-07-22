@@ -66,7 +66,6 @@ router.get("/", middleware.isLoggedIn, (req, res) => {
         }).then((result) => {
           const newresult = Promise.all(result.map((res) => helper.getGroupAndEvent(res)))
         return newresult}).then((result) => {
-          console.log(result)
         res.render("./users/status", {user: foundUser, data: result})}).catch((err) => console.log(err))
       }
    })
@@ -190,7 +189,8 @@ router.get("/add_exp", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/add_exp", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/add_exp", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -223,7 +223,8 @@ router.get("/remove_exp", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/remove_exp", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/remove_exp", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -250,7 +251,8 @@ router.get("/add_skill", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/add_skill", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/add_skill", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -283,7 +285,8 @@ router.get("/remove_skill", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/remove_skill", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/remove_skill", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -310,7 +313,8 @@ router.get("/add_int", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/add_int", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/add_int", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -343,7 +347,8 @@ router.get("/remove_int", middleware.isAuthorisedUser, (req, res) => {
       req.flash("error", "Something went wrong...Try again")
       res.redirect("/users/:userId")
     } else {
-      res.render("./users/remove_int", {user: foundUser})
+      const exists = fs.existsSync(`./public/uploads/${foundUser.profilePic}`)
+      res.render("./users/remove_int", {user: foundUser, picExists: exists})
     }
   })
 })
@@ -385,7 +390,7 @@ router.get("/notifications", middleware.isAuthorisedUser, (req, res) => {
       res.redirect("/users/:userId")
     } else {
       Promise.all(user.notifs.map(notif => helper.getNotif(notif._id))).then(data => data.sort()
-      ).then(data => res.render("./users/notifications", {notifs: data.reverse()})).catch(err => console.log(err))
+      ).then(data => res.render("./users/notifications", {notifs: data.reverse(), user: req.user})).catch(err => console.log(err))
     }
   })
 })
