@@ -19,7 +19,8 @@ const {
 
 describe("Testing event routes with puppeteer", () => {
     let browser, page, eventA, eventB, user
-    before(async() => {
+
+    before(async () => {
         await db.connect()
         browser = await puppeteer.launch(
             {
@@ -58,11 +59,11 @@ describe("Testing event routes with puppeteer", () => {
         await navigationPromise 
 
     })
+
     after(async () => {
         await browser.close()
     })
-
-    afterEach(async() => {
+    afterEach(async () => {
         await db.clearDatabase()
         await page.goto("http://localhost:8080/");
     })
@@ -80,7 +81,7 @@ describe("Testing event routes with puppeteer", () => {
         })
         
         describe('Testing the search-filter bar', () => {
-            it('Search: Event, Category: All', async() => {
+            it('Search: Event, Category: All', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -101,7 +102,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
 
-            it('Search: B, Category: All', async() => {
+            it('Search: B, Category: All', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -120,7 +121,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
 
-            it('Search: DOESNOTEXIST, Category: All', async() => {
+            it('Search: DOESNOTEXIST, Category: All', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -139,7 +140,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(noResults).to.equal('No events match that query, please try again.')
             })
 
-            it('Search: , Category: Computing', async() => {
+            it('Search: , Category: Computing', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
@@ -170,7 +171,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
             
-            it('Search: , Category: Business', async() => {
+            it('Search: , Category: Business', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
@@ -194,7 +195,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
 
-            it('Search: , Category: Arts', async() => {
+            it('Search: , Category: Arts', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
@@ -218,7 +219,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(noResults).to.equal('No events match that query, please try again.')
             })
 
-            it('Search: Event, Category: Computing', async() => {
+            it('Search: Event, Category: Computing', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -274,7 +275,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
 
-            it('Search: B, Category: Computing', async() => {
+            it('Search: B, Category: Computing', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -301,7 +302,7 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventB).to.equal('EventB')
             })
 
-            it('Search: A, Category: Business', async() => {
+            it('Search: A, Category: Business', async () => {
                 const navigationPromise = page.waitForNavigation()
                 
                 const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
@@ -326,6 +327,77 @@ describe("Testing event routes with puppeteer", () => {
                 expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
                 const noResults = await page.$eval('body > .container > .row > .mt-4 > h3', a => a.innerText)
                 expect(noResults).to.equal('No events match that query, please try again.')
+            })
+
+                
+            it('Search: DOESNOTEXIST, Category: Computing', async () => {
+                const navigationPromise = page.waitForNavigation()
+                
+                const search = await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .form-control')
+                await search.type("DOESNOTEXIST")
+
+                await page.waitForSelector('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                await page.click('.dropdown > .btn > .filter-option > .filter-option-inner > .filter-option-inner-inner')
+                
+                await page.waitForSelector('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                await page.click('.dropdown-menu > #bs-select-1 #bs-select-1-0')
+                
+                await page.select('.row #filter', 'Computing')
+                
+                await page.waitForSelector('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                await page.click('.col-sm-12 > .form-inline > .row > .input-group > .btn')
+                
+                await navigationPromise
+    
+                const eventsHeader = await page.$eval('body > .container > .jumbotron > .container > h1', a => a.innerText)
+                expect(eventsHeader).to.equal('Events')
+                const eventsHeaderDesc = await page.$eval('body > .container > .jumbotron > .container > p', a => a.innerText)
+                expect(eventsHeaderDesc).to.equal('View the latest hackathons, projects and competitions you can join today!')
+                const noResults = await page.$eval('body > .container > .row > .mt-4 > h3', a => a.innerText)
+                expect(noResults).to.equal('No events match that query, please try again.')
+            })
+        })
+
+        describe('Event page', () => {
+            it('Should display event information', async () => {
+                const navigationPromise = page.waitForNavigation()
+
+                await page.waitForSelector('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+                await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+                
+                await navigationPromise
+
+                const eventName = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
+                expect(eventName).to.equal('EventA')
+                const submittedBy = await page.$eval('.container > .jumbotron > .container > .ml-3 > em', a => a.innerText)
+                expect(submittedBy).to.equal('Submitted by MockUser')
+                const eventDesc = await page.$eval('body > .container > p:nth-child(2)', a => a.innerText)
+                expect(eventDesc).to.equal('Test')
+                const minGroupSize = await page.$eval('.container > .table > tbody > tr:nth-child(1) > th:nth-child(2)', a => a.innerText)
+                expect(minGroupSize).to.equal('1')
+                const maxGroupSize = await page.$eval('.container > .table > tbody > tr:nth-child(2) > th:nth-child(2)', a => a.innerText)
+                expect(maxGroupSize).to.equal('4')
+                const eventReq = await page.$eval('body > .container > p:nth-child(14)', a => a.innerText)
+                expect(eventReq).to.equal('Test')
+                const eventPrizes = await page.$eval('body > .container > p:nth-child(17)', a => a.innerText)
+                expect(eventPrizes).to.equal('Test')
+            })
+
+            it('Should display "no groups" by default', async () => {
+                const navigationPromise = page.waitForNavigation()
+
+                await page.waitForSelector('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+                await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+                
+                await navigationPromise
+
+                await page.waitForSelector('body > .container > .nav > .nav-item > .text-dark')
+                await page.click('body > .container > .nav > .nav-item > .text-dark')
+
+                await navigationPromise
+
+                const noGroups = await page.$eval('body > .container > .mt-3:nth-child(1)', a => a.innerText)
+                expect(noGroups).to.equal('There are currently no groups for this event.')
             })
         })
     })
