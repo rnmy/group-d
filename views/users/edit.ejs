@@ -8,13 +8,22 @@
     <% if(currentUser._id.equals(user._id)) { %> 
       <ul class="nav nav-tabs">
           <li class="nav-item">
-            <a class="nav-link text-dark" href="/users/<%= user._id %>">My Profile</a>
+              <a class="nav-link text-dark" href="/users/<%= user._id %>">My Profile</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/pending">My Groups</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/bookmarks">My Bookmarks</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/notifications">My Activity Log</a>
           </li>
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle active" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
-                <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
+                  <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
+                  <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
               </div>
           </li>
       </ul>
@@ -24,7 +33,7 @@
     <h3 class="mb-3"><strong>Edit Profile</strong></h3>
     <form action="/users/<%= user._id%>?_method=PUT" method="POST" enctype="multipart/form-data">
       <div class="form-group">
-        <label class="text-primary">New Profile Pic (Only images are allowed):</label>
+        <label class="text-primary">New Profile Pic (Please choose only .jpg, .jpeg and .png image files of size 1.0MB.):</label>
         <input type="file" class="form-control-file" name="file">
       </div>
       <div class="form-group">

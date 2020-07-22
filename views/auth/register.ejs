@@ -5,54 +5,55 @@
     
     <form action="/register" method="post" style="width: 500px;" enctype="multipart/form-data">
       <div class="form-group">
-        <label>Your full name:</label>
+        <label>Your full name <span style="color:red">*</span> :</label>
         <% if (typeof data.name == 'undefined') {%>
-        <input class="form-control" type="text" name="name" placeholder="Full name" required>
+        <input class="form-control" type="text" name="name" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } else { %>
-          <input class="form-control" type="text" name="name" value="<%= data.name%>" required>
+          <input class="form-control" type="text" name="name" value="<%= data.name%>" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } %>
       </div>
       <div class="form-group">
-        <label>Your email:</label>
+        <label>Your email <span style="color:red">*</span> :</label>
         <% if (typeof data.email == 'undefined') {%>
-          <input class="form-control" type="email" name="email" placeholder="Your email" required>
+          <input class="form-control" type="email" name="email" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } else { %>
-          <input class="form-control" type="text" name="email" value="<%= data.email%>" required>
+          <input class="form-control" type="text" name="email" value="<%= data.email%>" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } %>
       </div>
       <div class="form-group">
-        <label>Pick a username:</label>
+        <label>Pick a username <span style="color:red">*</span> :</label>
         <% if (typeof data.username == 'undefined') {%>
-        <input class="form-control" type="text" name="username" placeholder="Your username" required>
+        <input class="form-control" type="text" name="username" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } else { %>
-          <input class="form-control" type="text" name="username" value="<%= data.username%>" required>
+          <input class="form-control" type="text" name="username" value="<%= data.username%>" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } %>
       </div>
       <div class="form-group">
-        <label>Enter a password:</label>
-        <input class="form-control" type="password" id="password" name="password" minlength="8" required>
+        <label>Enter a password <span style="color:red">*</span> :</label>
+        <input class="form-control" type="password" id="password" name="password" minlength="8" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <meter id="passwordMeter" max="4"></meter>
         <p id="strengthText"></p>
       </div>
       <div class="form-group">
-        <label>Confirm your password:</label>
-        <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirmation" onkeyup="check()" required>
+        <label>Confirm your password <span style="color:red">*</span> :</label>
+        <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirmation" onkeyup="check()" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <p id='confirmText'></p>
       </div>
       <div class="form-group">
-        <label>Your organization:</label>
+        <label>Your organization <span style="color:red">*</span> :</label>
         <% if (typeof data.organization == 'undefined') {%>
-          <input class="form-control" type="text" name="organization" placeholder="Organization" required>
+          <input class="form-control" type="text" name="organization" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } else { %>
-          <input class="form-control" type="text" name="organization" value="<%= data.organization%>" required>
+          <input class="form-control" type="text" name="organization" value="<%= data.organization%>" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
         <% } %>
       </div>
       <div class="form-group">
-        <label>Profile pic (Optional):</label>
+        <label>Profile picture:</label>
         <h6 class="text-primary mb-2" style="font-size: 0.8rem;"><em>Please choose only .jpg, .jpeg and .png image files of size 1.0MB.</em></h6>
         <input type="file" class="form-control-file" name="file">
       </div>
-      <button id="submit" class="btn btn-success mb-5">Register!</button
+      <div class="mb-3" style="color:red">* required</div>
+      <button id="submit" class="btn btn-success mb-5">Register!</button>
     </form>
     <script>
       const passwordField = document.getElementById('password')

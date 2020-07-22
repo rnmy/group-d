@@ -8,16 +8,22 @@
         <% if(currentUser._id.equals(user._id)) { %> 
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                  <a class="nav-link active" href="/users/<%= user._id %>">My Profile</a>
+                    <a class="nav-link active" href="/users/<%= user._id %>">My Profile</a>
                 </li>
                 <li class="nav-item">
-                  <a class="nav-link text-dark" href="/users/<%= user._id%>/pending">My Groups</a>
+                    <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/pending">My Groups</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/bookmarks">My Bookmarks</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" href="/users/<%= currentUser._id %>/notifications">My Activity Log</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-dark" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Settings</a>
                     <div class="dropdown-menu">
-                      <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
-                      <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
+                        <a class="dropdown-item" href="/users/<%= user._id %>/edit">Edit Profile</a>
+                        <a class="dropdown-item" href="/users/<%= user._id%>/change_password">Change Password</a>
                     </div>
                 </li>
             </ul>
@@ -26,16 +32,15 @@
     <div class="row">        
         <div class="col-lg-3 col-md-4 col-sm-12">
             <div class="card m-0" style="width: 100%">
-                <% if(!user.profilePic){ %>
+                <% if(!user.profilePic || !picExists){ %>
                     <img class="card-img-top" src="/placeholder/placeholder.png">
                 <% } else { %>
                     <img class="card-img-top" src="/uploads/<%= user.profilePic %>">
-                <% } %>           
+                <% } %>          
                 <div class="card-body">
                   <h5 class="card-title">@<%= user.username %></h5>
                   <h6 class="card-subtitle mb-2 text-muted"><%= user.organization %></h6>
                   <p class="card-text"><%= user.bio %></p>
-                  <p class="card-text"><em><%= user.email %></em></p>
                 </div>
             </div>
             <% if(!currentUser._id.equals(user.id)) { %>
