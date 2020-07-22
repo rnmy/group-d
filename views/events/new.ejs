@@ -13,7 +13,11 @@
                     <% } %>
                 </div>
                 <div class="form-group">
-                    <input class="form-control" type="text" placeholder="Event Website" name="event[url]" required>
+                    <% if (typeof data.url != 'undefined') { %>
+                        <input class="form-control" type="text" value="<%=data.url%>" name="event[url]" required>
+                    <% } else { %>
+                        <input class="form-control" type="text" placeholder="Event Website" name="event[url]" required>
+                    <% } %>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.desc != 'undefined') { %> 
@@ -53,45 +57,110 @@
                     </div>
                 <div class="input-group flex-nowrap mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text" id="addon-wrapping">Event Date</span>
-                    </div>
-                    <% if (typeof data.date != 'undefined') { %>
-                        <input class="form-control" type="date" value="<%=data.date%>" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
-                    <% } else { %>
-                        <input class="form-control" type="date" placeholder="date" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
-                    <% } %>
-                </div>
-                <div class="input-group flex-nowrap mb-3">
-                    <div class="input-group-prepend">
                         <span class="input-group-text" id="addon-wrapping">Registration Deadline</span>
                     </div>
                     <% if (typeof data.deadline != 'undefined') { %>
-                        <input class="form-control" type="date" value="<%=data.deadline%>" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                        <input class="form-control" id="deadline" type="date" value="<%=data.deadline%>" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
                     <% } else { %>
-                        <input class="form-control" type="date" placeholder="registration deadline" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
-                    <% } %>
+                        <input class="form-control" id="deadline" type="date" placeholder="registration deadline" name="event[deadline]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } %> 
                 </div>
+                <div class="input-group flex-nowrap mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="addon-wrapping">Event Date</span>
+                    </div>
+                    <% if (typeof data.date != 'undefined') { %>
+                        <input class="form-control" id="date" type="date" value="<%=data.date%>" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } else { %>
+                        <input class="form-control" id="date" type="date" placeholder="date" name="event[date]" min="<%= new Date().toISOString().substr(0, 10) %>" required>
+                    <% } %>        
+                </div>
+                <p id="dateWarning"></p>
                 <div class="form-group">
                     <% if (typeof data.minGroupSize != 'undefined') { %> 
-                        <input class="form-control" type="number" min="1" value="<%=data.minGroupSize%>"name="event[minGroupSize]" required>
+                        <input class="form-control" id="min" type="number" min="1" value="<%=data.minGroupSize%>"name="event[minGroupSize]" required>
                     <% } else { %>
-                        <input class="form-control" type="number" min="1" placeholder="Minimum Group Size" name="event[minGroupSize]" required>
+                        <input class="form-control" id="min" type="number" min="1" placeholder="Minimum Group Size" name="event[minGroupSize]" required>
                     <% } %>
                 </div>
                 <div class="form-group">
                     <% if (typeof data.maxGroupSize != 'undefined') { %> 
-                        <input class="form-control" type="number" min="1" value="<%=data.maxGroupSize%>" name="event[maxGroupSize]" required>
+                        <input class="form-control" id="max" type="number" min="1" value="<%=data.maxGroupSize%>" name="event[maxGroupSize]" required>
                     <% } else { %>
-                        <input class="form-control" type="number" min="1" placeholder="Maximum Group Size" name="event[maxGroupSize]" required>
+                        <input class="form-control" id="max" type="number" min="1" placeholder="Maximum Group Size" name="event[maxGroupSize]" required>
                     <% } %>
+                    <p id="sizeWarning"></p>
                 </div>
                 <div class="form-group">
-                    <button class="btn btn-lg btn-primary btn-block">Submit</button>
+                    <button id="submitBtn" class="btn btn-lg btn-primary btn-block">Submit</button>
                 </div>
             </form>
             <a href="/events">Go back</a>
         </div>
         <script>
+            const minSize = document.querySelector('#min')
+            const maxSize = document.querySelector('#max')
+            const sizeWarning = document.querySelector('#sizeWarning')
+            const eventDate = document.querySelector('#date')
+            const registerDeadline = document.querySelector("#deadline")
+            const dateWarning = document.querySelector("#dateWarning")
+            const submitBtn = document.querySelector("#submitBtn")
+            minSize.addEventListener('input', () => {
+                let minValue = Number(minSize.value) 
+                let maxValue = Number(maxSize.value)
+                if (maxValue !== 0) {
+                    if (minValue > maxValue) {
+                        sizeWarning.innerHTML = `The maximum group size cannot be lower than the minimum group size!`
+                        sizeWarning.style.color = "red"
+                        submitBtn.disabled = true
+                    } else {
+                        sizeWarning.innerHTML = ''
+                        submitBtn.disabled = false
+                    }
+                }
+            }) 
+            maxSize.addEventListener('input', () => {
+                let minValue = Number(minSize.value)
+                let maxValue = Number(maxSize.value) 
+                if (minValue !== 0) {
+                    if (maxValue < minValue) {
+                        sizeWarning.innerHTML = `The maximum group size cannot be lower than the minimum group size!`
+                        sizeWarning.style.color = "red"
+                        submitBtn.disabled = true
+                    } else {
+                        sizeWarning.innerHTML = ''
+                        submitBtn.disabled = false
+                    }
+                }
+            })
+            eventDate.addEventListener("input", () => {
+                let date = eventDate.value 
+                let deadline = registerDeadline.value 
+                if (deadline !== '') {
+                    if (date < deadline) {
+                        dateWarning.innerHTML = `The event start date cannot be later than the registration deadline!`
+                        dateWarning.style.color = "red"
+                        submitBtn.disabled = true
+                    } else {
+                        dateWarning.innerHTML = ''
+                        submitBtn.disabled = false
+                    }
+                }
+            })
+            registerDeadline.addEventListener("input", () => {
+                let date = eventDate.value 
+                let deadline = registerDeadline.value 
+                if (date !== '') {
+                    if (date < deadline) {
+                        dateWarning.innerHTML = `The event start date cannot be later than the registration deadline!`
+                        dateWarning.style.color = "red"
+                        submitBtn.disabled = true
+                    } else {
+                        dateWarning.innerHTML = ''
+                        submitBtn.disabled = false
+                    }
+                }
+            })
             document.querySelector("#desc").innerText = `<%= data.desc%>`
             document.querySelector("#req").innerText = `<%= data.requirements%>`
             document.querySelector("#prizes").innerText = `<%= data.prizes%>`
