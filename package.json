@@ -4,7 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "export NODE_ENV=test && mocha --recursive --exit --timeout 300000",
+    "test": "export NODE_ENV=test && nyc mocha --recursive --exit --timeout 300000",
     "start": "node app.js"
   },
   "author": "JavaChip",
@@ -34,6 +34,7 @@
     "chai-http": "^4.3.0",
     "mocha": "^8.0.1",
     "mongodb-memory-server": "^6.6.1",
+    "nyc": "^15.1.0",
     "puppeteer": "^5.2.0",
     "supertest": "^4.0.2"
   }

@@ -23,7 +23,7 @@
       <% } %>
       <div>
         <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
-          See details
+          Open event link
         </a>
         <% if (currentUser._id.equals(event.author.id)) { %>
           <a class="btn btn-success" href="/events/<%= event._id%>/edit">

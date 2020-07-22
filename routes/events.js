@@ -86,9 +86,7 @@ router.post("/", middleware.isLoggedIn, (req, res) => {
         }
         Event.create(req.body.event, (err, event) => {
           if(err){
-              console.log(err)
-              req.flash("error", "This event has already been created")
-              res.redirect("/events")
+              res.render("./events/new", {data: req.body.event, error:"This event has already been created!"})
           } else {
               event.author = author
               event.save()
