@@ -33,9 +33,9 @@
         <div class="col-lg-3 col-md-4 col-sm-12">
             <div class="card m-0" style="width: 100%">
                 <% if(!user.profilePic || !picExists){ %>
-                    <img class="card-img-top" src="/placeholder/placeholder.png">
+                    <img class="card-img-top profile" src="/placeholder/placeholder.png">
                 <% } else { %>
-                    <img class="card-img-top" src="/uploads/<%= user.profilePic %>">
+                    <img class="card-img-top profile" src="/uploads/<%= user.profilePic %>">
                 <% } %>           
                 <div class="card-body">
                   <h5 class="card-title">@<%= user.username %></h5>
