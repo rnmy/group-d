@@ -6,7 +6,6 @@ const express = require("express"),
       passport = require("passport"),
       LocalStrategy = require("passport-local"),
       methodOverride = require('method-override'),
-      seedDB = require("./seeds"),
       flash = require("connect-flash"),
       expressSanitizer = require('express-sanitizer')
 
