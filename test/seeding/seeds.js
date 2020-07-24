@@ -35,6 +35,36 @@ module.exports.userCInfo = {
     profilePic: ""
 }
 
+module.exports.userDInfo = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "UserD",
+    email: "userD@test.com",
+    username: "UserD",
+    password: "password",
+    organization: "Test",
+    profilePic: ""
+}
+
+module.exports.userEInfo = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "UserE",
+    email: "userE@test.com",
+    username: "UserE",
+    password: "password",
+    organization: "Test",
+    profilePic: ""
+}
+
+module.exports.userFInfo = {
+    _id: new mongoose.Types.ObjectId(),
+    name: "UserF",
+    email: "userF@test.com",
+    username: "UserF",
+    password: "password",
+    organization: "Test",
+    profilePic: ""
+}
+
 module.exports.mockUserInfo = {
         name: "MockUser",
         email: "mock@mock.com",
