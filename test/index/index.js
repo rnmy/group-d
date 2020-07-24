@@ -175,6 +175,7 @@ describe("Testing index routes with puppeteer", () => {
     });
     after(async () => {
         await browser.close()
+        await db.clearDatabase()
     })
         
     describe("Testing register", () => {
