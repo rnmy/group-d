@@ -427,9 +427,9 @@ describe("Testing event routes with puppeteer", () => {
             await eventDate.type("27072020")
             const deadline = await page.waitForSelector('.container > div > form > .input-group:nth-child(8) > .form-control')
             await deadline.type("27072020")
-            const minGroupSize = await page.waitForSelector('.container > div > form > .form-group:nth-child(9) > .form-control')
+            const minGroupSize = await page.waitForSelector('.container #min')
             await minGroupSize.type("1")
-            const maxGroupSize = await page.waitForSelector('.container > div > form > .form-group:nth-child(10) > .form-control')
+            const maxGroupSize = await page.waitForSelector('.container #max')
             await maxGroupSize.type("4")
 
             await page.click('.container > div > form > .form-group > .btn')
@@ -467,15 +467,17 @@ describe("Testing event routes with puppeteer", () => {
             const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
             expect(alert2).to.equal("Event saved to your bookmarks")
 
-            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
-            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(1) > .nav-link')
+            await navigationPromise
+            await page.click('.container > .mb-5 > .nav > .nav-item:nth-child(3) > .nav-link')
             await navigationPromise
             await page.click('.col-sm-12:nth-child(1) > .card > .card-body > .card-title > a')
             await navigationPromise
             const firstBookmark = await page.$eval('body > .container > .jumbotron > .container > .display-3', a => a.innerText)
             expect(firstBookmark).to.equal("EventA")
-            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
-            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(1) > .nav-link')
+            await navigationPromise
+            await page.click('.container > .mb-5 > .nav > .nav-item:nth-child(3) > .nav-link')
             await navigationPromise
             await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
             await navigationPromise
@@ -552,8 +554,9 @@ describe("Testing event routes with puppeteer", () => {
             const alert2 =  await page.$eval('body > .container > .alert', a => a.innerText)
             expect(alert2).to.equal("Event removed from your bookmarks")
 
-            await page.click('.navbar > #navbarSupportedContent #navbarDropdown')
-            await page.click('#navbarSupportedContent > .navbar-nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(5)')
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(1) > .nav-link')
+            await navigationPromise
+            await page.click('.container > .mb-5 > .nav > .nav-item:nth-child(3) > .nav-link')
             await navigationPromise
             const text = await page.$eval('.container > .container > .row > .text-secondary > em', a => a.innerText)
             expect(text).to.equal("You currently have not bookmarked any events.")

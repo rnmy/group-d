@@ -11,7 +11,9 @@ const User = require("../../models/user")
 const Notification = require("../../models/notification")
 const puppeteer = require('puppeteer')
 const { 
-    mockUserInfo
+    mockUserInfo,
+    testEventAInfo,
+    testEventBInfo
 } = require("../seeding/seeds")
 
 describe("Testing user routes with puppeteer", () => {
@@ -33,7 +35,7 @@ describe("Testing user routes with puppeteer", () => {
     })
     describe("Accessing user profile pages", () => {
         before(async() => {
-            user = await User.register(mockUserInfo, "password")
+            await User.register(mockUserInfo, "password")
             const navigationPromise = page.waitForNavigation()
             await page.goto("http://localhost:8080/");
             await page.click('.row > .col > .form-group > a > .btn')
@@ -106,7 +108,7 @@ describe("Testing user routes with puppeteer", () => {
 
     describe("Changing password", () => {
         before(async() => {
-            user = await User.register(mockUserInfo, "password")
+            await User.register(mockUserInfo, "password")
             const navigationPromise = page.waitForNavigation()
             await page.goto("http://localhost:8080/");
             await page.click('.row > .col > .form-group > a > .btn')
@@ -192,7 +194,7 @@ describe("Testing user routes with puppeteer", () => {
     })
     describe("Updating profile", () => {
         before(async() => {
-            user = await User.register(mockUserInfo, "password")
+            await User.register(mockUserInfo, "password")
             const navigationPromise = page.waitForNavigation()
             await page.goto("http://localhost:8080/");
             await page.click('.row > .col > .form-group > a > .btn')
@@ -212,6 +214,30 @@ describe("Testing user routes with puppeteer", () => {
             await navigationPromise
             await db.clearDatabase()
             await db.clearUploads()
+        })
+        it("Should not update profile if wrong type of file uploaded", async() => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(1) > .nav-link')
+            await navigationPromise
+            await page.click('.container > .mb-5 > .nav > .dropdown > .nav-link')
+            await page.click('.mb-5 > .nav > .nav-item > .dropdown-menu > .dropdown-item:nth-child(1)')
+            await navigationPromise
+            const picUpload = await page.$('input[type=file]')
+            let fileToUpload = 'test/seeding/files/test.pdf'
+            await picUpload.uploadFile(fileToUpload)
+            const bio = await page.waitForSelector('.container #bio')
+            await bio.click({ clickCount: 3 })
+            await bio.type("Test")
+            const email = await page.waitForSelector('.container #email')
+            await email.click({ clickCount: 3 })
+            await email.type("testing@test.com")
+            const organization = await page.waitForSelector('.container #organization')
+            await organization.click({ clickCount: 3 })
+            await organization.type("Test")
+            await page.click('body > .container > .container > form > .btn')
+            await navigationPromise
+            const alert = await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert).to.equal("Please only upload images (.jpg/.jpeg/.png files)!")
         })
         it("Should successfully update profile", async() => {
             const navigationPromise = page.waitForNavigation()
@@ -246,7 +272,7 @@ describe("Testing user routes with puppeteer", () => {
     })
     describe("Adding and removing experience, interests and skills", () => {
         before(async() => {
-            user = await User.register(mockUserInfo, "password")
+            await User.register(mockUserInfo, "password")
             const navigationPromise = page.waitForNavigation()
             await page.goto("http://localhost:8080/");
             await page.click('.row > .col > .form-group > a > .btn')
@@ -286,7 +312,7 @@ describe("Testing user routes with puppeteer", () => {
             const updatedDescr = await page.$eval('.col-lg-9 > .card > .card-body > .card-text > p', a => a.innerText)
             expect(updatedDescr).to.equal("Test")
         })
-        it("Same experience cannot be added", async () => {
+        it("Same experience cannot be added, case insensitive", async () => {
             const navigationPromise = page.waitForNavigation()
             await page.click('.card:nth-child(1) > .card-body > .card-title > .row > .btn > .fa-plus')
             await navigationPromise
@@ -333,7 +359,7 @@ describe("Testing user routes with puppeteer", () => {
             const newSkill = await page.$eval('.card > .card-body > ul > .row > li', a => a.innerHTML)
             expect(newSkill).to.equal("Testing")
         })
-        it("Same skill cannot be added", async() => {
+        it("Same skill cannot be added, case insensitive", async() => {
             const navigationPromise = page.waitForNavigation()
             await page.click('.card:nth-child(2) > .card-body > .card-title > .row > .btn > .fa-plus')
             await navigationPromise
@@ -374,7 +400,7 @@ describe("Testing user routes with puppeteer", () => {
             const alert = await page.$eval('body > .container > .alert', a => a.innerText)
             expect(alert).to.equal("Successfully added interest")
         })
-        it("Same interest cannot be added", async() => {
+        it("Same interest cannot be added, case insensitive", async() => {
             const navigationPromise = page.waitForNavigation()
             await page.click('.card:nth-child(3) > .card-body > .card-title > .row > .btn > .fa-plus')
             await navigationPromise
@@ -403,6 +429,72 @@ describe("Testing user routes with puppeteer", () => {
             expect(alert).to.equal("Successfully removed interest")
             const displayText = await page.$eval('.row > .col-lg-9 > .card:nth-child(3) > .card-body > h5', a => a.innerText)
             expect(displayText).to.equal("The user has not input any interests")
+        })
+    })
+    describe("Viewing and clearing notifications", () => {
+        before(async() => {
+            await User.register(mockUserInfo, "password")
+            await Event.create(testEventAInfo)
+            await Event.create(testEventBInfo)
+            const navigationPromise = page.waitForNavigation()
+            await page.goto("http://localhost:8080/");
+            await page.click('.row > .col > .form-group > a > .btn')
+            await navigationPromise
+
+            const username = await page.waitForSelector('.container > div > form > .form-group:nth-child(1) > .form-control')
+            await username.type("MockUser")
+            const password = await page.waitForSelector('.container > div > form > .form-group:nth-child(2) > .form-control')
+            await password.type("password")
+
+            await page.click('.container > div > form > .form-group > .btn')
+            await navigationPromise 
+        })
+        after(async() => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(2) > .nav-link')
+            await navigationPromise
+            await db.clearDatabase()
+            await db.clearUploads()
+        })
+        it("Notification should be added upon creation of a group", async() => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('.col-sm-12:nth-child(2) > .card > .card-body > .card-title > a')
+            await navigationPromise
+            await page.click('body > .container > .nav > .nav-item > .text-dark')
+            await navigationPromise
+            await page.click('body > .container > .btn')
+            await navigationPromise
+            const groupName =   await page.waitForSelector('.container > div > #createGroup > .form-group:nth-child(1) > .form-control')
+            await groupName.type("TestGroup")
+            const groupDescr = await page.waitForSelector('.container > div > #createGroup > .form-group:nth-child(2) > .form-control')
+            await groupDescr.type("Testing")
+            page.on("dialog", async dialog => {
+                await dialog.accept();
+              })
+            await page.click('.container > div > #createGroup > .form-group > .btn')
+            await navigationPromise
+            const alert = await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(alert).to.equal('Successfully created the group "TestGroup" for EventA')
+            await page.click('.navbar > #navbarSupportedContent > .navbar-nav > .nav-item:nth-child(1) > .nav-link')
+            await navigationPromise
+            await page.click('.container > .mb-5 > .nav > .nav-item:nth-child(4) > .nav-link')
+            await navigationPromise
+            const notification = await page.$eval('.container > .table > tbody > tr:nth-child(1) > td:nth-child(1)', a => a.innerHTML)
+            expect(notification).to.not.equal("No new activity.")
+            await page.click('.table > tbody > tr:nth-child(1) > .mb-1 > .btn')
+            await navigationPromise
+            const groupCreated = await page.$eval('body > .container > .display-4', a => a.innerText)
+            expect(groupCreated).to.equal("You are viewing: TestGroup")
+            await page.goBack()  
+        })
+        it("Should successfully clear notification", async() => {
+            const navigationPromise = page.waitForNavigation()
+            await page.click('tbody > tr:nth-child(1) > .mb-1 > .d-inline > .btn')
+            await navigationPromise
+            const cleared = await page.$eval('body > .container > .alert', a => a.innerText)
+            expect(cleared).to.equal("Notification cleared")
+            const displayText = await page.$eval('body > .container > .table > caption > em', a => a.innerText)
+            expect(displayText).to.equal("No new activity.")
         })
     })
 })
