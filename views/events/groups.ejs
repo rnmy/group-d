@@ -22,7 +22,7 @@
         <h6 class="ml-3 mb-4 text-secondary"><em>Submitted by <a href="/users/<%=event.author.id%>"><%=event.author.username%></em></a></h6>
       <% } %>
       <div>
-        <a class="btn btn-info ml-3" href="<%= event.url%>" target="_blank">
+        <a class="btn ml-3 text-light btnBlue" href="<%= event.url%>" target="_blank">
           Go to event link
         </a>
         <% if (currentUser._id.equals(event.author.id)) { %>
@@ -72,7 +72,7 @@
   <% } %>
   
   <% if (!(allUsers.includes(String(currentUser._id))) && !(allPending.includes(String(currentUser._id)))) { %>
-    <a class="btn btn-primary mt-3" href="/events/<%= event._id%>/groups/new">Add a group</a>
+    <a class="btn mt-3 btnBlue text-light" href="/events/<%= event._id%>/groups/new">Add a group</a>
   <% } %>
 </div>
 

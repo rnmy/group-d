@@ -52,7 +52,7 @@
           <% } else { %>
             <li class="list-group-item">
               <form id="leaveGroup" action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-                <button onClick="leaveGroupAlert()" class="btn btn-sm text-danger">Leave Group</button>  
+                <button onClick="leaveGroupAlert()" class="btn btn-sm btnRed text-light">Leave Group</button>  
               </form>
             </li>
           <% } %>
@@ -93,7 +93,7 @@
                         </div>
                         <div style="width:50%; float:right;">
                           <form id="remove" action="/events/<%= event._id%>/groups/<%= group._id%>/remove/<%= user._id%>?_method=PUT" method="POST" class="form-inline">
-                            <button onClick="removeAlert()" class="btn btn-sm btn-warning mt-2">Remove</button>
+                            <button onClick="removeAlert()" class="btn btn-sm btnRed text-light mt-2">Remove</button>
                           </form>
                         </div>
                       </div>
@@ -110,7 +110,7 @@
             <% if(!(group.isClosed) && group.pending.length === 0) { %> 
               <form id="close" action="/events/<%= event._id %>/groups/<%= group._id%>/close?_method=PUT" method="POST">
                 <button data-toggle="tooltip" data-placement="right" 
-                  title="Your group will no longer be displayed on the events page and no new users will be able to join." onClick="closeAlert()" class="btn btn-danger mb-5">
+                  title="Your group will no longer be displayed on the events page and no new users will be able to join." onClick="closeAlert()" class="btn btnRed text-light mb-5">
                   Close Group
                 </button>
               </form>
