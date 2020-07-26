@@ -1,7 +1,7 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-    <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
+    <h1 class="display-4 pt-5"><strong><%= group.name%></strong></h1>
     <a href="/events/<%= event._id%>/groups/<%= group._id%>/edit_info" class="btn btn-sm btn-secondary float-right"> Edit Group Information</a>
     <h6>Group Leader: <%= group.groupLeader.name %></h6>
     <h6><em><%=group.description%></em></h6>
