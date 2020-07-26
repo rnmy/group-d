@@ -1,7 +1,7 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-  <h1 class="display-4 pt-5">You are viewing: <strong><%= group.name%></strong></h1>
+  <h1 class="display-4 pt-5"><strong><%= group.name%></strong></h1>
   <h6>Group Leader: <%= group.groupLeader.name %></h6>
   <h6><em><%=group.description%></em></h6>
   <hr>
@@ -9,7 +9,7 @@
   <!-- Side Bar -->
   <% if(users.includes(currentUser._id)) { %>
     <div class="col-md-3 mb-5 float-right text-center">
-      <div class="groupNav list-group">
+      <div class="list-group">
         <li class="list-group-item active">
           <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-light">Group Page</a>
         </li>
