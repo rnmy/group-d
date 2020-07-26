@@ -1,3 +1,4 @@
+/* Password strength checker + confirm password */
 meter {
     margin-top: 10px;
     width: 100%;
@@ -10,7 +11,7 @@ meter::-webkit-meter-bar {
 }
 
 meter[value="1"]::-webkit-meter-optimum-value {
-    background: red;
+    background: #d5445c;
 }
 
 meter[value="2"]::-webkit-meter-optimum-value {
@@ -26,16 +27,17 @@ meter[value="4"]::-webkit-meter-optimum-value {
 }
 
 #strengthText {
-    color: red;
+    color: #d5445c;
     font-size: 15px;
 }
 
 #confirmText {
     margin-top: 10px;
-    color: red;
+    color: #d5445c;
     font-size: 15px;
 }
 
+/* Navbar */
 nav {
     background: linear-gradient(90deg,#d5445c 0,#d5445c 10%,#20acd6 90%,#20acd6);
 }
@@ -45,6 +47,20 @@ html, body {
     height: 100%;
 } */
 
+#logo {
+    font-family: 'Pacifico', cursive;
+    font-size: x-large;
+    color: white;
+    text-shadow:
+        0 1px #20acd6,
+        -1px 0 #20acd6,
+        -1px 2px #20acd6,
+        -2px 1px #20acd6,
+        -2px 3px #20acd6,
+        -3px 2px #20acd6;
+}
+
+/* Landing page */
 .slideshow {
     position: fixed;
     width: 100%;
@@ -55,6 +71,7 @@ html, body {
     list-style: none;
     margin: 0;
     padding: 0;
+    /* background-image: linear-gradient(to bottom, #d5445c 0,#d5445c 10%,#20acd6 90%,#20acd6) */
 }
 .slideshow li {
     width: 100%;
@@ -111,12 +128,31 @@ html, body {
     z-index: 2;
     position: relative;
     text-align: center;
-    padding-top: 30vh;
+    padding-top: 20vh;
 }
 
 #landingPageTitle {
     font-family: 'Pacifico', cursive;
     font-size: 385px;
+    color: #202c2d;
+    text-shadow:
+        0 1px #d5445c,
+        -1px 0 #20acd6,
+        -1px 2px #d5445c,
+        -2px 1px #20acd6,
+        -2px 3px #d5445c,
+        -3px 2px #20acd6,
+        -3px 4px #d5445c,
+        -4px 3px #20acd6,
+        -4px 5px #d5445c,
+        -5px 4px #20acd6,
+        -5px 6px #d5445c,
+        -6px 5px #20acd6,
+        -6px 7px #d5445c,
+        -7px 6px #20acd6,
+        -7px 8px #d5445c,
+        -8px 7px #20acd6,
+        0 1px 0px #d5445c;
 }
 
 #landingPageButtons {
@@ -131,9 +167,48 @@ html, body {
 
 .landingPageButton {
     opacity: 0.7;
+    color: #3D4849;
+    /* background-image: linear-gradient(90deg,#d5445c 0,#d5445c 10%,#20acd6 90%,#20acd6); */
+}
+
+.landingPageButton:hover {
+    color: white;
+}
+
+/* Group navbar */
+.active {
+  background: #20acd6;
+}
+
+/* General */
+body {
+    font-family: 'Karla', sans-serif;
 }
 
 .alert {
     z-index: 3;
 }
 
+.btnBlue {
+    background-color: #20acd6;
+}
+
+.btnRed {
+    background-color: #d5445c;
+}
+
+.textBlue {
+    color: #20acd6;
+}
+
+.textRed {
+    color: #d5445c;
+}
+
+.jumbotronBackground {
+    background-color:#f4f4f4; 
+    background-image: url(https://images.unsplash.com/photo-1518655048521-f130df041f66?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80); 
+    background-position: top right; 
+    background-size: contain; 
+    background-repeat: no-repeat;
+}

@@ -9,7 +9,7 @@
   <!-- Side Bar -->
   <% if(users.includes(currentUser._id)) { %>
     <div class="col-md-3 mb-5 float-right text-center">
-      <div class="list-group">
+      <div class="groupNav list-group">
         <li class="list-group-item active">
           <a href="/events/<%= event._id %>/groups/<%= group._id %>" class="text-light">Group Page</a>
         </li>
@@ -33,14 +33,14 @@
           <% if (group.users.length === 1 && group.pending.length === 0) { %>
             <li class="list-group-item">
               <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
-                <button onclick="deleteGroup()" class="btn btn-sm text-danger">Delete Group</button>
+                <button onclick="deleteGroup()" class="btn btn-sm textRed">Delete Group</button>
               </form>
             </li>
             <% } else { %>
               <li class="list-group-item">
                 <form id="deleteGroup" action="/events/<%= event._id %>/groups/<%= group._id%>/delete?_method=PUT" method="POST">
                   <span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="bottom" title="You must remove all existing members and resolve outstanding pending requests before you can delete this group.">
-                    <button disabled class="btn btn-sm text-danger" style="pointer-events: none;">
+                    <button disabled class="btn btn-sm textRed" style="pointer-events: none;">
                       Delete Group
                     </button> 
                   </span> 
@@ -50,7 +50,7 @@
         <% } else { %>
           <li class="list-group-item">
             <form id="leaveGroup" action="/events/<%= event._id%>/groups/<%= group._id%>/leave?_method=PUT" method="POST">
-              <button onClick="leaveGroupAlert()" class="btn btn-sm text-danger">Leave Group</button>  
+              <button onClick="leaveGroupAlert()" class="btn btn-sm textRed">Leave Group</button>  
             </form>
           </li>
         <% } %>
@@ -73,11 +73,11 @@
       <% } else if (group.pending.includes(currentUser._id)) { %>
         <h6 class="text-secondary mt-4 mb-4">Your request to join <%= group.name%> is pending</h6>
       <% } else if (group.rejected.includes(currentUser._id)) { %>
-        <h6 class="text-danger mt-4 mb-4">Your request to join <%= group.name%> has been rejected</h6>
+        <h6 class="textRed mt-4 mb-4">Your request to join <%= group.name%> has been rejected</h6>
       <% } else if (group.removed.includes(currentUser._id)) { %>
-        <h6 class="text-danger mt-4 mb-4">You have been removed from <%= group.name%></h6>
+        <h6 class="textRed mt-4 mb-4">You have been removed from <%= group.name%></h6>
       <% } else if (group.left.includes(currentUser._id)) { %>
-        <h6 class="text-danger mt-4 mb-4">You have left <%= group.name%></h6>
+        <h6 class="textRed mt-4 mb-4">You have left <%= group.name%></h6>
       <% } %>
 
       <% group.users.forEach((user) => { %>
@@ -89,7 +89,7 @@
                   <h6 class="card-title">You</h6>
                 <% } else { %>
                   <h6 class="card-title"><%= user.name%></h6>
-                  <a href="/users/<%= user._id%>" class="card-text">Click to view full profile</a>
+                  <a href="/users/<%= user._id%>" class="card-text textBlue">Click to view full profile</a>
                 <% } %>
               </div>
             </div>
@@ -100,7 +100,7 @@
       <div class="mt-5">
         <% if (group.pending.includes(currentUser._id)) { %>
           <form id="cancelJoin" action="/events/<%= event._id%>/groups/<%= group._id%>/cancel?_method=PUT" method="post">
-            <button onClick="cancelJoinAlert()" class="btn btn-danger mb-5">Cancel Join Request</button>
+            <button onClick="cancelJoinAlert()" class="btn btnRed text-light mb-5">Cancel Join Request</button>
           </form>
         <% } else if (!(group.users.length == event.maxGroupSize) 
               && (!(allUsers.includes(String(currentUser._id)))) 
