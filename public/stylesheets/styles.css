@@ -51,7 +51,7 @@ html, body {
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 0;
+    z-index: 1;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -66,7 +66,7 @@ html, body {
     background-position: 50% 50%;
     background-repeat: no-repeat;
     opacity: 0;
-    z-index: 0;
+    z-index: 1;
     animation: imageAnimation 25s linear infinite; 
 }
 
@@ -108,9 +108,13 @@ html, body {
 }
 
 #landing-header {
-    z-index: 1;
+    z-index: 2;
     position: relative;
     text-align: center;
     padding-top: 20vh;
+}
+
+.alert {
+    z-index: 3
 }
 
