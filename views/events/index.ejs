@@ -1,11 +1,11 @@
 <%- include("../partials/header") %>
 
         <div class="container">
-            <header class ="jumbotron mt-3">
+            <header class ="jumbotron mt-3" style="background-color:	#f4f4f4; background-image: url(https://images.unsplash.com/photo-1518655048521-f130df041f66?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2850&q=80); background-position: top right; background-size: contain; background-repeat: no-repeat">
                 <div class="container">
                     <h1>Events</h1>
                     <p>View the latest hackathons, projects and competitions you can join today!</p>
-                    <a class="btn btn-primary btn-lg" href="/events/new">Add a new event today!</a>
+                    <a class="btn btn-lg text-light" style="background-color: #20acd6" href="/events/new">Add a new event today!</a>
                 </div>
             </header>
 
@@ -43,7 +43,7 @@
                     <div class="col-sm-12 mb-2">
                         <div class="card">
                             <div class="card-body">
-                                <h4 class="card-title"><a href="/events/<%= event._id %>"><%= event.name %></a></h4>
+                                <h4 class="card-title"><a style="color:#3D4849" href="/events/<%= event._id %>"><%= event.name %></a></h4>
                                 <h6 class="card-subtitle mb-2 text-muted">Happening on <%= event.date.toDateString() %></h6>
                                 <p class="card-text"><%= event.desc.substring(0, 135) %>...</p>
                                 <p class="card-text text-danger">Register by <%= event.deadline.toDateString() %></p>

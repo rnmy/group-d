@@ -19,10 +19,10 @@
                     <% if(currentUser){ %>
                       <ul class="navbar-nav ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="/users/<%= currentUser._id %>"><i class="fas fa-user mr-2"></i>Signed in as <%= currentUser.username %></a>        
+                            <a class="nav-link text-light" href="/users/<%= currentUser._id %>"><i class="fas fa-user mr-2"></i>Signed in as <%= currentUser.username %></a>        
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+                            <a class="nav-link text-light" href="/logout"><i class="fas fa-sign-out-alt mr-2"></i>Logout</a>
                         </li>              
                       </ul>
                     <% } %>

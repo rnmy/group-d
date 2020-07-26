@@ -31,14 +31,14 @@
     border-color: #adadad;
 }
 .searchFilter .btn-search {
-  background-color: #00aced;
+  background-color: #20acd6;
   color: #fff;
-  border: 1px solid #00aced;
+  border: 1px solid #20acd6;
 }
 .searchFilter .btn-search:hover {
-  background-color: #b20a11;
+  background-color:#d5445b;
   color: #fff;
-  border: 1px solid #b20a11;
+  border: 1px solid #d5445b;
 }
 .searchFilter .label-icon {
   display: none;  
