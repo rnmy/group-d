@@ -1,7 +1,7 @@
 <%- include("../partials/header") %>
 
 <div class="container">
-  <div class="jumbotron">
+  <div class="jumbotron jumbotronBackground">
     <div class="container">
       <h1 class="display-3"><%= event.name%></h1>
       <% if (!(event.bookmarks.includes(currentUser._id))) { %>

@@ -3,10 +3,10 @@
   <div class="container">
     <h1 class="text-center">Sign up</h1>
     
-    <div style="width: 30%; margin: 25px auto;">
+    <div class="mb-3" style="width: 40%; margin: 25px auto;">
       <form action="/register" method="POST">
         <div class="form-group">
-          <label>Your full name <span style="color:red">*</span> :</label>
+          <label>Your full name <span class="textRed">*</span> :</label>
           <% if (typeof data.name == 'undefined') {%>
           <input class="form-control" type="text" name="name" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <% } else { %>
@@ -14,7 +14,7 @@
           <% } %>
         </div>
         <div class="form-group">
-          <label>Your email <span style="color:red">*</span> :</label>
+          <label>Your email <span class="textRed">*</span> :</label>
           <% if (typeof data.email == 'undefined') {%>
             <input class="form-control" type="email" name="email" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <% } else { %>
@@ -22,7 +22,7 @@
           <% } %>
         </div>
         <div class="form-group">
-          <label>Pick a username <span style="color:red">*</span> :</label>
+          <label>Pick a username <span class="textRed">*</span> :</label>
           <% if (typeof data.username == 'undefined') {%>
           <input class="form-control" type="text" name="username" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <% } else { %>
@@ -30,18 +30,18 @@
           <% } %>
         </div>
         <div class="form-group">
-          <label>Enter a password <span style="color:red">*</span> :</label>
+          <label>Enter a password <span class="textRed">*</span> :</label>
           <input class="form-control" type="password" id="password" name="password" minlength="8" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <meter id="passwordMeter" max="4"></meter>
           <p id="strengthText"></p>
         </div>
         <div class="form-group">
-          <label>Confirm your password <span style="color:red">*</span> :</label>
+          <label>Confirm your password <span class="textRed">*</span> :</label>
           <input class="form-control" type="password" name="passwordConfirm" id="passwordConfirmation" onkeyup="check()" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <p id='confirmText'></p>
         </div>
         <div class="form-group">
-          <label>Your organization <span style="color:red">*</span> :</label>
+          <label>Your organization <span class="textRed">*</span> :</label>
           <% if (typeof data.organization == 'undefined') {%>
             <input class="form-control" type="text" name="organization" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <% } else { %>
@@ -50,15 +50,15 @@
         </div>
         <div class="form-group">
           <label>Profile picture:</label>
-          <h6 class="text-primary mb-2" style="font-size: 0.8rem;"><em>Please choose only .jpg, .jpeg and .png image files of size 1.0MB.</em></h6>
+          <h6 class="mb-2" style="color: #d5445c;font-size: 0.8rem;"><em>Please choose only .jpg, .jpeg and .png image files of size 1.0MB.</em></h6>
           <input type="file" class="form-control-file" name="file">
         </div>
-        <div class="mb-3" style="color:red">* required</div>
+        <div class="mb-3 textRed">* required</div>
         <button id="submit" class="btn btn-block btnBlue text-light">Register!</button>
       </form>
     </div>
     <div class="container text-center">
-      <a class="m-auto" href="/">Go back</a>
+      <a class="m-auto textBlue" href="/">Go back</a>
     </div>
     <script>
       const passwordField = document.getElementById('password')
@@ -72,7 +72,7 @@
           confirmText.innerHTML = 'Passwords match!';
           register.disabled = false
         } else {
-          confirmText.style.color = 'red';
+          confirmText.style.color = '#d5445c';
           confirmText.innerHTML = 'Password does not match.';
           register.disabled = true
         }
