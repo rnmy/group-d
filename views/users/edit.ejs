@@ -33,19 +33,19 @@
     <h3 class="mb-3"><strong>Edit Profile</strong></h3>
     <form action="/users/<%= user._id%>?_method=PUT" method="POST" enctype="multipart/form-data">
       <div class="form-group">
-        <label class="text-primary">New Profile Pic (Please choose only .jpg, .jpeg and .png image files of size 1.0MB.):</label>
+        <label class="textBlue">New Profile Pic (Please choose only .jpg, .jpeg and .png image files of size 1.0MB.):</label>
         <input type="file" class="form-control-file" name="file">
       </div>
       <div class="form-group">
-        <label class="text-primary" for="bio">Bio:</label>
+        <label class="textBlue" for="bio">Bio:</label>
         <input class="form-control" id="bio" type="text" name="bio" value="<%= user.bio %>">
       </div>
       <div class="form-group">
-        <label class="text-primary" for="email">Email:</label>
+        <label class="textBlue" for="email">Email:</label>
         <input class="form-control" id="email" type="text" name="email" value="<%= user.email %>" required>
       </div>
       <div class="form-group">
-        <label class="text-primary" for="organization">Organization:</label>
+        <label class="textBlue" for="organization">Organization:</label>
         <input class="form-control" id="organization" type="text" name="organization" value="<%= user.organization %>" required>
       </div>
       <button class="btn btn-success" type="submit">Edit</button>
