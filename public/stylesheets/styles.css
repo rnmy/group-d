@@ -51,7 +51,7 @@ html, body {
     height: 100%;
     top: 0;
     left: 0;
-    z-index: 0;
+    z-index: 1;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -66,7 +66,7 @@ html, body {
     background-position: 50% 50%;
     background-repeat: no-repeat;
     opacity: 0;
-    z-index: 0;
+    z-index: 1;
     animation: imageAnimation 25s linear infinite; 
 }
 
@@ -108,9 +108,34 @@ html, body {
 }
 
 #landing-header {
-    z-index: 1;
+    z-index: 2;
     position: relative;
     text-align: center;
-    padding-top: 20vh;
+    padding-top: 30vh;
 }
+
+#landingPageTitle {
+    font-family: 'Pacifico', cursive;
+    font-size: 385px;
+}
+
+#landingPageButtons {
+    float: right;
+    position: relative;
+    z-index: 99;
+    margin-right: 10%;
+    margin-top: 0;
+    padding-top: 0;
+    height: 100%;
+}
+
+.landingPageButton {
+    opacity: 0.7;
+}
+
+.alert {
+    z-index: 3;
+}
+
+
 
