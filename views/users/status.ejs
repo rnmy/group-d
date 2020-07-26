@@ -29,7 +29,7 @@
         <% } %>  
     </div>
     <table class="table">
-        <% if(data.length === 0 || data.map(d => d.group).filter(g => !g.isDeleted).length === 0) { %>
+        <% if(data.length === 0 || data.map(d => d.group).filter(g => !g.isDeleted).length === 0 || data.map(d => d.group.pending).filter(g => g.includes(currentUser._id).length === data.length)) { %>
             <caption><em>You currently have no active groups.</em></caption>
         <% } %>
         <thead>
@@ -67,18 +67,6 @@
                         </td>
                         
                         <td class="text-success">Member</td>
-                    <% } else if(data[i].group.pending.includes(currentUser._id)) { %>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
-                                <%= data[i].group.name%>
-                            </a>
-                        </td>
-                        <td>
-                            <a href="/events/<%= data[i].event._id%>/">
-                                <%= data[i].event.name%>
-                            </a>
-                        </td>
-                        <td class="text-warning">Pending</td>
                     <% } %>
                 </tr>
             <% } %>
