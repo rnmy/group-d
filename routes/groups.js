@@ -273,8 +273,16 @@ router.put("/:groupid/pending/:pendingid", middleware.isGroupLeader, (req, res) 
                           req.flash("error", "Something went wrong...Try again")
                           res.redirect("back")
                         } else {
-                          autoReject.notifs.push(notif)
-                          autoReject.save()
+                          User.findById(autoReject._id, (err, rejectedUser) => {
+                            if (err) {
+                              req.flash("error", "Something went wrong...Try again")
+                              res.redirect("back")
+                            } else {
+                              rejectedUser.notifs.push(notif)
+                              rejectedUser.save()
+                            }
+                          })
+                          
                         }
                       }
                     )
