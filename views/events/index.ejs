@@ -45,7 +45,11 @@
                             <div class="card-body">
                                 <h4 class="card-title"><a style="color:#3D4849" href="/events/<%= event._id %>"><%= event.name %></a></h4>
                                 <h6 class="card-subtitle mb-2 text-muted">Happening on <%= event.date.toDateString() %></h6>
-                                <p class="card-text"><%= event.desc.substring(0, 135) %>...</p>
+                                <% if (event.desc.length > 135) { %>
+                                    <p class="card-text"><%= event.desc.substring(0, 135) %>...</p>
+                                <% } else { %>
+                                    <p class="card-text"><%= event.desc %></p>
+                                <% } %>
                                 <p class="card-text textRed">Register by <%= event.deadline.toDateString() %></p>
                                 <p>
                                     <% event.cat.forEach((cat) => { %>
