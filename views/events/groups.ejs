@@ -55,7 +55,7 @@
   <% } else { %>
     <% event.groups.forEach((group) => { %>
       <% if (!(group.isClosed) && (!(group.isDeleted))) { %>
-        <div class="card mt-3" style="width: 18rem;">
+        <div class="card mt-3 mr-3" style="width: 18em; height: 14em; display: inline-flex">
           <div class="card-body">
             <h5 class="card-title"><%= group.name%></h5>
             <p class="card-text"><%= group.description%></p>
@@ -72,7 +72,9 @@
   <% } %>
   
   <% if (!(allUsers.includes(String(currentUser._id))) && !(allPending.includes(String(currentUser._id)))) { %>
-    <a class="btn mt-3 btnBlue text-light" href="/events/<%= event._id%>/groups/new">Add a group</a>
+    <div class="container">
+      <a class="btn mt-3 btnBlue text-light" href="/events/<%= event._id%>/groups/new">Add a group</a>
+    </div>
   <% } %>
 </div>
 
