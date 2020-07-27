@@ -59,7 +59,7 @@
         </div>
         <div class="form-group">
           <label>Enter a password <span class="textRed">*</span> :</label>
-          <input class="form-control" type="password" id="password" name="password" minlength="8" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
+          <input class="form-control" type="password" id="password" name="password" minlength="8" onkeyup="check()" required pattern=".*\S+.*" title="This field is required, please enter a valid input">
           <meter id="passwordMeter" max="4"></meter>
           <p id="strengthText"></p>
         </div>
@@ -122,6 +122,9 @@
       meterField.value = checkResult.score
       if (value !== "") {
         strengthText.innerHTML = "Password strength: " + strength[checkResult.score]
+        if(checkResult.score === 4) {
+          strengthText.style.color = 'green'
+        }
       } else {
         strengthText.innerHTML = ""
       }
