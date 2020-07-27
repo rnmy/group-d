@@ -124,6 +124,8 @@
         strengthText.innerHTML = "Password strength: " + strength[checkResult.score]
         if(checkResult.score === 4) {
           strengthText.style.color = 'green'
+        } else {
+          strengthText.style.color = '#d5445c'
         }
       } else {
         strengthText.innerHTML = ""
