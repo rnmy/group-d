@@ -51,11 +51,17 @@
                             </span>
                             <%= notif.text %>
                         </td>
-                        <td class="mb-1">
-                            <a class="btn btn-link text-success px-0 py-0" href="/events/<%=notif.event._id%>/groups/<%=notif.group._id%>">View</a>
-                            <form action="/users/<%=currentUser._id%>/notifications/<%=notif._id%>?_method=DELETE" method="POST" class="d-inline">
-                                <button class="btn btn-link textRed ml-2 px-0 py-0">Clear</button>
-                            </form>
+                        <td class="mb-1 container float-right">
+                            <div class="row">
+                                <div class="col-2 mr-1">
+                                    <a class="btn btn-link text-success d-inline-block px-0 py-0" href="/events/<%=notif.event._id%>/groups/<%=notif.group._id%>">View</a>
+                                </div>
+                                <div class="col-2">
+                                    <form action="/users/<%=currentUser._id%>/notifications/<%=notif._id%>?_method=DELETE" method="POST" class="d-inline-block">
+                                        <button class="btn btn-link textRed ml-2 px-0 py-0">Clear</button>
+                                    </form>        
+                                </div>
+                            </div>
                         </td>
                     </tr>    
                 <% }) %>
