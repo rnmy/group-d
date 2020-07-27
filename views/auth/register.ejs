@@ -32,7 +32,7 @@
     <h1 class="text-center">Sign up</h1>
     
     <div class="mb-3" style="width: 40%; margin: 25px auto;">
-      <form action="/register" method="POST">
+      <form action="/register" method="POST" enctype="multipart/form-data">
         <div class="form-group">
           <label>Your full name <span class="textRed">*</span> :</label>
           <% if (typeof data.name == 'undefined') {%>
