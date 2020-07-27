@@ -57,12 +57,12 @@
                         <td class="text-success">Leader</td>
                     <% } else if(data[i].group.users.includes(currentUser._id)) { %>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
+                            <a class="textBlue" href="/events/<%= data[i].event._id%>/groups/<%= data[i].group._id%>">
                                 <%= data[i].group.name%>
                             </a>
                         </td>
                         <td>
-                            <a href="/events/<%= data[i].event._id%>/">
+                            <a class="textBlue" href="/events/<%= data[i].event._id%>/">
                                 <%= data[i].event.name%>
                             </a>
                         </td>
