@@ -46,6 +46,7 @@ router.get("/register", function(req, res){
 router.post("/register",function(req, res){
   upload(req, res, (err) => {
     if (err) {
+      console.log(err)
       res.render("./auth/register", {
         data: req.body,
         error: "Please upload only images for your profile picture (e.g. .jpeg/.png files)"
