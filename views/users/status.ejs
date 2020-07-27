@@ -29,7 +29,7 @@
         <% } %>  
     </div>
     <table class="table">
-        <% if(data.length === 0 || data.map(d => d.group).filter(g => !g.isDeleted).length === 0 || data.map(d => d.group.pending).filter(g => g.includes(currentUser._id).length === data.length)) { %>
+        <% if(data.length === 0 || data.map(d => d.group).filter(g => !g.isDeleted).length === 0 || data.map(d => d.group.pending).filter(g => g.includes(currentUser._id)).length === data.length) { %>
             <caption><em>You currently have no active groups.</em></caption>
         <% } %>
         <thead>
